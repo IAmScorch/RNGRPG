@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>300</height>
+    <height>306</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -36,10 +36,10 @@
      <widget class="QPushButton" name="btnNewGame">
       <property name="geometry">
        <rect>
-        <x>10</x>
+        <x>220</x>
         <y>10</y>
-        <width>191</width>
-        <height>121</height>
+        <width>151</width>
+        <height>61</height>
        </rect>
       </property>
       <property name="font">
@@ -47,17 +47,23 @@
         <pointsize>16</pointsize>
        </font>
       </property>
+      <property name="styleSheet">
+       <string notr="true"/>
+      </property>
       <property name="text">
        <string>New Game</string>
+      </property>
+      <property name="flat">
+       <bool>false</bool>
       </property>
      </widget>
      <widget class="QPushButton" name="btnQuit">
       <property name="geometry">
        <rect>
-        <x>204</x>
-        <y>10</y>
-        <width>181</width>
-        <height>121</height>
+        <x>220</x>
+        <y>190</y>
+        <width>151</width>
+        <height>61</height>
        </rect>
       </property>
       <property name="font">
@@ -68,6 +74,9 @@
       <property name="text">
        <string>Quit</string>
       </property>
+      <property name="flat">
+       <bool>false</bool>
+      </property>
      </widget>
      <widget class="QPushButton" name="btnSave">
       <property name="enabled">
@@ -75,10 +84,10 @@
       </property>
       <property name="geometry">
        <rect>
-        <x>10</x>
-        <y>132</y>
-        <width>191</width>
-        <height>121</height>
+        <x>220</x>
+        <y>70</y>
+        <width>151</width>
+        <height>61</height>
        </rect>
       </property>
       <property name="font">
@@ -89,14 +98,17 @@
       <property name="text">
        <string>Save</string>
       </property>
+      <property name="flat">
+       <bool>false</bool>
+      </property>
      </widget>
      <widget class="QPushButton" name="btnLoad">
       <property name="geometry">
        <rect>
-        <x>204</x>
-        <y>132</y>
-        <width>181</width>
-        <height>121</height>
+        <x>220</x>
+        <y>130</y>
+        <width>151</width>
+        <height>61</height>
        </rect>
       </property>
       <property name="font">
@@ -107,7 +119,28 @@
       <property name="text">
        <string>Load</string>
       </property>
+      <property name="flat">
+       <bool>false</bool>
+      </property>
      </widget>
+     <widget class="QLabel" name="lblMenuTabBG">
+      <property name="geometry">
+       <rect>
+        <x>-60</x>
+        <y>-60</y>
+        <width>501</width>
+        <height>333</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <zorder>lblMenuTabBG</zorder>
+     <zorder>btnNewGame</zorder>
+     <zorder>btnQuit</zorder>
+     <zorder>btnSave</zorder>
+     <zorder>btnLoad</zorder>
     </widget>
     <widget class="QWidget" name="tabActionScreen">
      <attribute name="title">
@@ -163,6 +196,9 @@
         <pointsize>10</pointsize>
        </font>
       </property>
+      <property name="styleSheet">
+       <string notr="true">color: rgb(255, 255, 255);</string>
+      </property>
       <property name="text">
        <string>Gold: 0</string>
       </property>
@@ -181,10 +217,31 @@
         <pointsize>10</pointsize>
        </font>
       </property>
+      <property name="styleSheet">
+       <string notr="true">color: rgb(255, 255, 255);</string>
+      </property>
       <property name="text">
        <string>Potions: 0</string>
       </property>
      </widget>
+     <widget class="QLabel" name="lblActionTabBG">
+      <property name="geometry">
+       <rect>
+        <x>-60</x>
+        <y>-60</y>
+        <width>1001</width>
+        <height>665</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <zorder>lblActionTabBG</zorder>
+     <zorder>btnBuyPotion</zorder>
+     <zorder>btnUsePotion</zorder>
+     <zorder>lblGoldAmount</zorder>
+     <zorder>lblPotionAmount</zorder>
     </widget>
     <widget class="QWidget" name="tabBattleScreen">
      <attribute name="title">
@@ -205,6 +262,9 @@
         <weight>75</weight>
         <bold>true</bold>
        </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: rgb(255, 255, 255, 100);</string>
       </property>
       <property name="readOnly">
        <bool>true</bool>
@@ -292,7 +352,11 @@
         <pointsize>10</pointsize>
         <weight>75</weight>
         <bold>true</bold>
+        <strikeout>false</strikeout>
        </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color: rgb(255, 255, 255);</string>
       </property>
       <property name="text">
        <string/>
@@ -353,6 +417,9 @@
         <bold>true</bold>
        </font>
       </property>
+      <property name="styleSheet">
+       <string notr="true">color: rgb(255, 255, 255);</string>
+      </property>
       <property name="text">
        <string>0</string>
       </property>
@@ -375,6 +442,9 @@
         <weight>75</weight>
         <bold>true</bold>
        </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color: rgb(255, 255, 255);</string>
       </property>
       <property name="text">
        <string>0</string>
@@ -401,6 +471,20 @@
        <string>Special Ability</string>
       </property>
      </widget>
+     <widget class="QLabel" name="lblBattleTabBG">
+      <property name="geometry">
+       <rect>
+        <x>-90</x>
+        <y>-70</y>
+        <width>601</width>
+        <height>335</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <zorder>lblBattleTabBG</zorder>
      <zorder>btnSpecialAbility</zorder>
      <zorder>txtBattleInfo</zorder>
      <zorder>pbarCHealth</zorder>
@@ -433,6 +517,9 @@
       <property name="autoFillBackground">
        <bool>false</bool>
       </property>
+      <property name="styleSheet">
+       <string notr="true">color: rgb(255, 255, 255);</string>
+      </property>
       <property name="text">
        <string>Name:</string>
       </property>
@@ -453,6 +540,9 @@
       </property>
       <property name="autoFillBackground">
        <bool>false</bool>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color: rgb(255, 255, 255);</string>
       </property>
       <property name="text">
        <string>Health:</string>
@@ -475,6 +565,9 @@
       <property name="autoFillBackground">
        <bool>false</bool>
       </property>
+      <property name="styleSheet">
+       <string notr="true">color: rgb(255, 255, 255);</string>
+      </property>
       <property name="text">
        <string>Attack:</string>
       </property>
@@ -496,6 +589,9 @@
       <property name="autoFillBackground">
        <bool>false</bool>
       </property>
+      <property name="styleSheet">
+       <string notr="true">color: rgb(255, 255, 255);</string>
+      </property>
       <property name="text">
        <string>Level:</string>
       </property>
@@ -504,7 +600,7 @@
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>130</y>
+        <y>150</y>
         <width>251</width>
         <height>21</height>
        </rect>
@@ -516,6 +612,9 @@
       </property>
       <property name="autoFillBackground">
        <bool>false</bool>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color: rgb(255, 255, 255);</string>
       </property>
       <property name="text">
        <string>Critical Hit Chance:</string>
@@ -525,7 +624,7 @@
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>160</y>
+        <y>180</y>
         <width>251</width>
         <height>21</height>
        </rect>
@@ -537,6 +636,9 @@
       </property>
       <property name="autoFillBackground">
        <bool>false</bool>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color: rgb(255, 255, 255);</string>
       </property>
       <property name="text">
        <string>Experience:</string>
@@ -546,7 +648,7 @@
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>190</y>
+        <y>210</y>
         <width>251</width>
         <height>21</height>
        </rect>
@@ -558,6 +660,9 @@
       </property>
       <property name="autoFillBackground">
        <bool>false</bool>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color: rgb(255, 255, 255);</string>
       </property>
       <property name="text">
        <string>XP till next level:</string>
@@ -612,7 +717,7 @@
       <property name="geometry">
        <rect>
         <x>270</x>
-        <y>130</y>
+        <y>150</y>
         <width>23</width>
         <height>23</height>
        </rect>
@@ -640,10 +745,38 @@
         <pointsize>10</pointsize>
        </font>
       </property>
+      <property name="styleSheet">
+       <string notr="true">color: rgb(255, 255, 255);</string>
+      </property>
       <property name="text">
        <string>Skill Points: 0</string>
       </property>
      </widget>
+     <widget class="QLabel" name="lblCharTabBG">
+      <property name="geometry">
+       <rect>
+        <x>-370</x>
+        <y>-10</y>
+        <width>1001</width>
+        <height>665</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <zorder>lblCharTabBG</zorder>
+     <zorder>lblCName</zorder>
+     <zorder>lblCHealth</zorder>
+     <zorder>lblCAttack</zorder>
+     <zorder>lblCLevel</zorder>
+     <zorder>lblCCritChance</zorder>
+     <zorder>lblCXP</zorder>
+     <zorder>lblCXPTillLvl</zorder>
+     <zorder>btnIncreaseHP</zorder>
+     <zorder>btnIncreaseAttack</zorder>
+     <zorder>btnIncreaseCritChance</zorder>
+     <zorder>lblCSkillPoints</zorder>
     </widget>
     <widget class="QWidget" name="tabQuestScreen">
      <attribute name="title">
@@ -778,6 +911,37 @@
      <zorder>lblQReward</zorder>
      <zorder>btnAbandonQuest</zorder>
     </widget>
+   </widget>
+   <widget class="QProgressBar" name="pbarXP">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>280</y>
+      <width>401</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="autoFillBackground">
+     <bool>false</bool>
+    </property>
+    <property name="maximum">
+     <number>100</number>
+    </property>
+    <property name="value">
+     <number>0</number>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+    <property name="textVisible">
+     <bool>true</bool>
+    </property>
+    <property name="invertedAppearance">
+     <bool>false</bool>
+    </property>
+    <property name="format">
+     <string>%v%</string>
+    </property>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">

@@ -75,13 +75,30 @@ int Bandit::goldDrop()
     int gold = 0;
     if (level_ == 15)
     {
-        gold = rand()% 20 + 10;
+        gold = 500;
         QMessageBox msgBox;
         msgBox.setWindowTitle("Gold Drop");
         msgBox.setText(QString("Bandit Leader dropped %1 gold.").arg(gold));
         msgBox.exec();
     }
-    else if (level_ <= 14)
+    if (level_ == 13 || level_ == 14)
+    {
+        //attackDmg_ = rand() % ((maxAttackPower_ + 1) - minAttackPower_) + minAttackPower_;
+        gold = rand()% ((30 + 1 ) - 20) + 20;
+        QMessageBox msgBox;
+        msgBox.setWindowTitle("Gold Drop");
+        msgBox.setText(QString("Bandit Leader dropped %1 gold.").arg(gold));
+        msgBox.exec();
+    }
+    else if (level_ >= 10 && level_ <= 12)
+    {
+        gold = rand()% ((10 + 1) - 5) + 5;
+        QMessageBox msgBox;
+        msgBox.setWindowTitle("Gold Drop");
+        msgBox.setText(QString("Bandit dropped %1 gold.").arg(gold));
+        msgBox.exec();
+    }
+    else if (level_ <= 11)
     {
         gold = rand()% 4 + 1;
         QMessageBox msgBox;

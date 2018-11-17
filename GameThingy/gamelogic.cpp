@@ -75,9 +75,16 @@ GameLogic::GameLogic(QWidget *parent) :
     ui->btnCompleteQuest->setEnabled(false);
     ui->btnAbandonQuest->setEnabled(false);
     ui->btnSpecialAbility->setEnabled(false);
-    ui->lblQuestTabBG->setPixmap(QPixmap("../Img/questTab4.png"));
-   // ui->btnNewGame->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_Q))));
- //   ui->btnNewGame->setShortcutEnabled(true);
+    ui->lblQuestTabBG->setPixmap(QPixmap("../Img/tabQuestBG.png"));
+    ui->lblMenuTabBG->setPixmap(QPixmap("../Img/tabMenuBG.png"));
+    ui->lblBattleTabBG->setPixmap(QPixmap("../Img/tabBattleBG.png"));
+    ui->lblCharTabBG->setPixmap(QPixmap("../Img/tabCharacterBG.png"));
+    ui->lblActionTabBG->setPixmap(QPixmap("../Img/tabActionBG.png"));
+
+    ui->btnNewGame->setStyleSheet("background-color: rgb(225, 225, 225, 200)");
+    ui->btnLoad->setStyleSheet("background-color: rgb(225, 225, 225, 200)");
+    ui->btnSave->setStyleSheet("background-color: rgb(225, 225, 225, 200)");
+    ui->btnQuit->setStyleSheet("background-color: rgb(225, 225, 225, 200)");
     bandit_ = new Bandit("", 0, 0, 0, 0, 0, 0, 0);
     banditBoss_ = new Bandit("", 0, 0, 0, 0, 0, 0, 0);
     warrior_ = new Warrior("", 0, 0, 0, 0, 0);
@@ -118,8 +125,8 @@ void GameLogic::on_btnAttack_clicked()
     int enemyLevel = 0;
     int levelDiff = 0;
 
-    if (player_->getLevel() >= 1 && player_->getLevel() <= 14)
-    {
+   // if (player_->getLevel() >= 1 && player_->getLevel() <= 15)
+   // {
         if (bandit_->isAlive() && player_->isAlive())
         {
             bandit_->doHit(player_->doAttack(bandit_->getName()));
@@ -191,165 +198,165 @@ void GameLogic::on_btnAttack_clicked()
             checkQuest();
             bsBattleSC_->setEnabled(true);
         }
-    }
-    else if (player_->getLevel() == 15)
-    {
-        if (banditBoss_->isAlive() && player_->isAlive())
-        {
-            banditBoss_->doHit(player_->doAttack(banditBoss_->getName()));
-            message_ += player_->getMessage() + banditBoss_->getMessage();
-            player_->doHit(banditBoss_->doAttack(player_->getName()));
-            message_ += banditBoss_->getMessage() + player_->getMessage();
-            ui->txtBattleInfo->setText(message_);
-            ui->pbarCHealth->setValue(player_->getHealth());
-            ui->pbarEHealth->setValue(banditBoss_->getHealth());
-        }
-        if (!banditBoss_->isAlive())
-        {
-            ui->pbarEHealth->setValue(0);
-            player_->addXP(banditBoss_->getXPReward());
+  //  }
+//    else if (player_->getLevel() == 15)
+//    {
+//        if (banditBoss_->isAlive() && player_->isAlive())
+//        {
+//            banditBoss_->doHit(player_->doAttack(banditBoss_->getName()));
+//            message_ += player_->getMessage() + banditBoss_->getMessage();
+//            player_->doHit(banditBoss_->doAttack(player_->getName()));
+//            message_ += banditBoss_->getMessage() + player_->getMessage();
+//            ui->txtBattleInfo->setText(message_);
+//            ui->pbarCHealth->setValue(player_->getHealth());
+//            ui->pbarEHealth->setValue(banditBoss_->getHealth());
+//        }
+//        if (!banditBoss_->isAlive())
+//        {
+//            ui->pbarEHealth->setValue(0);
+//            player_->addXP(banditBoss_->getXPReward());
 
-            int potChance = rand() % 10 + 1;
-            player_->addGold(banditBoss_->goldDrop());
-            ui->lblGoldAmount->setText(QString("Gold: %1").arg(player_->getGold()));
-            if (potChance == 3 || potChance == 7)
-            {
-                QSound::play("../Sounds/potionDrop.wav");
-                QMessageBox msgBox;
-                msgBox.setWindowTitle("Item Drop");
-                msgBox.setText("Bandit dropped a potion");
-                msgBox.exec();
-                player_->addPotion(1);
-                ui->lblPotionAmount->setText(QString("Potions: %1").arg(player_->getPotion()));
-            }
-            player_->checkXP();
-            checkSkillPoints();
-            ui->tabActionScreen->setEnabled(true);
-            ui->tabCInfoScreen->setEnabled(true);
-            ui->tabMenuScreen->setEnabled(true);
-            ui->tabQuestScreen->setEnabled(true);
+//            int potChance = rand() % 10 + 1;
+//            player_->addGold(banditBoss_->goldDrop());
+//            ui->lblGoldAmount->setText(QString("Gold: %1").arg(player_->getGold()));
+//            if (potChance == 3 || potChance == 7)
+//            {
+//                QSound::play("../Sounds/potionDrop.wav");
+//                QMessageBox msgBox;
+//                msgBox.setWindowTitle("Item Drop");
+//                msgBox.setText("Bandit dropped a potion");
+//                msgBox.exec();
+//                player_->addPotion(1);
+//                ui->lblPotionAmount->setText(QString("Potions: %1").arg(player_->getPotion()));
+//            }
+//            player_->checkXP();
+//            checkSkillPoints();
+//            ui->tabActionScreen->setEnabled(true);
+//            ui->tabCInfoScreen->setEnabled(true);
+//            ui->tabMenuScreen->setEnabled(true);
+//            ui->tabQuestScreen->setEnabled(true);
 
-            ui->txtBattleInfo->setEnabled(false);
-            ui->btnAttack->setEnabled(false);
-            ui->pbarCHealth->setEnabled(false);
-            ui->pbarEHealth->setEnabled(false);
-            ui->btnBattle->setEnabled(true);
-            ui->btnUsePotionBS->setEnabled(false);
-            setPlayerInfo();
-            checkQuest();
-        }
-    }
-    else if (player_->getLevel() >= 16 && player_->getLevel() <= 34)
-    {
-        if (warrior_->isAlive() && player_->isAlive())
-        {
-            warrior_->doHit(player_->doAttack(warrior_->getName()));
-            message_ += player_->getMessage() + warrior_->getMessage();
-            player_->doHit(warrior_->doAttack(player_->getName()));
-            message_ += warrior_->getMessage() + player_->getMessage();
-            ui->txtBattleInfo->setText(message_);
-            ui->pbarCHealth->setValue(player_->getHealth());
-            ui->pbarEHealth->setValue(warrior_->getHealth());
-        }
-        if (!warrior_->isAlive())
-        {
-            ui->pbarEHealth->setValue(0);
-            player_->addXP(warrior_->getXPReward());
+//            ui->txtBattleInfo->setEnabled(false);
+//            ui->btnAttack->setEnabled(false);
+//            ui->pbarCHealth->setEnabled(false);
+//            ui->pbarEHealth->setEnabled(false);
+//            ui->btnBattle->setEnabled(true);
+//            ui->btnUsePotionBS->setEnabled(false);
+//            setPlayerInfo();
+//            checkQuest();
+//        }
+//    }
+//    else if (player_->getLevel() >= 16 && player_->getLevel() <= 34)
+//    {
+//        if (warrior_->isAlive() && player_->isAlive())
+//        {
+//            warrior_->doHit(player_->doAttack(warrior_->getName()));
+//            message_ += player_->getMessage() + warrior_->getMessage();
+//            player_->doHit(warrior_->doAttack(player_->getName()));
+//            message_ += warrior_->getMessage() + player_->getMessage();
+//            ui->txtBattleInfo->setText(message_);
+//            ui->pbarCHealth->setValue(player_->getHealth());
+//            ui->pbarEHealth->setValue(warrior_->getHealth());
+//        }
+//        if (!warrior_->isAlive())
+//        {
+//            ui->pbarEHealth->setValue(0);
+//            player_->addXP(warrior_->getXPReward());
 
-            int potChance = rand() % 10 + 1;
-            int upgradeChance = rand() % 50 + 1;
-            player_->addGold(warrior_->goldDrop());
-            ui->lblGoldAmount->setText(QString("Gold: %1").arg(player_->getGold()));
-            if (potChance == 3 || potChance == 7)
-            {
-                QSound::play("../Sounds/potionDrop.wav");
-                QMessageBox msgBox;
-                msgBox.setWindowTitle("Item Drop");
-                msgBox.setText("Warrior dropped a potion");
-                msgBox.exec();
-                player_->addPotion(1);
-                ui->lblPotionAmount->setText(QString("Potions: %1").arg(player_->getPotion()));
-            }
-            if (upgradeChance == 25 || upgradeChance == 15)
-            {
-                QMessageBox msgBox;
-                msgBox.setWindowTitle("Health Upgrade");
-                msgBox.setText("Warrior dropped a health upgrade, adding 10 to your max health.");
-                msgBox.exec();
-                player_->addHealthUpgrade(10);
-            }
-            player_->checkXP();
-            checkSkillPoints();
-            ui->tabActionScreen->setEnabled(true);
-            ui->tabCInfoScreen->setEnabled(true);
-            ui->tabMenuScreen->setEnabled(true);
-            ui->tabQuestScreen->setEnabled(true);
+//            int potChance = rand() % 10 + 1;
+//            int upgradeChance = rand() % 50 + 1;
+//            player_->addGold(warrior_->goldDrop());
+//            ui->lblGoldAmount->setText(QString("Gold: %1").arg(player_->getGold()));
+//            if (potChance == 3 || potChance == 7)
+//            {
+//                QSound::play("../Sounds/potionDrop.wav");
+//                QMessageBox msgBox;
+//                msgBox.setWindowTitle("Item Drop");
+//                msgBox.setText("Warrior dropped a potion");
+//                msgBox.exec();
+//                player_->addPotion(1);
+//                ui->lblPotionAmount->setText(QString("Potions: %1").arg(player_->getPotion()));
+//            }
+//            if (upgradeChance == 25 || upgradeChance == 15)
+//            {
+//                QMessageBox msgBox;
+//                msgBox.setWindowTitle("Health Upgrade");
+//                msgBox.setText("Warrior dropped a health upgrade, adding 10 to your max health.");
+//                msgBox.exec();
+//                player_->addHealthUpgrade(10);
+//            }
+//            player_->checkXP();
+//            checkSkillPoints();
+//            ui->tabActionScreen->setEnabled(true);
+//            ui->tabCInfoScreen->setEnabled(true);
+//            ui->tabMenuScreen->setEnabled(true);
+//            ui->tabQuestScreen->setEnabled(true);
 
-            ui->txtBattleInfo->setEnabled(false);
-            ui->btnAttack->setEnabled(false);
-            ui->pbarCHealth->setEnabled(false);
-            ui->pbarEHealth->setEnabled(false);
-            ui->btnBattle->setEnabled(true);
-            setPlayerInfo();
-            checkQuest();
-        }
-    }
-    else if (player_->getLevel() == 35)
-    {
-        if (warriorBoss_->isAlive() && player_->isAlive())
-        {
-            warriorBoss_->doHit(player_->doAttack(warriorBoss_->getName()));
-            message_ += player_->getMessage() + warriorBoss_->getMessage();
-            player_->doHit(warriorBoss_->doAttack(player_->getName()));
-            message_ += warriorBoss_->getMessage() + player_->getMessage();
-            ui->txtBattleInfo->setText(message_);
-            ui->pbarCHealth->setValue(player_->getHealth());
-            ui->pbarEHealth->setValue(warriorBoss_->getHealth());
-        }
-        if (!warriorBoss_->isAlive())
-        {
-            ui->pbarEHealth->setValue(0);
-            player_->addXP(warriorBoss_->getXPReward());
+//            ui->txtBattleInfo->setEnabled(false);
+//            ui->btnAttack->setEnabled(false);
+//            ui->pbarCHealth->setEnabled(false);
+//            ui->pbarEHealth->setEnabled(false);
+//            ui->btnBattle->setEnabled(true);
+//            setPlayerInfo();
+//            checkQuest();
+//        }
+//    }
+//    else if (player_->getLevel() == 35)
+//    {
+//        if (warriorBoss_->isAlive() && player_->isAlive())
+//        {
+//            warriorBoss_->doHit(player_->doAttack(warriorBoss_->getName()));
+//            message_ += player_->getMessage() + warriorBoss_->getMessage();
+//            player_->doHit(warriorBoss_->doAttack(player_->getName()));
+//            message_ += warriorBoss_->getMessage() + player_->getMessage();
+//            ui->txtBattleInfo->setText(message_);
+//            ui->pbarCHealth->setValue(player_->getHealth());
+//            ui->pbarEHealth->setValue(warriorBoss_->getHealth());
+//        }
+//        if (!warriorBoss_->isAlive())
+//        {
+//            ui->pbarEHealth->setValue(0);
+//            player_->addXP(warriorBoss_->getXPReward());
 
-            int potChance = rand() % 10 + 1;
-            int upgradeChance = rand() % 50 + 1;
-            player_->addGold(warriorBoss_->goldDrop());
-            ui->lblGoldAmount->setText(QString("Gold: %1").arg(player_->getGold()));
-            if (potChance == 3 || potChance == 7)
-            {
-                QSound::play("../Sounds/potionDrop.wav");
-                QMessageBox msgBox;
-                msgBox.setWindowTitle("Item Drop");
-                msgBox.setText("Warrior dropped a potion");
-                msgBox.exec();
-                player_->addPotion(1);
-                ui->lblPotionAmount->setText(QString("Potions: %1").arg(player_->getPotion()));
-            }
-            if (upgradeChance == 25 || upgradeChance == 15)
-            {
-                QMessageBox msgBox;
-                msgBox.setWindowTitle("Health Upgrade");
-                msgBox.setText("Warrior dropped a health upgrade, adding 10 to your max health.");
-                msgBox.exec();
-                player_->addHealthUpgrade(10);
-            }
-            player_->checkXP();
-            checkSkillPoints();
-            ui->tabActionScreen->setEnabled(true);
-            ui->tabCInfoScreen->setEnabled(true);
-            ui->tabMenuScreen->setEnabled(true);
-            ui->tabQuestScreen->setEnabled(true);
+//            int potChance = rand() % 10 + 1;
+//            int upgradeChance = rand() % 50 + 1;
+//            player_->addGold(warriorBoss_->goldDrop());
+//            ui->lblGoldAmount->setText(QString("Gold: %1").arg(player_->getGold()));
+//            if (potChance == 3 || potChance == 7)
+//            {
+//                QSound::play("../Sounds/potionDrop.wav");
+//                QMessageBox msgBox;
+//                msgBox.setWindowTitle("Item Drop");
+//                msgBox.setText("Warrior dropped a potion");
+//                msgBox.exec();
+//                player_->addPotion(1);
+//                ui->lblPotionAmount->setText(QString("Potions: %1").arg(player_->getPotion()));
+//            }
+//            if (upgradeChance == 25 || upgradeChance == 15)
+//            {
+//                QMessageBox msgBox;
+//                msgBox.setWindowTitle("Health Upgrade");
+//                msgBox.setText("Warrior dropped a health upgrade, adding 10 to your max health.");
+//                msgBox.exec();
+//                player_->addHealthUpgrade(10);
+//            }
+//            player_->checkXP();
+//            checkSkillPoints();
+//            ui->tabActionScreen->setEnabled(true);
+//            ui->tabCInfoScreen->setEnabled(true);
+//            ui->tabMenuScreen->setEnabled(true);
+//            ui->tabQuestScreen->setEnabled(true);
 
-            ui->txtBattleInfo->setEnabled(false);
-            ui->btnAttack->setEnabled(false);
-            ui->pbarCHealth->setEnabled(false);
-            ui->pbarEHealth->setEnabled(false);
-            ui->btnBattle->setEnabled(true);
-            ui->btnUsePotionBS->setEnabled(false);
-            setPlayerInfo();
-            checkQuest();
-        }
-    }
+//            ui->txtBattleInfo->setEnabled(false);
+//            ui->btnAttack->setEnabled(false);
+//            ui->pbarCHealth->setEnabled(false);
+//            ui->pbarEHealth->setEnabled(false);
+//            ui->btnBattle->setEnabled(true);
+//            ui->btnUsePotionBS->setEnabled(false);
+//            setPlayerInfo();
+//            checkQuest();
+//        }
+//    }
 
     if (!player_->isAlive())
     {
@@ -368,24 +375,24 @@ void GameLogic::on_btnAttack_clicked()
         ui->pbarCHealth->setValue(0);
     }
 
-    if (!warriorBoss_->isAlive())
-    {
-        QMessageBox msgBox;
-        msgBox.setWindowTitle("End Game");
-        msgBox.setText("You have defeated the Warrior Leader!\nYou're Winner!\nNow the game will close and you can start all over, scrub!\n");
-        msgBox.exec();
-        ui->tabActionScreen->setEnabled(false);
-        ui->tabCInfoScreen->setEnabled(false);
-        ui->tabMenuScreen->setEnabled(true);
-        ui->txtBattleInfo->setEnabled(false);
-        ui->btnAttack->setEnabled(false);
-        ui->pbarCHealth->setEnabled(false);
-        ui->pbarEHealth->setEnabled(false);
-        ui->btnBattle->setEnabled(false);
-        ui->btnUsePotionBS->setEnabled(false);
-        ui->btnSave->setEnabled(false);
-        ui->pbarCHealth->setValue(0);
-    }
+//    if (!banditBoss_->isAlive())
+//    {
+//        QMessageBox msgBox;
+//        msgBox.setWindowTitle("End Game");
+//        msgBox.setText("You have defeated Thragg!\nYou're Winner!\nNow the game will close and you can start all over, scrub!\n");
+//        msgBox.exec();
+//        ui->tabActionScreen->setEnabled(false);
+//        ui->tabCInfoScreen->setEnabled(false);
+//        ui->tabMenuScreen->setEnabled(true);
+//        ui->txtBattleInfo->setEnabled(false);
+//        ui->btnAttack->setEnabled(false);
+//        ui->pbarCHealth->setEnabled(false);
+//        ui->pbarEHealth->setEnabled(false);
+//        ui->btnBattle->setEnabled(false);
+//        ui->btnUsePotionBS->setEnabled(false);
+//        ui->btnSave->setEnabled(false);
+//        ui->pbarCHealth->setValue(0);
+//    }
 }
 
 void GameLogic::on_btnSpecialAbility_clicked()
@@ -441,7 +448,6 @@ void GameLogic::on_btnSpecialAbility_clicked()
             ui->lblPotionAmount->setText(QString("Potions: %1").arg(player_->getPotion()));
         }
         player_->checkXP();
-        player_->resetSpecialAbility();
         checkSkillPoints();
         ui->tabActionScreen->setEnabled(true);
         ui->tabCInfoScreen->setEnabled(true);
@@ -475,8 +481,10 @@ void GameLogic::on_btnSpecialAbility_clicked()
         ui->pbarCHealth->setValue(0);
     }
 
-    if (player_->getSpecialAbilityCharged() == 0)
-        bsSpecialSC_->setEnabled(false);
+    player_->resetSpecialAbility();
+
+    if (!player_->IsSpecialReady())
+        ui->btnSpecialAbility->setEnabled(false);
 }
 
 void GameLogic::on_btnBattle_clicked()
@@ -508,7 +516,18 @@ void GameLogic::on_btnBattle_clicked()
     ui->pbarCHealth->setValue(player_->getHealth());
     checkLevel();
 
-    if (player_->getLevel() >= 1 && player_->getLevel() <= 14)
+    if (bandit_->getEnemyType() == 6)
+    {
+        ui->txtBattleInfo->setText("You were attacked by Thragg!");
+        ui->pbarEHealth->setMaximum(bandit_->getHealth());
+        ui->pbarEHealth->setValue(bandit_->getHealth());
+        //ui->lblQReward->setText(QString("Reward: %1 XP").arg(quest_->getXPReward()));
+        ui->lblPLevel->setText(QString("%1").arg(player_->getLevel()));
+        ui->lblELevel->setText(QString("%1").arg(bandit_->getLevel()));
+        ui->lblEnemyName->setText(bandit_->getName());
+        ui->btnUsePotionBS->setEnabled(true);
+    }
+    else
     {
         ui->txtBattleInfo->setText("You were attacked by a bandit");
         ui->pbarEHealth->setMaximum(bandit_->getHealth());
@@ -518,26 +537,26 @@ void GameLogic::on_btnBattle_clicked()
         ui->lblELevel->setText(QString("%1").arg(bandit_->getLevel()));
         ui->lblEnemyName->setText(bandit_->getName());
     }
-    else if (player_->getLevel() == 15)
-    {
-        ui->txtBattleInfo->setText("You were attacked by a bandit Leader");
-        ui->pbarEHealth->setMaximum(banditBoss_->getHealth());
-        ui->pbarEHealth->setValue(banditBoss_->getHealth());
-        ui->btnUsePotionBS->setEnabled(true);
-    }
-    else if (player_->getLevel() >= 16 && player_->getLevel() <= 34)
-    {
-        ui->txtBattleInfo->setText("You were attacked by a warrior");
-        ui->pbarEHealth->setMaximum(warrior_->getHealth());
-        ui->pbarEHealth->setValue(warrior_->getHealth());
-    }
-    else if (player_->getLevel() == 35)
-    {
-        ui->txtBattleInfo->setText("You were attacked by a bandit");
-        ui->pbarEHealth->setMaximum(warriorBoss_->getHealth());
-        ui->pbarEHealth->setValue(warriorBoss_->getHealth());
-        ui->btnUsePotionBS->setEnabled(true);
-    }
+//    else if (player_->getLevel() == 15)
+//    {
+//        ui->txtBattleInfo->setText("You were attacked by a bandit Leader");
+//        ui->pbarEHealth->setMaximum(banditBoss_->getHealth());
+//        ui->pbarEHealth->setValue(banditBoss_->getHealth());
+//        ui->btnUsePotionBS->setEnabled(true);
+//    }
+//    else if (player_->getLevel() >= 16 && player_->getLevel() <= 34)
+//    {
+//        ui->txtBattleInfo->setText("You were attacked by a warrior");
+//        ui->pbarEHealth->setMaximum(warrior_->getHealth());
+//        ui->pbarEHealth->setValue(warrior_->getHealth());
+//    }
+//    else if (player_->getLevel() == 35)
+//    {
+//        ui->txtBattleInfo->setText("You were attacked by a bandit");
+//        ui->pbarEHealth->setMaximum(warriorBoss_->getHealth());
+//        ui->pbarEHealth->setValue(warriorBoss_->getHealth());
+//        ui->btnUsePotionBS->setEnabled(true);
+//    }
 }
 
 void GameLogic::checkLevel()
@@ -550,6 +569,7 @@ void GameLogic::checkLevel()
     QPushButton *btnBruiserCamp = msgBox.addButton(tr("Bruiser Camp"), QMessageBox::ActionRole);
     QPushButton *btnCutthroatCamp = msgBox.addButton(tr("Cutthroat Camp"), QMessageBox::ActionRole);
     QPushButton *btnEliteCamp = msgBox.addButton(tr("Elite Camp"), QMessageBox::ActionRole);
+    QPushButton *btnFightTragg = msgBox.addButton(tr("Fight Thragg"), QMessageBox::ActionRole);
     QPushButton *btnCancel = msgBox.addButton(QMessageBox::Cancel);
     msgBox.exec();
 
@@ -733,21 +753,66 @@ void GameLogic::checkLevel()
         if (banditLevel == 13)
         {
             banditHealth = 1000;
-            banditMaxAttackPower = 50;
-            banditMinAttackPower = 30;
+            banditMaxAttackPower = 40;
+            banditMinAttackPower = 25;
             banditCritChance = 60;
-            banditXPReward = 2000;
+            banditXPReward = 5000;
         }
         else if (banditLevel == 14)
         {
-            banditHealth = 1200;
-            banditMaxAttackPower = 55;
-            banditMinAttackPower = 40;
+            banditHealth = 1100;
+            banditMaxAttackPower = 40;
+            banditMinAttackPower = 30;
             banditCritChance = 60;
-            banditXPReward = 2500;
+            banditXPReward = 6000;
         }
 
         bandit_ = new Bandit(banditName, banditHealth, banditMaxAttackPower, banditMinAttackPower, banditCritChance, banditXPReward, banditLevel, banditType);
+    }
+    else if (msgBox.clickedButton() == btnFightTragg)
+    {
+        if (player_->getLevel() < 15)
+        {
+            QMessageBox msgBox;
+            msgBox.setWindowTitle("Choose A Bandit Camp To Attack");
+            msgBox.setText("You are not yet strong enough to face Thragg");
+            msgBox.exec();
+            ui->tabActionScreen->setEnabled(true);
+            ui->tabCInfoScreen->setEnabled(true);
+            ui->tabMenuScreen->setEnabled(true);
+            ui->tabQuestScreen->setEnabled(true);
+
+            ui->txtBattleInfo->setEnabled(false);
+            ui->btnAttack->setEnabled(false);
+            ui->btnSpecialAbility->setEnabled(false);
+            ui->pbarCHealth->setEnabled(false);
+            ui->pbarEHealth->setEnabled(false);
+            ui->btnBattle->setEnabled(true);
+            bsBattleSC_->setEnabled(true);
+        }
+        else
+        {
+            bsAttackSC_->setEnabled(true);
+            bsBattleSC_->setEnabled(false);
+            QString banditName = "Thragg";
+            int banditHealth = 0;
+            int banditMaxAttackPower = 0;
+            int banditMinAttackPower = 0;
+            int banditCritChance = 0;
+            int banditXPReward = 0;
+            // attackDmg_ = rand() % ((maxAttackPower_ + 1) - minAttackPower_) + minAttackPower_;
+            int banditLevel = 15;
+            int banditType = 6;
+
+            banditHealth = 5000;
+            banditMaxAttackPower = 50;
+            banditMinAttackPower = 35;
+            banditCritChance = 40;
+            banditXPReward = 2000000;
+
+
+            bandit_ = new Bandit(banditName, banditHealth, banditMaxAttackPower, banditMinAttackPower, banditCritChance, banditXPReward, banditLevel, banditType);
+        }
     }
     else if (msgBox.clickedButton() == btnCancel)
     {
@@ -902,7 +967,6 @@ void GameLogic::on_btnUsePotion_clicked()
 
 void GameLogic::on_btnBuyPotion_clicked()
 {
-    QSound::play("../Sounds/potionDrop.wav");
     player_->buyPotion();
     ui->lblGoldAmount->setText(QString("Gold: %1").arg(player_->getGold()));
     ui->lblPotionAmount->setText(QString("Potions: %1").arg(player_->getPotion()));
@@ -921,6 +985,8 @@ void GameLogic::setPlayerInfo()
     ui->lblCSkillPoints->setText(QString("Skill Points: %1").arg(player_->getSkillPoints()));
     ui->lblGoldAmount->setText(QString("Gold: %1").arg(player_->getGold()));
     ui->lblPotionAmount->setText(QString("Potions: %1").arg(player_->getPotion()));
+    double xpPercent = (double(player_->getXP()) / double(player_->getXPTillLevel())) * 100;
+    ui->pbarXP->setValue(int(xpPercent));
 }
 
 void GameLogic::on_btnUsePotionBS_clicked()
@@ -1028,6 +1094,30 @@ void GameLogic::checkQuest()
     {
         if (quest_->getIsQuestActive() == 1 && quest_->getAmountComplete() != quest_->getObjective())
         {
+            QString questText = QString("Progress: %1/%2 Bandit Cutthroats killed.").arg(quest_->getAmountComplete()).arg(quest_->getObjective());
+            ui->lblQTitle->setText(QString("Kill %1 Bandit Cutthroats").arg(quest_->getObjective()));
+            ui->lblQProgress->setText(questText);
+            ui->lblQReward->setText(QString("Reward: %1 XP").arg(quest_->getXPReward()));
+
+            quest_->setObjectiveProgress(questText);
+        }
+        else if (quest_->getIsQuestActive() == 1 && quest_->getAmountComplete() == quest_->getObjective())
+        {
+            ui->lblQTitle->setText(QString("Kill %1 Bandit Cutthroats").arg(quest_->getObjective()));
+            ui->lblQProgress->setText(QString("Progress: %1/%2 Bandit Cutthroats killed.").arg(quest_->getAmountComplete()).arg(quest_->getObjective()));
+            ui->lblQReward->setText(QString("Reward: %1 XP").arg(quest_->getXPReward()));
+            QSound::play("../Sounds/questComplete.wav");
+            QMessageBox msgBox;
+            msgBox.setWindowTitle("Quest");
+            msgBox.setText("Quest Completed!");
+            msgBox.exec();
+            quest_->setIsQuestActive(0);
+        }
+    }
+    else if (quest_->getQuestType() == 5)
+    {
+        if (quest_->getIsQuestActive() == 1 && quest_->getAmountComplete() != quest_->getObjective())
+        {
             QString questText = QString("Progress: %1/%2 Bandit Elites killed.").arg(quest_->getAmountComplete()).arg(quest_->getObjective());
             ui->lblQTitle->setText(QString("Kill %1 Bandit Elites").arg(quest_->getObjective()));
             ui->lblQProgress->setText(questText);
@@ -1039,6 +1129,28 @@ void GameLogic::checkQuest()
         {
             ui->lblQTitle->setText(QString("Kill %1 Bandit Elites").arg(quest_->getObjective()));
             ui->lblQProgress->setText(QString("Progress: %1/%2 Bandit Elites killed.").arg(quest_->getAmountComplete()).arg(quest_->getObjective()));
+            ui->lblQReward->setText(QString("Reward: %1 XP").arg(quest_->getXPReward()));
+            QSound::play("../Sounds/questComplete.wav");
+            QMessageBox msgBox;
+            msgBox.setWindowTitle("Quest");
+            msgBox.setText("Quest Completed!");
+            msgBox.exec();
+            quest_->setIsQuestActive(0);
+        }
+    }
+    else if (quest_->getQuestType() == 6)
+    {
+        if (quest_->getIsQuestActive() == 1 && quest_->getAmountComplete() != quest_->getObjective())
+        {
+            //QString questText = QString("Progress: Kill Thragg.");
+            ui->lblQTitle->setText(quest_->getQuestTitle());
+            ui->lblQProgress->setText(quest_->getObjectiveProgress());
+            ui->lblQReward->setText(QString("Reward: %1 XP").arg(quest_->getXPReward()));
+        }
+        else if (quest_->getIsQuestActive() == 1 && quest_->getAmountComplete() == quest_->getObjective())
+        {
+            ui->lblQTitle->setText(quest_->getQuestTitle());
+            ui->lblQProgress->setText(QString("Progress: Thragg Killed."));
             ui->lblQReward->setText(QString("Reward: %1 XP").arg(quest_->getXPReward()));
             QSound::play("../Sounds/questComplete.wav");
             QMessageBox msgBox;
@@ -1193,8 +1305,9 @@ void GameLogic::on_btnBeginQuest_clicked()
     QPushButton *btnInitiateKills = msgBox.addButton(tr("Initiate Kills"), QMessageBox::ActionRole);
     QPushButton *btnThugKills     = msgBox.addButton(tr("Thug Kills"), QMessageBox::ActionRole);
     QPushButton *btnBruiserKills = msgBox.addButton(tr("Bruiser Kills"), QMessageBox::ActionRole);
-    QPushButton *btnCutthroatKills = msgBox.addButton(tr("Cuthroat Kills"), QMessageBox::ActionRole);
+    QPushButton *btnCutthroatKills = msgBox.addButton(tr("Cutthroat Kills"), QMessageBox::ActionRole);
     QPushButton *btnEliteKills = msgBox.addButton(tr("Elite Kills"), QMessageBox::ActionRole);
+    QPushButton *btnThraggKill = msgBox.addButton(tr("Kill Thragg"), QMessageBox::ActionRole);
     QPushButton *btnCancel = msgBox.addButton(QMessageBox::Cancel);
     msgBox.exec();
 
@@ -1229,7 +1342,7 @@ void GameLogic::on_btnBeginQuest_clicked()
     {
         QSound::play("../Sounds/acceptQuest.wav");
         //xpReward, objective, amountComplete, isQuestComplete, isQuestActive, questType
-        quest_ = new quests(6000, 10, 0, 0, 1, 4);
+        quest_ = new quests(9000, 6, 0, 0, 1, 4);
         questTitle = QString("Kill %1 Bandit Cutthroats").arg(quest_->getObjective());
         questText = QString("Progress: %1/%2 Bandit Cutthroats killed.").arg(quest_->getAmountComplete()).arg(quest_->getObjective());
 
@@ -1238,9 +1351,18 @@ void GameLogic::on_btnBeginQuest_clicked()
     {
         QSound::play("../Sounds/acceptQuest.wav");
         //xpReward, objective, amountComplete, isQuestComplete, isQuestActive, questType
-        quest_ = new quests(6000, 10, 0, 0, 1, 5);
+        quest_ = new quests(25000, 5, 0, 0, 1, 5);
         questTitle = QString("Kill %1 Bandit Elites").arg(quest_->getObjective());
         questText = QString("Progress: %1/%2 Bandit Elites killed.").arg(quest_->getAmountComplete()).arg(quest_->getObjective());
+
+    }
+    else if (msgBox.clickedButton() == btnThraggKill)
+    {
+        QSound::play("../Sounds/acceptQuest.wav");
+        //xpReward, objective, amountComplete, isQuestComplete, isQuestActive, questType
+        quest_ = new quests(3000000, 1, 0, 0, 1, 6);
+        questTitle = QString("Kill Thragg, the leader of the Bandits");
+        questText = QString("Progress: Kill Thragg");
 
     }
     else if (msgBox.clickedButton() == btnCancel)
@@ -1280,25 +1402,63 @@ void GameLogic::on_btnCompleteQuest_clicked()
 
     if (isQuestComplete == 1)
     {
-        QSound::play("../Sounds/questComplete.wav");
-        QMessageBox msgBox;
-        msgBox.setWindowTitle("Quest Progress");
-        msgBox.setText("<b>" + quest_->getQuestTitle() + "</b>");
-        msgBox.setInformativeText(QString("Quest complete!\nYou are rewarded %1 XP!").arg(quest_->getXPReward()));
-        msgBox.exec();
-        player_->addXP(quest_->getXPReward());
-        ui->lblQTitle->setText("Quest Completed!");
-        ui->lblQProgress->setText("Progess:");
-        ui->lblQReward->setText("Reward:");
-        player_->checkXP();
-        checkSkillPoints();
-        setPlayerInfo();
-        ui->btnBeginQuest->setEnabled(true);
-        ui->btnCompleteQuest->setEnabled(false);
-        ui->btnAbandonQuest->setEnabled(false);
-        qsBeginSC_->setEnabled(true);
-        qsAbandonSC_->setEnabled(false);
-        qsHandInSC_->setEnabled(false);
+        if (quest_->getQuestTitle().toLower().contains("thragg"))
+        {
+            QSound::play("../Sounds/deathOfThragg.wav");
+            QMessageBox msgBox;
+            msgBox.setWindowTitle("End Game");
+            msgBox.setText("<b>You have defeated Thragg!</b>");
+            msgBox.setInformativeText("You have saved the city of Windlehelm from Thragg and his bandits. "
+                                      "They can now pick up the pieces of their destroyed city and start to rebuild. "
+                                      "Thragg and his bandits can no longer hurt Windlehelm, thanks to you!");
+            msgBox.exec();
+            player_->addXP(quest_->getXPReward());
+            ui->lblQTitle->setText("Quest Completed!");
+            ui->lblQProgress->setText("Progess:");
+            ui->lblQReward->setText("Reward:");
+            player_->checkXP();
+            checkSkillPoints();
+            setPlayerInfo();
+            ui->btnBeginQuest->setEnabled(true);
+            ui->btnCompleteQuest->setEnabled(false);
+            ui->btnAbandonQuest->setEnabled(false);
+            qsBeginSC_->setEnabled(true);
+            qsAbandonSC_->setEnabled(false);
+            qsHandInSC_->setEnabled(false);
+//            ui->tabActionScreen->setEnabled(false);
+//            ui->tabCInfoScreen->setEnabled(false);
+//            ui->tabMenuScreen->setEnabled(true);
+//            ui->txtBattleInfo->setEnabled(false);
+//            ui->btnAttack->setEnabled(false);
+//            ui->pbarCHealth->setEnabled(false);
+//            ui->pbarEHealth->setEnabled(false);
+//            ui->btnBattle->setEnabled(false);
+//            ui->btnUsePotionBS->setEnabled(false);
+//            ui->btnSave->setEnabled(false);
+//            ui->pbarCHealth->setValue(0);
+        }
+        else
+        {
+            QSound::play("../Sounds/questComplete.wav");
+            QMessageBox msgBox;
+            msgBox.setWindowTitle("Quest Progress");
+            msgBox.setText("<b>" + quest_->getQuestTitle() + "</b>");
+            msgBox.setInformativeText(QString("Quest complete!\nYou are rewarded %1 XP!").arg(quest_->getXPReward()));
+            msgBox.exec();
+            player_->addXP(quest_->getXPReward());
+            ui->lblQTitle->setText("Quest Completed!");
+            ui->lblQProgress->setText("Progess:");
+            ui->lblQReward->setText("Reward:");
+            player_->checkXP();
+            checkSkillPoints();
+            setPlayerInfo();
+            ui->btnBeginQuest->setEnabled(true);
+            ui->btnCompleteQuest->setEnabled(false);
+            ui->btnAbandonQuest->setEnabled(false);
+            qsBeginSC_->setEnabled(true);
+            qsAbandonSC_->setEnabled(false);
+            qsHandInSC_->setEnabled(false);
+        }
     }
     else
     {

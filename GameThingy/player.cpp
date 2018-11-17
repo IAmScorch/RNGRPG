@@ -171,7 +171,7 @@ void Player::usePotion()
             msgBox.setText("Your health is full.");
             msgBox.exec();
         }
-        else if (level_ <= 15)
+        else if (level_ <= 14)
         {
             health_ += 50;
             potion_ -= 1;
@@ -184,7 +184,7 @@ void Player::usePotion()
             msgBox.exec();
 
         }
-        else if (level_ >= 16 && level_ <= 29)
+        else if (level_ >= 15 && level_ <= 29)
         {
             health_ += 75;
             potion_ -= 1;
@@ -229,8 +229,9 @@ void Player::buyPotion()
             msgBox.setText("You cannot carry any more potions.");
             msgBox.exec();
         }
-        else if (level_<= 15)
+        else if (level_<= 12)
         {
+            QSound::play("../Sounds/potionDrop.wav");
             gold_ -= 5;
             potion_ += 1;
             QMessageBox msgBox;
@@ -238,8 +239,19 @@ void Player::buyPotion()
             msgBox.setText("You bought a potion.");
             msgBox.exec();
         }
-        else if (level_ >= 16)
+        else if (level_ >= 13 && level_ <= 14)
         {
+            QSound::play("../Sounds/potionDrop.wav");
+            gold_ -= 8;
+            potion_ += 1;
+            QMessageBox msgBox;
+            msgBox.setWindowTitle("Buy Potion");
+            msgBox.setText("You bought a potion.");
+            msgBox.exec();
+        }
+        else if (level_ >= 15)
+        {
+            QSound::play("../Sounds/potionDrop.wav");
             gold_ -= 10;
             potion_ += 1;
             QMessageBox msgBox;
