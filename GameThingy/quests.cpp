@@ -46,9 +46,10 @@ void quests::completeQuest()
     }
 }
 
-void quests::save()
+void quests::save(QString playerName)
 {
-    QFile file("questLog.save");
+    QString filename = "saves\\" + playerName + "QuestLog.save";
+    QFile file(filename);
     file.open(QIODevice::WriteOnly | QIODevice::Text);
     QTextStream saveFile(&file);
     saveFile << xpReward_ << "\n";
@@ -62,9 +63,10 @@ void quests::save()
     file.close();
 }
 
-void quests::load()
+void quests::load(QString playerName)
 {
-    QFile file("questLog.save");
+    QString filename = playerName + "QuestLog.save";
+    QFile file(filename);
     file.open(QIODevice::ReadOnly| QIODevice::Text);
     QTextStream saveFile(&file);
     if (file.exists() && file.isOpen())

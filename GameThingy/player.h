@@ -42,7 +42,7 @@ public:
     void usePotion();
     void buyPotion();
     void save();
-    void load();
+    void load(QString playerName);
     void addHealthUpgrade(int health);
     void resetSpecialAbility();
 

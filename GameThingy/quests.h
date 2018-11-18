@@ -22,8 +22,8 @@ public:
     void beginQuest(QString title, QString objective, int isQuestActive);
     void progress(int kill);
     void completeQuest();
-    void save();
-    void load();
+    void save(QString playerName);
+    void load(QString playerName);
 
     int getXPReward();
     void setXpReward(int xpReward);

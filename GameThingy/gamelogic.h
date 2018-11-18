@@ -4,7 +4,7 @@
 #include <QMainWindow>
 #include <QShortcut>
 #include <string>
-#include "Player.h"
+#include "player.h"
 #include "bandit.h"
 #include "warrior.h"
 #include "quests.h"
@@ -59,6 +59,8 @@ private slots:
     void openBattleTab();
     void openCharacterTab();
     void openQuestTab();
+    void setPlayerHealth();
+    void setEnemyHealth();
 
     void on_tabGame_tabBarClicked(int index);
 
@@ -88,6 +90,7 @@ private:
     QShortcut *qsBeginSC_;
     QShortcut *qsAbandonSC_;
     QShortcut *qsHandInSC_;
+    int enemyMaxHP_;
 
     void checkLevel();
     void createCharacter();

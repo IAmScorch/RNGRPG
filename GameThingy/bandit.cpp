@@ -71,7 +71,7 @@ void Bandit::doHit(int dmg)
 
 int Bandit::goldDrop()
 {
-    QSound::play("../Sounds/goldDrop.wav");
+    QSound::play("..\\Sounds\\goldDrop.wav");
     int gold = 0;
     if (level_ == 15)
     {
