@@ -896,17 +896,18 @@ void GameLogic::createCharacter()
 
 void GameLogic::on_btnSave_clicked()
 {
+    QString playerName = " ";
+    int maxSaves = 3;
     QDir directory("saves");
     QStringList saves = directory.entryList(QStringList() << "Save*.save",QDir::Files);
+    //player_->save();
+    //quest_->save(player_->getName());
+//    QMessageBox msgBox;
+//    msgBox.setWindowTitle("Save Game");
+//    msgBox.setText(QString("%1").arg(saves.size()));
+//    msgBox.exec();
 
-    if (saves.size() == 3)
-    {
-        QMessageBox msgBox2;
-        msgBox2.setWindowTitle("Saves Full");
-        msgBox2.setText("You cannot save more than 3 games");
-        msgBox2.exec();
-    }
-    else
+    if (saves.size() == 0)
     {
         player_->save();
         quest_->save(player_->getName());
@@ -915,6 +916,68 @@ void GameLogic::on_btnSave_clicked()
         msgBox.setText("      Game Saved.            ");
         msgBox.exec();
     }
+    else
+    {
+        foreach (QString fileName, saves)
+        {
+            QFile file("saves\\" + fileName);
+            file.open(QIODevice::ReadOnly| QIODevice::Text);
+            QTextStream saveFile(&file);
+            playerName += saveFile.readLine();
+//            if (player_->getName() == playerName)
+//            {
+//                player_->save();
+//                quest_->save(player_->getName());
+//                QMessageBox msgBox;
+//                msgBox.setWindowTitle("Save Game");
+//                msgBox.setText("      Game Saved.            ");
+//                msgBox.exec();
+//            }
+//            else if (player_->getName() != playerName && saves.size() <= 3)
+//            {
+//                player_->save();
+//                quest_->save(player_->getName());
+//                QMessageBox msgBox;
+//                msgBox.setWindowTitle("Save Game");
+//                msgBox.setText("      Game Saved.            ");
+//                msgBox.exec();
+//            }
+//            else
+//            {
+//                QMessageBox msgBox2;
+//                msgBox2.setWindowTitle("Saves Full");
+//                msgBox2.setText("You cannot save more than 3 games");
+//                msgBox2.exec();
+//            }
+        }
+
+        if (playerName.contains(player_->getName()))
+        {
+            player_->save();
+            quest_->save(player_->getName());
+            QMessageBox msgBox;
+            msgBox.setWindowTitle("Save Game");
+            msgBox.setText("      Game Saved.            ");
+            msgBox.exec();
+        }
+        else if (!playerName.contains(player_->getName()) && saves.size() != maxSaves)
+        {
+            player_->save();
+            quest_->save(player_->getName());
+            QMessageBox msgBox;
+            msgBox.setWindowTitle("Save Game");
+            msgBox.setText("      Game Saved.            ");
+            msgBox.exec();
+        }
+        else
+        {
+            QMessageBox msgBox;
+            msgBox.setWindowTitle("Saves Full");
+            msgBox.setText("You cannot save more than 3 games");
+            msgBox.exec();
+        }
+    }
+
 }
 
 void GameLogic::on_btnLoad_clicked()
