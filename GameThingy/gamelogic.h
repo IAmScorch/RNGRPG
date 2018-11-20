@@ -61,6 +61,7 @@ private slots:
     void openQuestTab();
     void setPlayerHealth();
     void setEnemyHealth();
+    void resetQuestInfo();
 
     void on_tabGame_tabBarClicked(int index);
 

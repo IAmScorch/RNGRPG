@@ -123,6 +123,7 @@ void GameLogic::on_btnNewGame_clicked()
     ui->lblELevel->setText("0");
     ui->lblEnemyName->setText(" ");
     ui->txtBattleInfo->setText(" ");
+    resetQuestInfo();
 }
 
 void GameLogic::on_btnAttack_clicked()
@@ -763,7 +764,7 @@ void GameLogic::checkLevel()
             banditMaxAttackPower = 40;
             banditMinAttackPower = 25;
             banditCritChance = 60;
-            banditXPReward = 5000;
+            banditXPReward = 5004;
         }
         else if (banditLevel == 14)
         {
@@ -900,12 +901,6 @@ void GameLogic::on_btnSave_clicked()
     int maxSaves = 3;
     QDir directory("saves");
     QStringList saves = directory.entryList(QStringList() << "Save*.save",QDir::Files);
-    //player_->save();
-    //quest_->save(player_->getName());
-//    QMessageBox msgBox;
-//    msgBox.setWindowTitle("Save Game");
-//    msgBox.setText(QString("%1").arg(saves.size()));
-//    msgBox.exec();
 
     if (saves.size() == 0)
     {
@@ -924,31 +919,6 @@ void GameLogic::on_btnSave_clicked()
             file.open(QIODevice::ReadOnly| QIODevice::Text);
             QTextStream saveFile(&file);
             playerName += saveFile.readLine();
-//            if (player_->getName() == playerName)
-//            {
-//                player_->save();
-//                quest_->save(player_->getName());
-//                QMessageBox msgBox;
-//                msgBox.setWindowTitle("Save Game");
-//                msgBox.setText("      Game Saved.            ");
-//                msgBox.exec();
-//            }
-//            else if (player_->getName() != playerName && saves.size() <= 3)
-//            {
-//                player_->save();
-//                quest_->save(player_->getName());
-//                QMessageBox msgBox;
-//                msgBox.setWindowTitle("Save Game");
-//                msgBox.setText("      Game Saved.            ");
-//                msgBox.exec();
-//            }
-//            else
-//            {
-//                QMessageBox msgBox2;
-//                msgBox2.setWindowTitle("Saves Full");
-//                msgBox2.setText("You cannot save more than 3 games");
-//                msgBox2.exec();
-//            }
         }
 
         if (playerName.contains(player_->getName()))
@@ -1207,6 +1177,18 @@ void GameLogic::setEnemyHealth()
         ui->lblEHealthAmount->setText("0");
         ui->lblEHealth->setFixedWidth(0);
     }
+}
+
+void GameLogic::resetQuestInfo()
+{
+    //xpReward, objective, amountComplete, isQuestComplete, isQuestActive, questType
+    quest_ = new quests(0, 0, 0, 0, 0, 0);
+    ui->lblQTitle->setText("No Active Quest");
+    ui->lblQProgress->setText("Progess:");
+    ui->lblQReward->setText("Reward:");
+    ui->btnBeginQuest->setEnabled(true);
+    ui->btnCompleteQuest->setEnabled(false);
+    ui->btnAbandonQuest->setEnabled(false);
 }
 
 void GameLogic::on_btnUsePotionBS_clicked()
