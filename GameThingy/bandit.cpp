@@ -7,7 +7,7 @@
 #include "bandit.h"
 
 Bandit::Bandit(QString name, int health, int maxAttackPower, int minAttackPower,
-               int critChance, int XPReward, int level, int enemyType)
+               int critChance, int XPReward, int level, int enemyType, int agility)
     :name_(name),
     health_(health),
     maxAttackPower_(maxAttackPower),
@@ -15,7 +15,8 @@ Bandit::Bandit(QString name, int health, int maxAttackPower, int minAttackPower,
     critChance_(critChance),
     XPReward_(XPReward),
     level_(level),
-    enemyType_(enemyType)
+    enemyType_(enemyType),
+    agility_(agility)
 {
     qsrand(QTime::currentTime().msec());
     isAlive_ = true;
@@ -57,16 +58,32 @@ int Bandit::doAttack(QString enemy)
         return 0;
 }
 
-void Bandit::doHit(int dmg)
+int Bandit::doHitRoll()
 {
-    health_ = health_ - dmg;
-    if (health_ <= 0)
+    int hitRoll = rand()% 20 + 1;
+    return hitRoll;
+}
+
+void Bandit::doHit(int dmg, int playerHitRoll, QString playerName)
+{
+    if (playerHitRoll >= agility_)
     {
-        isAlive_ = false;
-        message_ = name_ + " takes " + QString("%1").arg(dmg) + " damage.\n" + name_ + " is dead.\n\n";
+        isHit_ = true;
+        health_ = health_ - dmg;
+        if (health_ <= 0)
+        {
+            isAlive_ = false;
+            message_ = name_ + " takes " + QString("%1").arg(dmg) + " damage.\n" + name_ + " is dead.\n\n";
+            isHit_ = false;
+        }
+        else
+            message_ = name_ + " takes " + QString("%1").arg(dmg) + " damage.\n\n";
     }
     else
-        message_ = name_ + " takes " + QString("%1").arg(dmg) + " damage.\n\n";
+    {
+        message_ = name_ + " dodges " + playerName + "'s attack.\n\n";
+        isHit_ = false;
+    }
 }
 
 int Bandit::goldDrop()
@@ -112,6 +129,11 @@ int Bandit::goldDrop()
 bool Bandit::isAlive()
 {
     return isAlive_;
+}
+
+bool Bandit::isHit()
+{
+    return isHit_;
 }
 
 int Bandit::getHealth()

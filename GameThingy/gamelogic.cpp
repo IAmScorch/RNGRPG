@@ -88,8 +88,8 @@ GameLogic::GameLogic(QWidget *parent) :
     ui->btnLoad->setStyleSheet("background-color: rgb(225, 225, 225, 200)");
     ui->btnSave->setStyleSheet("background-color: rgb(225, 225, 225, 200)");
     ui->btnQuit->setStyleSheet("background-color: rgb(225, 225, 225, 200)");
-    bandit_ = new Bandit("", 0, 0, 0, 0, 0, 0, 0);
-    banditBoss_ = new Bandit("", 0, 0, 0, 0, 0, 0, 0);
+    bandit_ = new Bandit("", 0, 0, 0, 0, 0, 0, 0, 0);
+    banditBoss_ = new Bandit("", 0, 0, 0, 0, 0, 0, 0, 0);
     warrior_ = new Warrior("", 0, 0, 0, 0, 0);
     warriorBoss_ = new Warrior("", 0, 0, 0, 0, 0);
     player_ = new Player(0, 0, 0, 0, 0);
@@ -136,16 +136,16 @@ void GameLogic::on_btnAttack_clicked()
 
    // if (player_->getLevel() >= 1 && player_->getLevel() <= 15)
    // {
-        if (bandit_->isAlive() && player_->isAlive())
+        if (player_->isAlive())
         {
-            bandit_->doHit(player_->doAttack(bandit_->getName()));
-            player_->addSpecialAbilityCharge(1);
+            bandit_->doHit(player_->doAttack(bandit_->getName()), player_->doHitRoll(), player_->getName());
+
+            if (bandit_->isHit())
+            {
+                player_->addSpecialAbilityCharge(1);
+            }
+
             message_ += player_->getMessage() + bandit_->getMessage();
-            player_->doHit(bandit_->doAttack(player_->getName()));
-            message_ += bandit_->getMessage() + player_->getMessage();
-            ui->txtBattleInfo->setText(message_);
-            setPlayerHealth();
-            setEnemyHealth();
 
             if (player_->IsSpecialReady())
             {
@@ -153,8 +153,21 @@ void GameLogic::on_btnAttack_clicked()
                 bsSpecialSC_->setEnabled(true);
             }
         }
+
+        if (bandit_->isAlive())
+        {
+            player_->doHit(bandit_->doAttack(player_->getName()), bandit_->doHitRoll(), bandit_->getName(), bandit_->isAlive());
+            message_ += bandit_->getMessage() + player_->getMessage();
+        }
+
+        ui->txtBattleInfo->setText(message_);
+        setPlayerHealth();
+        setEnemyHealth();
+
         if (!bandit_->isAlive())
         {
+            message_ += player_->getName() + " Wins the battle!\n\n";
+            ui->txtBattleInfo->setText(message_);
             bsAttackSC_->setEnabled(false);
             setEnemyHealth();
 
@@ -409,9 +422,9 @@ void GameLogic::on_btnSpecialAbility_clicked()
 
     if (bandit_->isAlive() && player_->isAlive())
     {
-        bandit_->doHit(player_->doSpecialAbility(bandit_->getName()));
+        bandit_->doHit(player_->doAttack(bandit_->getName()), player_->doHitRoll(), player_->getName());
         message_ += player_->getMessage() + bandit_->getMessage();
-        player_->doHit(bandit_->doAttack(player_->getName()));
+        player_->doHit(bandit_->doAttack(player_->getName()), bandit_->doHitRoll(), bandit_->getName(), bandit_->isAlive());
         message_ += bandit_->getMessage() + player_->getMessage();
         ui->txtBattleInfo->setText(message_);
         setEnemyHealth();
@@ -580,6 +593,7 @@ void GameLogic::checkLevel()
         int banditXPReward = 0;
         int banditLevel = (rand() % 3 + 1);
         int banditType = 1;
+        int banditAgility = 4;
 
         if (banditLevel == 1)
         {
@@ -609,7 +623,8 @@ void GameLogic::checkLevel()
             banditXPReward = 24;
         }
 
-        bandit_ = new Bandit(banditName, banditHealth, banditMaxAttackPower, banditMinAttackPower, banditCritChance, banditXPReward, banditLevel, banditType);
+        bandit_ = new Bandit(banditName, banditHealth, banditMaxAttackPower, banditMinAttackPower,
+                             banditCritChance, banditXPReward, banditLevel, banditType, banditAgility);
     }
     else if (msgBox.clickedButton() == btnThugCamp)
     {
@@ -624,6 +639,7 @@ void GameLogic::checkLevel()
         // attackDmg_ = rand() % ((maxAttackPower_ + 1) - minAttackPower_) + minAttackPower_;
         int banditLevel = (rand() % ((6 + 1) - 4) + 4);
         int banditType = 2;
+        int banditAgility = 6;
 
         if (banditLevel == 4)
         {
@@ -653,7 +669,8 @@ void GameLogic::checkLevel()
             banditXPReward = 72;
         }
 
-        bandit_ = new Bandit(banditName, banditHealth, banditMaxAttackPower, banditMinAttackPower, banditCritChance, banditXPReward, banditLevel, banditType);
+        bandit_ = new Bandit(banditName, banditHealth, banditMaxAttackPower, banditMinAttackPower,
+                             banditCritChance, banditXPReward, banditLevel, banditType, banditAgility);
     }
     else if (msgBox.clickedButton() == btnBruiserCamp)
     {
@@ -668,6 +685,7 @@ void GameLogic::checkLevel()
         // attackDmg_ = rand() % ((maxAttackPower_ + 1) - minAttackPower_) + minAttackPower_;
         int banditLevel = (rand() % ((9 + 1) - 7) + 7);
         int banditType = 3;
+        int banditAgility = 3;
 
         if (banditLevel == 7)
         {
@@ -697,7 +715,8 @@ void GameLogic::checkLevel()
             banditXPReward = 300;
         }
 
-        bandit_ = new Bandit(banditName, banditHealth, banditMaxAttackPower, banditMinAttackPower, banditCritChance, banditXPReward, banditLevel, banditType);
+        bandit_ = new Bandit(banditName, banditHealth, banditMaxAttackPower, banditMinAttackPower,
+                             banditCritChance, banditXPReward, banditLevel, banditType, banditAgility);
     }
     else if (msgBox.clickedButton() == btnCutthroatCamp)
     {
@@ -712,6 +731,7 @@ void GameLogic::checkLevel()
         // attackDmg_ = rand() % ((maxAttackPower_ + 1) - minAttackPower_) + minAttackPower_;
         int banditLevel = (rand() % ((12 + 1) - 10) + 10);
         int banditType = 4;
+        int banditAgility = 8;
 
         if (banditLevel == 10)
         {
@@ -741,7 +761,8 @@ void GameLogic::checkLevel()
             banditXPReward = 702;
         }
 
-        bandit_ = new Bandit(banditName, banditHealth, banditMaxAttackPower, banditMinAttackPower, banditCritChance, banditXPReward, banditLevel, banditType);
+        bandit_ = new Bandit(banditName, banditHealth, banditMaxAttackPower, banditMinAttackPower,
+                             banditCritChance, banditXPReward, banditLevel, banditType, banditAgility);
     }
     else if (msgBox.clickedButton() == btnEliteCamp)
     {
@@ -756,6 +777,7 @@ void GameLogic::checkLevel()
         // attackDmg_ = rand() % ((maxAttackPower_ + 1) - minAttackPower_) + minAttackPower_;
         int banditLevel = (rand() % ((14 + 1) - 13) + 13);
         int banditType = 5;
+        int banditAgility = 10;
 
         if (banditLevel == 13)
         {
@@ -776,7 +798,8 @@ void GameLogic::checkLevel()
             banditXPReward = 6000;
         }
 
-        bandit_ = new Bandit(banditName, banditHealth, banditMaxAttackPower, banditMinAttackPower, banditCritChance, banditXPReward, banditLevel, banditType);
+        bandit_ = new Bandit(banditName, banditHealth, banditMaxAttackPower, banditMinAttackPower,
+                             banditCritChance, banditXPReward, banditLevel, banditType, banditAgility);
     }
     else if (msgBox.clickedButton() == btnFightTragg)
     {
@@ -810,6 +833,7 @@ void GameLogic::checkLevel()
             // attackDmg_ = rand() % ((maxAttackPower_ + 1) - minAttackPower_) + minAttackPower_;
             int banditLevel = 15;
             int banditType = 6;
+            int banditAgility = 12;
 
             banditHealth = 5000;
             enemyMaxHP_ = 5000;
@@ -819,7 +843,8 @@ void GameLogic::checkLevel()
             banditXPReward = 2000000;
 
 
-            bandit_ = new Bandit(banditName, banditHealth, banditMaxAttackPower, banditMinAttackPower, banditCritChance, banditXPReward, banditLevel, banditType);
+            bandit_ = new Bandit(banditName, banditHealth, banditMaxAttackPower, banditMinAttackPower,
+                                 banditCritChance, banditXPReward, banditLevel, banditType, banditAgility);
         }
     }
     else if (msgBox.clickedButton() == btnCancel)

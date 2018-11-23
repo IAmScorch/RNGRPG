@@ -23,6 +23,17 @@ private:
     int specialAbilityMaxCharges_;
     int specialAbilityCharged_;
     int specialAbilityCharge_;
+
+    int stamina_;
+    int strength_;
+    int agility_;
+    int agilityBonus_;
+    int agilityDefault_;
+    int luck_;
+    int luckBonus_;
+    int intelligence_;
+    int intelligenceBonus_;
+
     bool isSpecialAbilityLearned_;
     bool isSpecialReady_;
     bool isAlive_;
@@ -36,7 +47,8 @@ public:
 
     int doAttack(QString enemy);
     int doSpecialAbility(QString enemy);
-    void doHit(int dmg);
+    int doHitRoll();
+    void doHit(int dmg, int enemyHitRoll, QString enemyName, bool isEnemyAlive);
     QString printPlayerInfo();
     void checkXP();
     void usePotion();

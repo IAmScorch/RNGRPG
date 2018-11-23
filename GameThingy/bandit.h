@@ -16,15 +16,19 @@ private:
     int XPReward_;
     int level_;
     int enemyType_;
+    int agility_;
     bool isAlive_;
+    bool isHit_;
     QString message_;
+
 public:
     Bandit(QString name, int health, int maxAttackPower, int minAttackPower,
-        int critChance, int XPReward, int level, int enemyType);
+        int critChance, int XPReward, int level, int enemyType, int agility);
     ~Bandit(void);
 
     int doAttack(QString enemy);
-    void doHit(int dmg);
+    int doHitRoll();
+    void doHit(int dmg, int playerHitRoll, QString playerName);
     int goldDrop();
 
     int getHealth();
@@ -52,6 +56,8 @@ public:
     void setName(QString name);
 
     bool isAlive();
+
+    bool isHit();
 
     QString getMessage();
     void setMessage(QString message);

@@ -65,7 +65,7 @@ void quests::save(QString playerName)
 
 void quests::load(QString playerName)
 {
-    QString filename = playerName + "QuestLog.save";
+    QString filename = "saves\\" + playerName + "QuestLog.save";
     QFile file(filename);
     file.open(QIODevice::ReadOnly| QIODevice::Text);
     QTextStream saveFile(&file);

@@ -29,6 +29,15 @@ Player::Player(int health, int maxHealth, int maxAttackPower, int minAttackPower
     specialAbilityCharge_ = 0;
     specialAbilityCharged_ = 0;
     specialAbilityMaxCharges_ = 0;
+    stamina_ = 10;
+    strength_ = 10;
+    agility_ = 0;
+    luck_ = 0;
+    intelligence_ = 0;
+    agilityBonus_ = 0;
+    agilityDefault_ = 8;
+    luckBonus_ = 0;
+    intelligenceBonus_ = 0;
     isSpecialAbilityLearned_ = false;
     isSpecialReady_ = false;
     qsrand(QTime::currentTime().msec());
@@ -80,26 +89,37 @@ int Player::doSpecialAbility(QString enemy)
     return attackDmg_;
 }
 
-void Player::doHit(int dmg)
+int Player::doHitRoll()
 {
-    health_ = health_ - dmg;
-    if (dmg == 0)
+    int hitRoll = rand()% 20 + 1;
+    return hitRoll;
+}
+
+void Player::doHit(int dmg, int enemyHitRoll, QString enemyName, bool isEnemyAlive)
+{
+    if (!isEnemyAlive)
     {
         message_ = name_ + " Wins the battle!\n\n";
     }
     else
     {
-        if (health_ <= 0)
+        if (enemyHitRoll >= agilityDefault_ + agilityBonus_)
         {
-            isAlive_ = false;
-            message_ = name_ + " takes " + QString("%1").arg(dmg) + " damage.\nAww you dead.\n\n";
-            QMessageBox msgBox;
-            msgBox.setWindowTitle("You Dead");
-            msgBox.setText("Aww you dead. Start a new game or load a previous one.");
-            msgBox.exec();
+            health_ = health_ - dmg;
+            if (health_ <= 0)
+            {
+                isAlive_ = false;
+                message_ = name_ + " takes " + QString("%1").arg(dmg) + " damage.\nAww you dead.\n\n";
+                QMessageBox msgBox;
+                msgBox.setWindowTitle("You Dead");
+                msgBox.setText("Aww you dead. Start a new game or load a previous one.");
+                msgBox.exec();
+            }
+            else
+                message_ = name_ + " takes " + QString("%1").arg(dmg) + " damage.\n\n";
         }
         else
-            message_ = name_ + " takes " + QString("%1").arg(dmg) + " damage.\n\n";
+            message_ = name_ + " dodges " + enemyName + "'s attack.\n\n";
     }
 
 }
@@ -304,6 +324,15 @@ void Player::save()
     saveFile << specialAbilityMaxCharges_ << "\n";
     saveFile << isSpecialAbilityLearned_ << "\n";
     saveFile << isSpecialReady_ << "\n";
+    saveFile << stamina_ << "\n";
+    saveFile << strength_ << "\n";
+    saveFile << agility_ << "\n";
+    saveFile << agilityBonus_ << "\n";
+    saveFile << agilityDefault_ << "\n";
+    saveFile << luck_ << "\n";
+    saveFile << luckBonus_ << "\n";
+    saveFile << intelligence_ << "\n";
+    saveFile << intelligenceBonus_ << "\n";
     file.close();
 }
 
@@ -334,6 +363,15 @@ void Player::load(QString playerName)
         specialAbilityMaxCharges_ = saveFile.readLine().toInt();
         isSpecialAbilityLearned_ = saveFile.readLine().toInt();
         isSpecialReady_ = saveFile.readLine().toInt();
+        stamina_ = saveFile.readLine().toInt();
+        strength_ = saveFile.readLine().toInt();
+        agility_ = saveFile.readLine().toInt();
+        agilityBonus_ = saveFile.readLine().toInt();
+        agilityDefault_ = saveFile.readLine().toInt();
+        luck_ = saveFile.readLine().toInt();
+        luckBonus_ = saveFile.readLine().toInt();
+        intelligence_ = saveFile.readLine().toInt();
+        intelligenceBonus_ = saveFile.readLine().toInt();
         file.close();
     }
 }
@@ -507,13 +545,16 @@ int Player::getSpecialAbilityCharge()
 
 void Player::addSpecialAbilityCharge(int specialAbilityCharge)
 {
-    if (specialAbilityCharged_ != specialAbilityMaxCharges_)
-        specialAbilityCharge_ += specialAbilityCharge;
-
-    if (specialAbilityCharge_ == 3 && specialAbilityCharged_ != specialAbilityMaxCharges_)
+    if (isSpecialAbilityLearned_)
     {
-        isSpecialReady_ = true;
-        specialAbilityCharged_ = 1;
+        if (specialAbilityCharged_ != specialAbilityMaxCharges_)
+            specialAbilityCharge_ += specialAbilityCharge;
+
+        if (specialAbilityCharge_ == 3 && specialAbilityCharged_ != specialAbilityMaxCharges_)
+        {
+            isSpecialReady_ = true;
+            specialAbilityCharged_ = 1;
+        }
     }
 }
 
