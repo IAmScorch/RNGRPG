@@ -420,18 +420,26 @@ void GameLogic::on_btnSpecialAbility_clicked()
     int enemyLevel = 0;
     int levelDiff = 0;
 
-    if (bandit_->isAlive() && player_->isAlive())
+    if (player_->isAlive())
     {
-        bandit_->doHit(player_->doAttack(bandit_->getName()), player_->doHitRoll(), player_->getName());
+        bandit_->doHit(player_->doSpecialAbility(bandit_->getName()), 20, player_->getName());
         message_ += player_->getMessage() + bandit_->getMessage();
+    }
+
+    if (bandit_->isAlive())
+    {
         player_->doHit(bandit_->doAttack(player_->getName()), bandit_->doHitRoll(), bandit_->getName(), bandit_->isAlive());
         message_ += bandit_->getMessage() + player_->getMessage();
-        ui->txtBattleInfo->setText(message_);
-        setEnemyHealth();
-        setPlayerHealth();
     }
+
+    ui->txtBattleInfo->setText(message_);
+    setEnemyHealth();
+    setPlayerHealth();
+
     if (!bandit_->isAlive())
     {
+        message_ += player_->getName() + " Wins the battle!\n\n";
+        ui->txtBattleInfo->setText(message_);
         setEnemyHealth();
 
         playerLevel = player_->getLevel();
@@ -1496,6 +1504,7 @@ void GameLogic::on_btnIncreaseHP_clicked()
     player_->setSkillPoints(1);
     ui->lblCSkillPoints->setText(QString("Skill Points: %1").arg(player_->getSkillPoints()));
     checkSkillPoints();
+    setPlayerHealth();
 }
 
 void GameLogic::on_btnIncreaseAttack_clicked()

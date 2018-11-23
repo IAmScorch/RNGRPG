@@ -173,7 +173,8 @@ void Player::doLevelUp()
             msgBox.setInformativeText("This ability does <b>3x</b> your max attack power,\n"
                                       "but it needs to be charged before use.\n"
                                       "After <b>3</b> successfull hits on your enemy,\n"
-                                      "the ability will be charged and can be used.");
+                                      "the ability will be charged and can be used.\n"
+                                      "<b>This ability cannot be dodged.</b>");
             msgBox.exec();
             learnSpecialAbility();
         }
