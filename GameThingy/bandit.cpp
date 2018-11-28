@@ -60,7 +60,7 @@ int Bandit::doAttack(QString enemy)
 
 int Bandit::doHitRoll()
 {
-    int hitRoll = rand()% 20 + 1;
+    int hitRoll = rand()% ((20 + 1) - 1) + 1;
     return hitRoll;
 }
 

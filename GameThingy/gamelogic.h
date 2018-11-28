@@ -65,6 +65,10 @@ private slots:
 
     void on_tabGame_tabBarClicked(int index);
 
+    void on_btnIncreaseAgility_clicked();
+
+    void on_btnIncreaseHitChance_clicked();
+
 private:
     Ui::GameLogic *ui;
     Player *player_;

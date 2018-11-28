@@ -11,9 +11,6 @@ private:
     int maxAttackPower_;
     int minAttackPower_;
     int attackDmg_;
-    int critChance_;
-    int critNum_;
-    int critDmg_;
     int XP_;
     int XPTillLevel_;
     int skillpoints_;
@@ -24,15 +21,28 @@ private:
     int specialAbilityCharged_;
     int specialAbilityCharge_;
 
-    int stamina_;
+    int vitality_;
     int strength_;
     int agility_;
-    int agilityBonus_;
-    int agilityDefault_;
     int luck_;
-    int luckBonus_;
     int intelligence_;
+    int hit_;
+
+    int strengthCount_;
+    int agilityCount_;
+    int luckCount_;
+    int intelligenceCount_;
+    int hitCount_;
+
+    int agilityBonus_;
+    int luckBonus_;
     int intelligenceBonus_;
+    int hitBonus_;
+
+    int agilityDefault_;
+    int luckDefault_;
+
+    int questsCompleted_;
 
     bool isSpecialAbilityLearned_;
     bool isSpecialReady_;
@@ -42,14 +52,15 @@ private:
 
     void doLevelUp();
 public:
-    Player(int health, int maxHealth, int maxAttackPower, int minAttackPower, int critChance);
+    Player(int health, int maxHealth, int maxAttackPower, int minAttackPower,
+           int vitality, int strength, int agility, int luck, int intelligence, int hit,
+           int agilityDefault, int luckDefault);
     ~Player(void);
 
     int doAttack(QString enemy);
     int doSpecialAbility(QString enemy);
     int doHitRoll();
     void doHit(int dmg, int enemyHitRoll, QString enemyName, bool isEnemyAlive);
-    QString printPlayerInfo();
     void checkXP();
     void usePotion();
     void buyPotion();
@@ -57,6 +68,24 @@ public:
     void load(QString playerName);
     void addHealthUpgrade(int health);
     void resetSpecialAbility();
+
+    void addVitality(int vitality);
+    int getVitality();
+
+    void addStrength(int strength);
+    int getStrength();
+
+    void addAgility(int agility);
+    int getAgility();
+
+    void addLuck(int luck);
+    int getLuck();
+
+    void addIntelligence(int intelligence);
+    int getIntelligence();
+
+    void addHit(int hit);
+    int getHit();
 
     int getHealth();
     void setHealth(int health);
@@ -69,9 +98,6 @@ public:
 
     int getMinAttackPower();
     void setMinAttackPower(int minAttackPower);
-
-    int getCritChance();
-    void setCritChance(int critChance);
 
     int getLevel();
     void setLevel(int level);
@@ -96,6 +122,9 @@ public:
 
     QString getName();
     void setName(QString name);
+
+    int getQuestsCompleted();
+    void completeQuest();
 
     bool isAlive();
 

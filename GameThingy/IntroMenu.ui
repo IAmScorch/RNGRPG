@@ -652,35 +652,11 @@
        <string>Level:</string>
       </property>
      </widget>
-     <widget class="QLabel" name="lblCCritChance">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>150</y>
-        <width>251</width>
-        <height>21</height>
-       </rect>
-      </property>
-      <property name="font">
-       <font>
-        <pointsize>10</pointsize>
-       </font>
-      </property>
-      <property name="autoFillBackground">
-       <bool>false</bool>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">color: rgb(255, 255, 255);</string>
-      </property>
-      <property name="text">
-       <string>Critical Hit Chance:</string>
-      </property>
-     </widget>
      <widget class="QLabel" name="lblCXP">
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>180</y>
+        <y>200</y>
         <width>251</width>
         <height>21</height>
        </rect>
@@ -704,7 +680,7 @@
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>210</y>
+        <y>230</y>
         <width>251</width>
         <height>21</height>
        </rect>
@@ -730,7 +706,7 @@
       </property>
       <property name="geometry">
        <rect>
-        <x>270</x>
+        <x>370</x>
         <y>40</y>
         <width>23</width>
         <height>23</height>
@@ -751,7 +727,7 @@
       </property>
       <property name="geometry">
        <rect>
-        <x>270</x>
+        <x>370</x>
         <y>70</y>
         <width>23</width>
         <height>23</height>
@@ -772,8 +748,8 @@
       </property>
       <property name="geometry">
        <rect>
-        <x>270</x>
-        <y>150</y>
+        <x>370</x>
+        <y>180</y>
         <width>23</width>
         <height>23</height>
        </rect>
@@ -820,19 +796,190 @@
       <property name="text">
        <string/>
       </property>
+      <property name="pixmap">
+       <pixmap>../Img/tabCharacterBG.png</pixmap>
+      </property>
+     </widget>
+     <widget class="QLabel" name="lblCVitality">
+      <property name="geometry">
+       <rect>
+        <x>270</x>
+        <y>40</y>
+        <width>100</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+       </font>
+      </property>
+      <property name="toolTip">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#000000;&quot;&gt;Determines the amount of damage you can take from enemies&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color: rgb(255, 255, 255);</string>
+      </property>
+      <property name="text">
+       <string>Vitality:</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="lblCStrength">
+      <property name="geometry">
+       <rect>
+        <x>270</x>
+        <y>70</y>
+        <width>100</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+       </font>
+      </property>
+      <property name="toolTip">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#000000;&quot;&gt;Determines how much damage you can do to enemies&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color: rgb(255, 255, 255);</string>
+      </property>
+      <property name="text">
+       <string>Strength:</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="lblCAgility">
+      <property name="geometry">
+       <rect>
+        <x>270</x>
+        <y>150</y>
+        <width>100</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+       </font>
+      </property>
+      <property name="toolTip">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#000000;&quot;&gt;Determines the chance at which you can dodge an enemy's attack.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color: rgb(255, 255, 255);</string>
+      </property>
+      <property name="text">
+       <string>Agility:</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="lblCLuck">
+      <property name="geometry">
+       <rect>
+        <x>270</x>
+        <y>180</y>
+        <width>100</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+       </font>
+      </property>
+      <property name="toolTip">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#000000;&quot;&gt;Determines the chance your attack can cause critical damage to an enemy.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color: rgb(255, 255, 255);</string>
+      </property>
+      <property name="text">
+       <string>Luck:</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnIncreaseAgility">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>370</x>
+        <y>150</y>
+        <width>23</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>+</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="lblCHit">
+      <property name="geometry">
+       <rect>
+        <x>270</x>
+        <y>210</y>
+        <width>100</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+       </font>
+      </property>
+      <property name="toolTip">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#000000;&quot;&gt;Determines the chance at which you can successfully strike an enemy.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color: rgb(255, 255, 255);</string>
+      </property>
+      <property name="text">
+       <string>Hit:</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnIncreaseHitChance">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>370</x>
+        <y>210</y>
+        <width>23</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>+</string>
+      </property>
      </widget>
      <zorder>lblCharTabBG</zorder>
      <zorder>lblCName</zorder>
      <zorder>lblCHealth</zorder>
      <zorder>lblCAttack</zorder>
      <zorder>lblCLevel</zorder>
-     <zorder>lblCCritChance</zorder>
      <zorder>lblCXP</zorder>
      <zorder>lblCXPTillLvl</zorder>
      <zorder>btnIncreaseHP</zorder>
      <zorder>btnIncreaseAttack</zorder>
      <zorder>btnIncreaseCritChance</zorder>
      <zorder>lblCSkillPoints</zorder>
+     <zorder>lblCVitality</zorder>
+     <zorder>lblCStrength</zorder>
+     <zorder>lblCAgility</zorder>
+     <zorder>lblCLuck</zorder>
+     <zorder>btnIncreaseAgility</zorder>
+     <zorder>lblCHit</zorder>
+     <zorder>btnIncreaseHitChance</zorder>
     </widget>
     <widget class="QWidget" name="tabQuestScreen">
      <attribute name="title">

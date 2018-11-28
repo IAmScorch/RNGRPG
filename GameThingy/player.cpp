@@ -11,17 +11,24 @@
 
 
 Player::Player(int health, int maxHealth, int maxAttackPower, int minAttackPower,
-               int critChance)
+               int vitality, int strength, int agility, int luck, int intelligence, int hit,
+               int agilityDefault, int luckDefault)
     : health_(health),
       maxHealth_(maxHealth),
       maxAttackPower_(maxAttackPower),
       minAttackPower_(minAttackPower),
-      critChance_(critChance)
+      vitality_(vitality),
+      strength_(strength),
+      agility_(agility),
+      luck_(luck),
+      intelligence_(intelligence),
+      hit_(hit),
+      agilityDefault_(agilityDefault),
+      luckDefault_(luckDefault)
 {
     level_ = 1;
     XP_ = 0;
-    XPTillLevel_ = 100;
-    critNum_ = 0;
+    XPTillLevel_ = 500;
     isAlive_ = true;
     potion_ = 0;
     gold_ = 0;
@@ -29,17 +36,18 @@ Player::Player(int health, int maxHealth, int maxAttackPower, int minAttackPower
     specialAbilityCharge_ = 0;
     specialAbilityCharged_ = 0;
     specialAbilityMaxCharges_ = 0;
-    stamina_ = 10;
-    strength_ = 10;
-    agility_ = 0;
-    luck_ = 0;
-    intelligence_ = 0;
+    strengthCount_ = 0;
+    agilityCount_ = 0;
+    luckCount_ = 0;
+    intelligenceCount_ = 0;
+    hitCount_ = 0;
     agilityBonus_ = 0;
-    agilityDefault_ = 8;
     luckBonus_ = 0;
     intelligenceBonus_ = 0;
+    hitBonus_ = 0;
     isSpecialAbilityLearned_ = false;
     isSpecialReady_ = false;
+    questsCompleted_ = 0;
     qsrand(QTime::currentTime().msec());
 }
 
@@ -50,23 +58,15 @@ Player::~Player(void)
 
 int Player::doAttack(QString enemy)
 {
-    //bool doesCrit;
-    int critical;
-    if (critNum_ == 0)
-        critNum_ = (rand() % critChance_ + 1);
+    int critRoll;
 
-    //attackDmg_ = (rand() % 10 + minAttackPower_);
     attackDmg_ = rand() % ((maxAttackPower_ + 1) - minAttackPower_) + minAttackPower_;
 
-    critical   = (rand() % critChance_ + 1);
-    if (level_ <= 15)
-        critDmg_   = (rand() % 10 + 5);
-    else if (level_ >= 16)
-        critDmg_   = (rand() % 30 + 10);
+    critRoll   = rand() % ((20 + 1) - 1) + 1;
 
-    if (critical == critNum_)
+    if (critRoll == luckDefault_ - luckBonus_)
     {
-        attackDmg_+= critDmg_;
+        attackDmg_*= 2;
         message_ = name_ + " Attacks " + enemy + " for " + QString("%1").arg(attackDmg_) + " damage. CRITICAL HIT!\n";
     }
     else
@@ -91,8 +91,8 @@ int Player::doSpecialAbility(QString enemy)
 
 int Player::doHitRoll()
 {
-    int hitRoll = rand()% 20 + 1;
-    return hitRoll;
+    int hitRoll = rand()% ((20 + 1) - 1) + 1;
+    return hitRoll + hitBonus_;
 }
 
 void Player::doHit(int dmg, int enemyHitRoll, QString enemyName, bool isEnemyAlive)
@@ -161,10 +161,42 @@ void Player::doLevelUp()
 
         //if (critChance_ > 5)
         //    critChance_-= 5;
-        skillpoints_ += 3;
+        skillpoints_ += 4;
         XP_ -= XPTillLevel_;
-        XPTillLevel_ *= 2;
-        critNum_ = 0;
+        XPTillLevel_ = int(double(XPTillLevel_) * 1.5);
+
+        if (level_ == 2)
+        {
+            msgBox.setWindowTitle("Level Up");
+            msgBox.setText("<b>You achieved your first level up!</b><br>"
+                           "---------------------------------------------------------------------<br><br>"
+                           "Every time you level, you get 4 skill points to distribute between<br>"
+                           "any of these 5 stats<br><br>"
+                           "<b>Vitality</b><br>"
+                           "Determines the amount of damage you can take from enemies.<br>"
+                           "Each point towards Vitality increases your HP by 2<br><br>"
+                           "<b>Strength</b><br>"
+                           "Determines how much damage you can do to enemies<br>"
+                           "Each point towards Strength increases your maximum amount of damage by 1<br>"
+                           "and every 5 points increases your minimum amount of damage by 5<br><br>"
+                           "<b>Agility</b><br>"
+                           "Determines the chance at which you can dodge an enemy's attack<br>"
+                           "Each 5 points towards Agility increases your chance at dodging<br>"
+                           "an enemy's attack<br><br>"
+                           "<b>Luck</b><br>"
+                           "Determines the chance your attack can critically damage an enemy<br>"
+                           "Each 5 points towards Luck increases your chance at critically<br>"
+                           "damaging an enemy<br>"
+                           "critical strikes cause 2x your maximum damage potential but can<br>"
+                           "still be dodged by an enemy<br><br>"
+                           "<b>Hit</b><br>"
+                           "Determines the chance at which you can successfully strike an enemy<br>"
+                           "Each 5 points towards Hit increases your chance to successfully "
+                           "strike an enemy<br><br>"
+                           "Each skill can be raised to a maximum of 20, so spend your<br>"
+                           "skill points wisely.");
+            msgBox.exec();
+        }
 
         if (level_ == 10)
         {
@@ -194,7 +226,7 @@ void Player::usePotion()
         }
         else if (level_ <= 14)
         {
-            health_ += 50;
+            health_ += 5;
             potion_ -= 1;
             if (health_ > maxHealth_)
                 health_ = maxHealth_;
@@ -207,7 +239,7 @@ void Player::usePotion()
         }
         else if (level_ >= 15 && level_ <= 29)
         {
-            health_ += 75;
+            health_ += 100;
             potion_ -= 1;
             if (health_ > maxHealth_)
                 health_ = maxHealth_;
@@ -290,16 +322,6 @@ void Player::buyPotion()
     }
 }
 
-QString Player::printPlayerInfo()
-{
-    QString info = QString("Character Info\n------------------------------------\nName: %1\nHealth: %2/%3\nAttack: %4-%5\nLevel: %6\nCritical Hit Chance: %7\nGold: %8\nPotions: %9\nCurrent XP: %10/%11\nXP Till Next Level: %12")
-            .arg(name_).arg(health_).arg(maxHealth_)
-            .arg(minAttackPower_).arg(maxAttackPower_).arg(level_).arg(critChance_).arg(gold_)
-            .arg(potion_).arg(XP_).arg(XPTillLevel_).arg(XPTillLevel_ - XP_);
-
-    return info;
-}
-
 void Player::save()
 {
     QString fileName = "saves\\Save" + name_ + ".save";
@@ -312,20 +334,18 @@ void Player::save()
     saveFile << minAttackPower_ << "\n";
     saveFile << maxAttackPower_ << "\n";
     saveFile << level_ << "\n";
-    saveFile << critChance_ << "\n";
     saveFile << gold_ << "\n";
     saveFile << potion_ << "\n";
     saveFile << XP_ << "\n";
     saveFile << XPTillLevel_ << "\n";
     saveFile << isAlive_ << "\n";
-    saveFile << critNum_ << "\n";
     saveFile << skillpoints_ << "\n";
     saveFile << specialAbilityCharge_ << "\n";
     saveFile << specialAbilityCharged_ << "\n";
     saveFile << specialAbilityMaxCharges_ << "\n";
     saveFile << isSpecialAbilityLearned_ << "\n";
     saveFile << isSpecialReady_ << "\n";
-    saveFile << stamina_ << "\n";
+    saveFile << vitality_ << "\n";
     saveFile << strength_ << "\n";
     saveFile << agility_ << "\n";
     saveFile << agilityBonus_ << "\n";
@@ -334,6 +354,13 @@ void Player::save()
     saveFile << luckBonus_ << "\n";
     saveFile << intelligence_ << "\n";
     saveFile << intelligenceBonus_ << "\n";
+    saveFile << agilityCount_ << "\n";
+    saveFile << luckCount_ << "\n";
+    saveFile << intelligenceCount_ << "\n";
+    saveFile << questsCompleted_ << "\n";
+    saveFile << hit_ << "\n";
+    saveFile << hitCount_ << "\n";
+    saveFile << hitBonus_ << "\n";
     file.close();
 }
 
@@ -351,20 +378,18 @@ void Player::load(QString playerName)
         minAttackPower_ = saveFile.readLine().toInt();
         maxAttackPower_ = saveFile.readLine().toInt();
         level_ = saveFile.readLine().toInt();
-        critChance_ = saveFile.readLine().toInt();
         gold_ = saveFile.readLine().toInt();
         potion_ = saveFile.readLine().toInt();
         XP_ = saveFile.readLine().toInt();
         XPTillLevel_ = saveFile.readLine().toInt();
         isAlive_ = saveFile.readLine().toInt();
-        critNum_ = saveFile.readLine().toInt();
         skillpoints_ = saveFile.readLine().toInt();
         specialAbilityCharge_ = saveFile.readLine().toInt();
         specialAbilityCharged_ = saveFile.readLine().toInt();
         specialAbilityMaxCharges_ = saveFile.readLine().toInt();
         isSpecialAbilityLearned_ = saveFile.readLine().toInt();
         isSpecialReady_ = saveFile.readLine().toInt();
-        stamina_ = saveFile.readLine().toInt();
+        vitality_ = saveFile.readLine().toInt();
         strength_ = saveFile.readLine().toInt();
         agility_ = saveFile.readLine().toInt();
         agilityBonus_ = saveFile.readLine().toInt();
@@ -373,8 +398,112 @@ void Player::load(QString playerName)
         luckBonus_ = saveFile.readLine().toInt();
         intelligence_ = saveFile.readLine().toInt();
         intelligenceBonus_ = saveFile.readLine().toInt();
+        agilityCount_ = saveFile.readLine().toInt();
+        luckCount_ = saveFile.readLine().toInt();
+        intelligenceCount_ = saveFile.readLine().toInt();
+        questsCompleted_ = saveFile.readLine().toInt();
+        hit_ = saveFile.readLine().toInt();
+        hitCount_ = saveFile.readLine().toInt();
+        hitBonus_ = saveFile.readLine().toInt();
         file.close();
     }
+}
+
+void Player::addVitality(int vitality)
+{
+    vitality_ += vitality;
+    maxHealth_ += 2;
+}
+
+int Player::getVitality()
+{
+    return vitality_;
+}
+
+void Player::addStrength(int strength)
+{
+    strength_ += strength;
+    strengthCount_ += strength;
+    maxAttackPower_ += strength;
+
+    if (strengthCount_ == 5)
+    {
+        minAttackPower_ += 5;
+        strengthCount_ = 0;
+    }
+}
+
+int Player::getStrength()
+{
+    return strength_;
+}
+
+void Player::addAgility(int agility)
+{
+    agility_ += agility;
+    agilityCount_ += agility;
+
+    if (agilityCount_ == 5)
+    {
+        agilityBonus_ += 1;
+        agilityCount_ = 0;
+    }
+}
+
+int Player::getAgility()
+{
+    return agility_;
+}
+
+void Player::addLuck(int luck)
+{
+    luck_ += luck;
+    luckCount_ += luck;
+
+    if (luckCount_ == 5)
+    {
+        luckBonus_ += 1;
+        luckCount_ = 0;
+    }
+}
+
+int Player::getLuck()
+{
+    return luck_;
+}
+
+void Player::addIntelligence(int intelligence)
+{
+    intelligence_ += intelligence;
+    intelligenceCount_ += intelligence;
+
+    if (intelligenceCount_ == 5)
+    {
+        intelligenceBonus_ += 1;
+        intelligenceCount_ = 0;
+    }
+}
+
+int Player::getIntelligence()
+{
+    return intelligence_;
+}
+
+void Player::addHit(int hit)
+{
+    hit_ += hit;
+    hitCount_ += hit;
+
+    if (hitCount_ == 5)
+    {
+        hitBonus_ += 1;
+        hitCount_ = 0;
+    }
+}
+
+int Player::getHit()
+{
+    return hit_;
 }
 
 bool Player::isAlive()
@@ -414,16 +543,6 @@ void Player::setMinAttackPower(int minAttackPower)
     {
         minAttackPower_ += minAttackPower;
     }
-}
-
-int Player::getCritChance()
-{
-    return critChance_;
-}
-
-void Player::setCritChance(int critChance)
-{
-    critChance_ -= critChance;
 }
 
 int Player::getMaxHealth()
@@ -593,3 +712,12 @@ void Player::setIsSpecialReady(bool isSpecialReady)
     isSpecialReady_ = isSpecialReady;
 }
 
+int Player::getQuestsCompleted()
+{
+    return questsCompleted_;
+}
+
+void Player::completeQuest()
+{
+    questsCompleted_ += 1;
+}
