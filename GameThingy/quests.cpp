@@ -42,7 +42,7 @@ void quests::completeQuest()
     {
         isQuestComplete_ = 1;
         isQuestActive_ = 0;
-        questType_ = 0;
+        //questType_ = 0;
     }
 }
 

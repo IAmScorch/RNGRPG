@@ -148,7 +148,7 @@ void Player::doLevelUp()
 {
     while (XP_ >= XPTillLevel_)
     {
-        QSound::play("..\\Sounds\\levelUp.wav");
+        QSound::play("Sounds\\levelUp.wav");
         QMessageBox msgBox;
         msgBox.setWindowTitle("Level Up");
         msgBox.setText("      LEVEL UP!               ");
@@ -230,7 +230,7 @@ void Player::usePotion()
             potion_ -= 1;
             if (health_ > maxHealth_)
                 health_ = maxHealth_;
-            QSound::play("..\\Sounds\\drinkPotion.wav");
+            QSound::play("Sounds\\drinkPotion.wav");
             QMessageBox msgBox;
             msgBox.setWindowTitle("Use Potion");
             msgBox.setText("      Potion used.            ");
@@ -243,7 +243,7 @@ void Player::usePotion()
             potion_ -= 1;
             if (health_ > maxHealth_)
                 health_ = maxHealth_;
-            QSound::play("..\\Sounds\\drinkPotion.wav");
+            QSound::play("Sounds\\drinkPotion.wav");
             QMessageBox msgBox;
             msgBox.setWindowTitle("Use Potion");
             msgBox.setText("      Potion used.            ");
@@ -255,7 +255,7 @@ void Player::usePotion()
             potion_ -= 1;
             if (health_ > maxHealth_)
                 health_ = maxHealth_;
-            QSound::play("..\\Sounds\\drinkPotion.wav");
+            QSound::play("Sounds\\drinkPotion.wav");
             QMessageBox msgBox;
             msgBox.setWindowTitle("Use Potion");
             msgBox.setText("      Potion used.            ");
@@ -284,7 +284,7 @@ void Player::buyPotion()
         }
         else if (level_<= 12)
         {
-            QSound::play("..\\Sounds\\potionDrop.wav");
+            QSound::play("Sounds\\potionDrop.wav");
             gold_ -= 5;
             potion_ += 1;
             QMessageBox msgBox;
@@ -294,7 +294,7 @@ void Player::buyPotion()
         }
         else if (level_ >= 13 && level_ <= 14)
         {
-            QSound::play("..\\Sounds\\potionDrop.wav");
+            QSound::play("Sounds\\potionDrop.wav");
             gold_ -= 8;
             potion_ += 1;
             QMessageBox msgBox;
@@ -304,7 +304,7 @@ void Player::buyPotion()
         }
         else if (level_ >= 15)
         {
-            QSound::play("..\\Sounds\\potionDrop.wav");
+            QSound::play("Sounds\\potionDrop.wav");
             gold_ -= 10;
             potion_ += 1;
             QMessageBox msgBox;
