@@ -1933,7 +1933,7 @@ void GameLogic::on_btnBeginQuest_clicked()
                                "metals we use for weapons and armour. We cannot afford to lose Riverbane.<br>"
                                "Get to Riverbane as soon as you can, and help my guards defend the settlement.<br><br>"
                                "Speak with Werner when the raid has stopped. He will be leading the<br>"
-                               "defence on Riverbane.<br><br>"
+                               "defense on Riverbane.<br><br>"
                                "<B>Objective:</b><br>Kill 10 Bandit Raiders<br>"
                                "<b>Reward</b><br>"
                                "150 XP<br>"
@@ -2207,7 +2207,7 @@ void GameLogic::on_btnCompleteQuest_clicked()
                                        "Thank you, %1.<br>"
                                        "I will give this to one of my higher ranking guards.<br>"
                                        "He will use it to infiltrate the barracks and disrupt their training<br>"
-                                       "and rely any useful information to us that may help us get to Thragg.<br><br>"
+                                       "and relay any useful information to us that may help us get to Thragg.<br><br>"
                                        "<b>Quest complete!</b><br>"
                                        "You are rewarded %2 XP and 15 Gold!").arg(player_->getName()).arg(quest_->getXPReward()));
                 msgBox.exec();
