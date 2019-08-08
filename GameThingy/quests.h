@@ -8,15 +8,18 @@ class quests
 private:
     int xpReward_;
     int objective_;
+    int objectiveII_;
     int amountComplete_;
+    int amountCompleteII_;
     int isQuestComplete_;
     int isQuestActive_;
     int questType_;
+    int numObjectives_;
     QString questTitle_;
     QString objectiveProgress_;
 
 public:
-    quests(int xpReward, int objective, int amountComplete, int isQuestComplete, int isQuestActive, int questType);
+    quests(int xpReward, int objective, int objectiveII, int amountComplete, int amountCompleteII, int isQuestComplete, int isQuestActive, int questType, int numObjectives);
     ~quests(void);
 
     void beginQuest(QString title, QString objective, int isQuestActive);
@@ -31,8 +34,14 @@ public:
     int getObjective();
     void setObjective(int objective);
 
+    int getObjectiveII();
+    void setObjectiveII(int objectiveII);
+
     int getAmountComplete();
     void setAmountComplete(int amountComplete);
+
+    int getAmountCompleteII();
+    void setAmountCompleteII(int amountCompleteII);
 
     QString getQuestTitle();
     void setQuestTitle(QString &questTitle);
@@ -48,6 +57,8 @@ public:
 
     int getQuestType();
     void setQuestType(int questType);
+
+    int getNumObjectives();
 };
 
 #endif // QUESTS_H

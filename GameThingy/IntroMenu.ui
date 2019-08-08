@@ -1054,11 +1054,13 @@
         <x>10</x>
         <y>90</y>
         <width>381</width>
-        <height>21</height>
+        <height>41</height>
        </rect>
       </property>
       <property name="styleSheet">
-       <string notr="true">color: rgb(255, 255, 255);</string>
+       <string notr="true">color: rgb(255, 255, 255);
+vertical-align: top;
+text-align: left;</string>
       </property>
       <property name="text">
        <string>Progress:</string>

@@ -88,12 +88,12 @@ GameLogic::GameLogic(QWidget *parent) :
     ui->btnLoad->setStyleSheet("background-color: rgb(225, 225, 225, 200)");
     ui->btnSave->setStyleSheet("background-color: rgb(225, 225, 225, 200)");
     ui->btnQuit->setStyleSheet("background-color: rgb(225, 225, 225, 200)");
-    bandit_ = new Bandit("", 0, 0, 0, 0, 0, 0, 0, 0);
-    banditBoss_ = new Bandit("", 0, 0, 0, 0, 0, 0, 0, 0);
+    bandit_ = new Bandit("", 0, 0, 0, 0, 0, 0, 0, 0, 0);
+    banditBoss_ = new Bandit("", 0, 0, 0, 0, 0, 0, 0, 0, 0);
     warrior_ = new Warrior("", 0, 0, 0, 0, 0);
     warriorBoss_ = new Warrior("", 0, 0, 0, 0, 0);
     player_ = new Player(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-    quest_ = new quests(0, 0, 0, 0, 0, 0);
+    quest_ = new quests(0, 0, 0, 0, 0, 0, 0, 0, 0);
     qsrand(QTime::currentTime().msec());
 }
 
@@ -189,7 +189,12 @@ void GameLogic::on_btnAttack_clicked()
 
             //player_->addXP(bandit_->getXPReward());
             if (quest_->getQuestType() == bandit_->getEnemyType())
-                quest_->setAmountComplete(1);
+            {
+                if (bandit_->getObjType() == 1)
+                    quest_->setAmountComplete(1);
+                else if (bandit_->getObjType() == 2)
+                    quest_->setAmountCompleteII(1);
+            }
 
             int potChance = rand() % 10 + 1;
             player_->addGold(bandit_->goldDrop());
@@ -199,7 +204,7 @@ void GameLogic::on_btnAttack_clicked()
                 QSound::play("Sounds\\potionDrop.wav");
                 QMessageBox msgBox;
                 msgBox.setWindowTitle("Item Drop");
-                msgBox.setText("Bandit dropped a potion");
+                msgBox.setText(QString("%1 dropped a potion").arg(bandit_->getName()));
                 msgBox.exec();
                 player_->addPotion(1);
                 ui->lblPotionAmount->setText(QString("Potions: %1").arg(player_->getPotion()));
@@ -461,7 +466,12 @@ void GameLogic::on_btnSpecialAbility_clicked()
 
         //player_->addXP(bandit_->getXPReward());
         if (quest_->getQuestType() == bandit_->getEnemyType())
-            quest_->setAmountComplete(1);
+        {
+            if (bandit_->getObjType() == 1)
+                quest_->setAmountComplete(1);
+            else if (bandit_->getObjType() == 2)
+                quest_->setAmountCompleteII(1);
+        }
 
         int potChance = rand() % 10 + 1;
         player_->addGold(bandit_->goldDrop());
@@ -636,6 +646,7 @@ void GameLogic::checkLevel()
     QPushButton *btnBanditBarracks = msgBox.addButton(tr("Bandit Barracks"), QMessageBox::ActionRole);
     QPushButton *btnDeepwoodForest = msgBox.addButton(tr("Deepwood Forest"), QMessageBox::ActionRole);
     QPushButton *btnRiverbane = msgBox.addButton(tr("Riverbane"), QMessageBox::ActionRole);
+    QPushButton *btnRiverbaneMine = msgBox.addButton(tr("Riverbane Mine"), QMessageBox::ActionRole);
     QPushButton *btnAndorjaul = msgBox.addButton(tr("Andorjaul"), QMessageBox::ActionRole);
     //QPushButton *btnCutthroatCamp = msgBox.addButton(tr("Cutthroat Camp"), QMessageBox::ActionRole);
     //QPushButton *btnEliteCamp = msgBox.addButton(tr("Elite Camp"), QMessageBox::ActionRole);
@@ -661,7 +672,7 @@ void GameLogic::checkLevel()
                                    "to train.<br><br>"
                                    "There is nothing for you to do here right now."));
             msgBox.exec();
-            bandit_ = new Bandit("banditName", 0, 0, 0, 0, 0, 0, 999, 0);
+            bandit_ = new Bandit("banditName", 0, 0, 0, 0, 0, 0, 999, 0, 0);
         }
         else if (quest_->getQuestType() >= 4)
         {
@@ -671,7 +682,7 @@ void GameLogic::checkLevel()
                                    "---------------------------------------------------------------------<br><br>"
                                    "It is too dangerous to attack Thragg's Barracks right now."));
             msgBox.exec();
-            bandit_ = new Bandit("banditName", 0, 0, 0, 0, 0, 0, 999, 0);
+            bandit_ = new Bandit("banditName", 0, 0, 0, 0, 0, 0, 999, 0, 0);
         }
         else
         {
@@ -689,6 +700,7 @@ void GameLogic::checkLevel()
             int trainerChance = rand() % ((100 + 1) - 1) + 1;
             int banditType = 0;
             int banditAgility = 3;
+            int objType = 1;
 
             if (quest_->getQuestType() == 2 && quest_->getIsQuestActive() == 1 && trainerChance >= 75)
             {
@@ -715,7 +727,7 @@ void GameLogic::checkLevel()
             }
 
             bandit_ = new Bandit(banditName, banditHealth, banditMaxAttackPower, banditMinAttackPower,
-                                 banditCritChance, banditXPReward, banditLevel, banditType, banditAgility);
+                                 banditCritChance, banditXPReward, banditLevel, banditType, banditAgility, objType);
         }
     }
     else if (msgBox.clickedButton() == btnDeepwoodForest)
@@ -734,7 +746,7 @@ void GameLogic::checkLevel()
                                    "through Deepwood.<br><br>"
                                    "There is nothing out of the ordinary going on in Deepwood right now."));
             msgBox.exec();
-            bandit_ = new Bandit("banditName", 0, 0, 0, 0, 0, 0, 999, 0);
+            bandit_ = new Bandit("banditName", 0, 0, 0, 0, 0, 0, 999, 0, 0);
         }
         else
         {
@@ -752,6 +764,7 @@ void GameLogic::checkLevel()
             int trainerChance = rand() % ((100 + 1) - 1) + 1;
             int banditType = 0;
             int banditAgility = 3;
+            int objType = 1;
 
             if (quest_->getQuestType() == 3 && quest_->getIsQuestActive() == 1 && trainerChance >= 85)
             {
@@ -789,7 +802,7 @@ void GameLogic::checkLevel()
             }
 
             bandit_ = new Bandit(banditName, banditHealth, banditMaxAttackPower, banditMinAttackPower,
-                                 banditCritChance, banditXPReward, banditLevel, banditType, banditAgility);
+                                 banditCritChance, banditXPReward, banditLevel, banditType, banditAgility, objType);
         }
     }
     else if (msgBox.clickedButton() == btnRiverbane)
@@ -804,9 +817,9 @@ void GameLogic::checkLevel()
                                    "Most of the inhabitants there are miners that work at the<br>"
                                    "Riverbane Mine. They supply a huge amount of metals to Windlehelm,<br>"
                                    "which they use for crafting weapons and armour.<br><br>"
-                                   "There is nothing happening is Riverbane right now."));
+                                   "There is nothing happening in Riverbane right now."));
             msgBox.exec();
-            bandit_ = new Bandit("banditName", 0, 0, 0, 0, 0, 0, 999, 0);
+            bandit_ = new Bandit("banditName", 0, 0, 0, 0, 0, 0, 999, 0, 0);
         }
         else if (quest_->getQuestType() > 4)
         {
@@ -817,7 +830,7 @@ void GameLogic::checkLevel()
                                    "Riverbane is currently under heavy protection from the<br>"
                                    "Windlehelm City Guard and is in no danger."));
             msgBox.exec();
-            bandit_ = new Bandit("banditName", 0, 0, 0, 0, 0, 0, 999, 0);
+            bandit_ = new Bandit("banditName", 0, 0, 0, 0, 0, 0, 999, 0, 0);
         }
         else
         {
@@ -834,6 +847,7 @@ void GameLogic::checkLevel()
             int banditLevel = 2; //(rand() % ((6 + 1) - 4) + 4);
             int banditType = 4;
             int banditAgility = 4;
+            int objType = 1;
 
             banditHealth = rand() % ((12 + 1) - 9) + 9;
             enemyMaxHP_ = banditHealth;
@@ -843,7 +857,79 @@ void GameLogic::checkLevel()
             banditXPReward = 12;
 
             bandit_ = new Bandit(banditName, banditHealth, banditMaxAttackPower, banditMinAttackPower,
-                                 banditCritChance, banditXPReward, banditLevel, banditType, banditAgility);
+                                 banditCritChance, banditXPReward, banditLevel, banditType, banditAgility, objType);
+        }
+    }
+    else if (msgBox.clickedButton() == btnRiverbaneMine)
+    {
+        if (quest_->getQuestType() < 7 )
+        {
+            QMessageBox msgBox;
+            msgBox.setWindowTitle("Riverbane");
+            msgBox.setText(QString("<b>The Riverbane Mine</b><br>"
+                                   "---------------------------------------------------------------------<br><br>"
+                                   "The Riverbane Mine is the most profitable mine of Rendinshire.<br>"
+                                   "It employs the largest number of miners in the province and<br>"
+                                   "supplies Windlehelm City with the majority of its metals.<br>"
+                                   "Riverbane also sends out travelling vendors to sell metals<br>"
+                                   "to other provinces around Rendinshire.<br><br>"
+                                   "There is nothing happening in the Riverbane Mine right now."));
+            msgBox.exec();
+            bandit_ = new Bandit("banditName", 0, 0, 0, 0, 0, 0, 999, 0, 0);
+        }
+        else if (quest_->getQuestType() > 7 || player_->getQuestsCompleted() == 7)
+        {
+            QMessageBox msgBox;
+            msgBox.setWindowTitle("Riverbane");
+            msgBox.setText(QString("<b>The Riverbane Mine</b><br>"
+                                   "---------------------------------------------------------------------<br><br>"
+                                   "The Riverbane Mine is now cleared of Kobold invaders and the miners<br>"
+                                   "are back to work."));
+            msgBox.exec();
+            bandit_ = new Bandit("banditName", 0, 0, 0, 0, 0, 0, 999, 0, 0);
+        }
+        else
+        {
+            bsAttackSC_->setEnabled(true);
+            bsBattleSC_->setEnabled(false);
+            //QString banditName = "Bandit Thug";
+            QString banditName = "Kobold Invader";
+            int banditHealth = 0;
+            int banditMaxAttackPower = 0;
+            int banditMinAttackPower = 0;
+            int banditCritChance = 0;
+            int banditXPReward = 0;
+            // attackDmg_ = rand() % ((maxAttackPower_ + 1) - minAttackPower_) + minAttackPower_;
+            int banditLevel = 2; //(rand() % ((6 + 1) - 4) + 4);
+            int banditType = 7;
+            int banditAgility = 4;
+            int objType = 1;
+
+            if (quest_->getAmountComplete() == quest_->getObjective())
+            {
+                banditName = "Menzid";
+                banditHealth = 20;
+                enemyMaxHP_ = 20;
+                banditMaxAttackPower = 6;
+                banditMinAttackPower = 1;
+                banditCritChance = 50;
+                banditXPReward = 24;
+                banditLevel = 3;
+                banditAgility = 4;
+                objType = 2;
+            }
+            else
+            {
+                banditHealth = rand() % ((12 + 1) - 9) + 9;
+                enemyMaxHP_ = banditHealth;
+                banditMaxAttackPower = 4;
+                banditMinAttackPower = 1;
+                banditCritChance = 80;
+                banditXPReward = 12;
+            }
+
+            bandit_ = new Bandit(banditName, banditHealth, banditMaxAttackPower, banditMinAttackPower,
+                                 banditCritChance, banditXPReward, banditLevel, banditType, banditAgility, objType);
         }
     }
     else if (msgBox.clickedButton() == btnAndorjaul)
@@ -862,7 +948,7 @@ void GameLogic::checkLevel()
                                    "Windlehelm City Guard.<br><br>"
                                    "There is nothing out of the ordinary happening in Andorjaul right now."));
             msgBox.exec();
-            bandit_ = new Bandit("banditName", 0, 0, 0, 0, 0, 0, 999, 0);
+            bandit_ = new Bandit("banditName", 0, 0, 0, 0, 0, 0, 999, 0, 0);
         }
         else
         {
@@ -877,8 +963,9 @@ void GameLogic::checkLevel()
             int banditXPReward = 0;
             // attackDmg_ = rand() % ((maxAttackPower_ + 1) - minAttackPower_) + minAttackPower_;
             int banditLevel = 2; //(rand() % ((6 + 1) - 4) + 4);
-            int banditType = 7;
+            int banditType = 4;
             int banditAgility = 5;
+            int objType = 1;
             int andorjaulSettlerChance = rand() % ((100 + 1) - 1) + 1;
 
             if (quest_->getQuestType() == 6  && quest_->getIsQuestActive() == 1 && andorjaulSettlerChance >= 60)
@@ -904,7 +991,7 @@ void GameLogic::checkLevel()
             }
 
             bandit_ = new Bandit(banditName, banditHealth, banditMaxAttackPower, banditMinAttackPower,
-                                 banditCritChance, banditXPReward, banditLevel, banditType, banditAgility);
+                                 banditCritChance, banditXPReward, banditLevel, banditType, banditAgility, objType);
         }
     }
 //    else if (msgBox.clickedButton() == btnCutthroatCamp)
@@ -1038,11 +1125,11 @@ void GameLogic::checkLevel()
 //    }
     else if (msgBox.clickedButton() == btnCancel)
     {
-        bandit_ = new Bandit("banditName", 0, 0, 0, 0, 0, 0, 998, 0);
+        bandit_ = new Bandit("banditName", 0, 0, 0, 0, 0, 0, 998, 0, 0);
     }
     else
     {
-        bandit_ = new Bandit("banditName", 0, 0, 0, 0, 0, 0, 998, 0);
+        bandit_ = new Bandit("banditName", 0, 0, 0, 0, 0, 0, 998, 0, 0);
     }
 
 //    if (player_->getLevel() <= 3)
@@ -1276,7 +1363,7 @@ void GameLogic::on_btnLoad_clicked()
                 ui->btnAbandonQuest->setEnabled(false);
                 ui->btnBeginQuest->setEnabled(true);
 
-                ui->lblQTitle->setText("Quest Tite");
+                ui->lblQTitle->setText("Quest Title");
                 ui->lblQProgress->setText("Progess:");
                 ui->lblQReward->setText("Reward:");
             }
@@ -1405,7 +1492,7 @@ void GameLogic::setEnemyHealth()
 void GameLogic::resetQuestInfo()
 {
     //xpReward, objective, amountComplete, isQuestComplete, isQuestActive, questType
-    quest_ = new quests(0, 0, 0, 0, 0, 0);
+    quest_ = new quests(0, 0, 0, 0, 0, 0, 0, 0, 0);
     ui->lblQTitle->setText("No Active Quest");
     ui->lblQProgress->setText("Progess:");
     ui->lblQReward->setText("Reward:");
@@ -1621,6 +1708,40 @@ void GameLogic::checkQuest()
             quest_->setIsQuestActive(0);
         }
     }
+    else if (quest_->getQuestType() == 7)
+    {
+        if (quest_->getIsQuestActive() == 1)
+        {
+            if(quest_->getAmountComplete() == quest_->getObjective() && quest_->getAmountCompleteII() == quest_->getObjectiveII())
+            {
+                ui->lblQTitle->setText(QString("Clearing the Mine").arg(quest_->getObjective()));
+                ui->lblQProgress->setText(QString("Progress: %1/%2 Kobolds Killed.<br>"
+                                                  "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+                                                  "%3/%4 Menzid Killed").arg(quest_->getAmountComplete()).arg(quest_->getObjective())
+                                                                        .arg(quest_->getAmountCompleteII()).arg(quest_->getObjectiveII()));
+                ui->lblQReward->setText(QString("Reward: %1 XP | Gold: 25").arg(quest_->getXPReward()));
+                QSound::play("Sounds\\questComplete.wav");
+                QMessageBox msgBox;
+                msgBox.setWindowTitle("Quest");
+                msgBox.setText("Quest Completed!");
+                msgBox.exec();
+                quest_->setIsQuestActive(0);
+            }
+            else
+            {
+                QString questText = QString("Progress: %1/%2 Kobolds Killed.<br>"
+                                            "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+                                            "%3/%4 Menzid Killed").arg(quest_->getAmountComplete()).arg(quest_->getObjective())
+                                                                  .arg(quest_->getAmountCompleteII()).arg(quest_->getObjectiveII());
+                ui->lblQTitle->setText(QString("Clearing the Mine").arg(quest_->getObjective()));
+                ui->lblQProgress->setText(questText);
+                ui->lblQReward->setText(QString("Reward: %1 XP | Gold: 25").arg(quest_->getXPReward()));
+
+                quest_->setObjectiveProgress(questText);
+            }
+
+        }
+    }
 //    else if (quest_->getQuestType() == 6)
 //    {
 //        if (quest_->getIsQuestActive() == 1 && quest_->getAmountComplete() != quest_->getObjective())
@@ -1833,16 +1954,16 @@ void GameLogic::on_btnBeginQuest_clicked()
         {
             QSound::play("Sounds\\acceptQuest.wav");
             goldReward = 10;
-            //xpReward, objective, amountComplete, isQuestComplete, isQuestActive, questType
-            quest_ = new quests(50, 6, 0, 0, 1, 1);
+            //xpReward, objective, objectiveII, amountComplete, amountCompleteII, isQuestComplete, isQuestActive, questType
+            quest_ = new quests(50, 6, 0, 0, 0, 0, 1, 1, 1);
             questTitle = QString("Kill %1 Bandit Initiates").arg(quest_->getObjective());
             questText = QString("Progress: %1/%2 Bandit Initiates killed.").arg(quest_->getAmountComplete()).arg(quest_->getObjective());
         }
         else if (msgBox.clickedButton() == btnDecline)
         {
             QSound::play("Sounds\\abondonQuest.wav");
-            //xpReward, objective, amountComplete, isQuestComplete, isQuestActive, questType
-            quest_ = new quests(0, 0, 0, 0, 0, 0);
+            //xpReward, objective, objectiveII, amountComplete, amountCompleteII, isQuestComplete, isQuestActive, questType
+            quest_ = new quests(0, 0, 0, 0, 0, 0, 0, 0, 0);
         }
     }
     else if (player_->getQuestsCompleted() == 1)
@@ -1869,16 +1990,16 @@ void GameLogic::on_btnBeginQuest_clicked()
         {
             QSound::play("Sounds\\acceptQuest.wav");
             goldReward = 15;
-            //xpReward, objective, amountComplete, isQuestComplete, isQuestActive, questType
-            quest_ = new quests(100, 1, 0, 0, 1, 2);
+            //xpReward, objective, objectiveII, amountComplete, amountCompleteII, isQuestComplete, isQuestActive, questType
+            quest_ = new quests(100, 1, 0, 0, 0, 0, 1, 2, 1);
             questTitle = QString("Fashionable New Clothes").arg(quest_->getObjective());
             questText = QString("Progress: Take an Initiate Trainer's Outfit.");
         }
         else if (msgBox.clickedButton() == btnDecline)
         {
             QSound::play("Sounds\\abondonQuest.wav");
-            //xpReward, objective, amountComplete, isQuestComplete, isQuestActive, questType
-            quest_ = new quests(0, 0, 0, 0, 0, 1);
+            //xpReward, objective, objectiveII, amountComplete, amountCompleteII, isQuestComplete, isQuestActive, questType
+            quest_ = new quests(0, 0, 0, 0, 0, 0, 0, 1, 0);
         }
     }
     else if (player_->getQuestsCompleted() == 2)
@@ -1909,16 +2030,16 @@ void GameLogic::on_btnBeginQuest_clicked()
         {
             QSound::play("Sounds\\acceptQuest.wav");
             goldReward = 20;
-            //xpReward, objective, amountComplete, isQuestComplete, isQuestActive, questType
-            quest_ = new quests(250, 1, 0, 0, 1, 3);
+            //xpReward, objective, objectiveII, amountComplete, amountCompleteII, isQuestComplete, isQuestActive, questType
+            quest_ = new quests(250, 1, 0, 0, 0, 0, 1, 3, 1);
             questTitle = QString("An Oportunity Arises").arg(quest_->getObjective());
             questText = QString("Progress: Kill Gren and take his head.");
         }
         else if (msgBox.clickedButton() == btnDecline)
         {
             QSound::play("Sounds\\abondonQuest.wav");
-            //xpReward, objective, amountComplete, isQuestComplete, isQuestActive, questType
-            quest_ = new quests(0, 0, 0, 0, 0, 2);
+            //xpReward, objective, objectiveII, amountComplete, amountCompleteII, isQuestComplete, isQuestActive, questType
+            quest_ = new quests(0, 0, 0, 0, 0, 0, 0, 2, 0);
         }
     }
     else if (player_->getQuestsCompleted() == 3)
@@ -1946,16 +2067,16 @@ void GameLogic::on_btnBeginQuest_clicked()
         {
             QSound::play("Sounds\\acceptQuest.wav");
             goldReward = 30;
-            //xpReward, objective, amountComplete, isQuestComplete, isQuestActive, questType
-            quest_ = new quests(150, 10, 0, 0, 1, 4);
+            //xpReward, objective, objectiveII, amountComplete, amountCompleteII, isQuestComplete, isQuestActive, questType
+            quest_ = new quests(150, 10, 0, 0, 0, 0, 1, 4, 1);
             questTitle = QString("What's Mine is not Yours").arg(quest_->getObjective());
             questText = QString("Progress: %1/%2 Raiders killed.").arg(quest_->getAmountComplete()).arg(quest_->getObjective());
         }
         else if (msgBox.clickedButton() == btnDecline)
         {
             QSound::play("Sounds\\abondonQuest.wav");
-            //xpReward, objective, amountComplete, isQuestComplete, isQuestActive, questType
-            quest_ = new quests(0, 0, 0, 0, 0, 3);
+            //xpReward, objective, objectiveII, amountComplete, amountCompleteII, isQuestComplete, isQuestActive, questType
+            quest_ = new quests(0, 0, 0, 0, 0, 0, 0, 3, 0);
         }
     }
     else if (player_->getQuestsCompleted() == 4)
@@ -1982,16 +2103,16 @@ void GameLogic::on_btnBeginQuest_clicked()
         {
             QSound::play("Sounds\\acceptQuest.wav");
             goldReward = 15;
-            //xpReward, objective, amountComplete, isQuestComplete, isQuestActive, questType
-            quest_ = new quests(75, 10, 0, 0, 1, 5);
+            //xpReward, objective, objectiveII, amountComplete, amountCompleteII, isQuestComplete, isQuestActive, questType
+            quest_ = new quests(75, 10, 0, 0, 0, 0, 1, 5, 1);
             questTitle = QString("Deepwood Cleanup").arg(quest_->getObjective());
             questText = QString("Progress: %1/%2 Initiate Ambushers killed.").arg(quest_->getAmountComplete()).arg(quest_->getObjective());
         }
         else if (msgBox.clickedButton() == btnDecline)
         {
             QSound::play("Sounds\\abondonQuest.wav");
-            //xpReward, objective, amountComplete, isQuestComplete, isQuestActive, questType
-            quest_ = new quests(0, 0, 0, 0, 0, 4);
+            //xpReward, objective, objectiveII, amountComplete, amountCompleteII, isQuestComplete, isQuestActive, questType
+            quest_ = new quests(0, 0, 0, 0, 0, 0, 0, 4, 0);
         }
     }
     else if (player_->getQuestsCompleted() == 5)
@@ -2024,16 +2145,55 @@ void GameLogic::on_btnBeginQuest_clicked()
         {
             QSound::play("Sounds\\acceptQuest.wav");
             goldReward = 20;
-            //xpReward, objective, amountComplete, isQuestComplete, isQuestActive, questType
-            quest_ = new quests(150, 7, 0, 0, 1, 6);
+            //xpReward, objective, objectiveII, amountComplete, amountCompleteII, isQuestComplete, isQuestActive, questType
+            quest_ = new quests(150, 7, 0, 0, 0, 0, 1, 6, 1);
             questTitle = QString("Played The Fool").arg(quest_->getObjective());
             questText = QString("Progress: %1/%2 Andorjaul Settlers saved.").arg(quest_->getAmountComplete()).arg(quest_->getObjective());
         }
         else if (msgBox.clickedButton() == btnDecline)
         {
             QSound::play("Sounds\\abondonQuest.wav");
-            //xpReward, objective, amountComplete, isQuestComplete, isQuestActive, questType
-            quest_ = new quests(0, 0, 0, 0, 0, 5);
+            //xpReward, objective, objectiveII, amountComplete, amountCompleteII, isQuestComplete, isQuestActive, questType
+            quest_ = new quests(0, 0, 0, 0, 0, 0, 0, 5, 0);
+        }
+    }
+    else if (player_->getQuestsCompleted() == 6)
+    {
+        QMessageBox msgBox;
+        msgBox.setWindowTitle("Bormeir");
+        msgBox.setText(QString("<b>Clearing the Mine</b><br>"
+                               "---------------------------------------------------------------------<br><br>"
+                               "Andorjaul has been lost? That’s not the news I was hoping for. <br>"
+                               "We can’t worry about that now. Whilst you were gone, a few Raiders <br>"
+                               "came back and released a bunch of kobolds into the Riverbane Mine. <br>"
+                               "We lost a couple miners, but we managed to get most of them out. <br>"
+                               "With the kobolds in there they can’t continue mining. Take some of <br>"
+                               "my guards, go to the mine and kill the kobolds and their leader.<br><br>"
+                               "<B>Objective:</b><br>Kill 10 Kobolds<br>Kill Menzid<br>"
+                               "<b>Reward</b><br>"
+                               "175 XP<br>"
+                               "25 Gold"));
+        QPushButton *btnAccept = msgBox.addButton(tr("Accept"), QMessageBox::ActionRole);
+        QPushButton *btnDecline = msgBox.addButton(tr("Decline"), QMessageBox::ActionRole);
+        msgBox.exec();
+
+        if (msgBox.clickedButton() == btnAccept)
+        {
+            QSound::play("Sounds\\acceptQuest.wav");
+            goldReward = 25;
+            //xpReward, objective, objectiveII, amountComplete, amountCompleteII, isQuestComplete, isQuestActive, questType
+            quest_ = new quests(175, 10, 1, 0, 0, 0, 1, 7, 2);
+            questTitle = QString("Clearing the Mine").arg(quest_->getObjective());
+            questText = QString("Progress: %1/%2 Kobolds Killed.<br>"
+                                "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+                                "%3/%4 Menzid Killed").arg(quest_->getAmountComplete()).arg(quest_->getObjective())
+                                                      .arg(quest_->getAmountCompleteII()).arg(quest_->getObjectiveII());
+        }
+        else if (msgBox.clickedButton() == btnDecline)
+        {
+            QSound::play("Sounds\\abondonQuest.wav");
+            //xpReward, objective, objectiveII, amountComplete, amountCompleteII, isQuestComplete, isQuestActive, questType
+            quest_ = new quests(0, 0, 0, 0, 0, 0, 0, 6, 0);
         }
     }
 
@@ -2136,9 +2296,19 @@ void GameLogic::on_btnCompleteQuest_clicked()
 {
     int isQuestComplete = 0;
     quest_->completeQuest();
-    if (quest_->getAmountComplete() == quest_->getObjective())
+    if (quest_->getNumObjectives() == 1)
     {
-        player_->completeQuest();
+        if (quest_->getAmountComplete() == quest_->getObjective())
+        {
+            player_->completeQuest();
+        }
+    }
+    else if (quest_->getNumObjectives() == 2)
+    {
+        if (quest_->getAmountComplete() == quest_->getObjective() && quest_->getAmountCompleteII() == quest_->getObjectiveII())
+        {
+            player_->completeQuest();
+        }
     }
     isQuestComplete = quest_->getIsQuestComplete();
 
@@ -2275,6 +2445,20 @@ void GameLogic::on_btnCompleteQuest_clicked()
                 msgBox.exec();
                 player_->addGold(20);
             }
+            else if (player_->getQuestsCompleted() == 7)
+            {
+                QMessageBox msgBox;
+                msgBox.setWindowTitle("Werner");
+                msgBox.setText(QString("<b>Played The Fool - Completed!</b><br>"
+                                       "---------------------------------------------------------------------<br><br>"
+                                       "Good job. Now the miners can get back to work. With Andorjaul gone,<br>"
+                                       "we’re going to need to make more weapons and armour so we can even<br>"
+                                       "stand a chance at getting it back.<br><br>"
+                                       "<b>Quest complete!</b><br>"
+                                       "You are rewarded %2 XP and 25 Gold!").arg(quest_->getXPReward()));
+                msgBox.exec();
+                player_->addGold(25);
+            }
             player_->addXP(quest_->getXPReward());
             ui->lblQTitle->setText("Quest Completed!");
             ui->lblQProgress->setText("Progess:");
@@ -2303,7 +2487,7 @@ void GameLogic::on_btnAbandonQuest_clicked()
 {
     QSound::play("Sounds\\abondonQuest.wav");
     //xpReward, objective, amountComplete, isQuestComplete, isQuestActive
-    quest_ = new quests(0, 0, 0, 0, 0, 0);
+    quest_ = new quests(0, 0, 0, 0, 0, 0, 0, 0, 0);
 
     ui->lblQTitle->setText("No Active Quest");
     ui->lblQProgress->setText("Progess:");

@@ -7,7 +7,7 @@
 #include "bandit.h"
 
 Bandit::Bandit(QString name, int health, int maxAttackPower, int minAttackPower,
-               int critChance, int XPReward, int level, int enemyType, int agility)
+               int critChance, int XPReward, int level, int enemyType, int agility, int objType)
     :name_(name),
     health_(health),
     maxAttackPower_(maxAttackPower),
@@ -16,7 +16,8 @@ Bandit::Bandit(QString name, int health, int maxAttackPower, int minAttackPower,
     XPReward_(XPReward),
     level_(level),
     enemyType_(enemyType),
-    agility_(agility)
+    agility_(agility),
+    objType_(objType)
 {
     qsrand(QTime::currentTime().msec());
     isAlive_ = true;
@@ -209,6 +210,11 @@ QString Bandit::getName()
 void Bandit::setName(QString name)
 {
     name_ = name;
+}
+
+int Bandit::getObjType()
+{
+    return objType_;
 }
 
 QString Bandit::getMessage()

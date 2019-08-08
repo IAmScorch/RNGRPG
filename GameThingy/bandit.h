@@ -17,13 +17,14 @@ private:
     int level_;
     int enemyType_;
     int agility_;
+    int objType_;
     bool isAlive_;
     bool isHit_;
     QString message_;
 
 public:
     Bandit(QString name, int health, int maxAttackPower, int minAttackPower,
-        int critChance, int XPReward, int level, int enemyType, int agility);
+        int critChance, int XPReward, int level, int enemyType, int agility, int objType);
     ~Bandit(void);
 
     int doAttack(QString enemy);
@@ -54,6 +55,8 @@ public:
 
     QString getName();
     void setName(QString name);
+
+    int getObjType();
 
     bool isAlive();
 

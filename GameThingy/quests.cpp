@@ -8,13 +8,16 @@
 #include <QMessageBox>
 #include "quests.h"
 
-quests::quests(int xpReward, int objective, int amountComplete, int isQuestComplete, int isQuestActive, int questType)
+quests::quests(int xpReward, int objective, int objectiveII, int amountComplete, int amountCompleteII, int isQuestComplete, int isQuestActive, int questType, int numObjectives)
     : xpReward_(xpReward),
       objective_(objective),
+      objectiveII_(objectiveII),
       amountComplete_(amountComplete),
+      amountCompleteII_(amountCompleteII),
       isQuestComplete_(isQuestComplete),
       isQuestActive_(isQuestActive),
-      questType_(questType)
+      questType_(questType),
+      numObjectives_(numObjectives)
 {
     qsrand(QTime::currentTime().msec());
 }
@@ -38,12 +41,25 @@ void quests::progress(int kill)
 
 void quests::completeQuest()
 {
-    if (amountComplete_ == objective_)
+    if (numObjectives_ == 1)
     {
-        isQuestComplete_ = 1;
-        isQuestActive_ = 0;
-        //questType_ = 0;
+        if (amountComplete_ == objective_)
+        {
+            isQuestComplete_ = 1;
+            isQuestActive_ = 0;
+            //questType_ = 0;
+        }
     }
+    else if (numObjectives_ == 2)
+    {
+        if (amountComplete_ == objective_ && amountCompleteII_ == objectiveII_)
+        {
+            isQuestComplete_ = 1;
+            isQuestActive_ = 0;
+            //questType_ = 0;
+        }
+    }
+
 }
 
 void quests::save(QString playerName)
@@ -54,12 +70,15 @@ void quests::save(QString playerName)
     QTextStream saveFile(&file);
     saveFile << xpReward_ << "\n";
     saveFile << objective_ << "\n";
+    saveFile << objectiveII_ << "\n";
     saveFile << amountComplete_ << "\n";
+    saveFile << amountCompleteII_ << "\n";
     saveFile << isQuestComplete_ << "\n";
     saveFile << isQuestActive_ << "\n";
     saveFile << questTitle_ << "\n";
     saveFile << objectiveProgress_ << "\n";
     saveFile << questType_ << "\n";
+    saveFile << numObjectives_ << "/n";
     file.close();
 }
 
@@ -73,12 +92,15 @@ void quests::load(QString playerName)
     {
         xpReward_ = saveFile.readLine().toInt();
         objective_ = saveFile.readLine().toInt();
+        objectiveII_ = saveFile.readLine().toInt();
         amountComplete_ = saveFile.readLine().toInt();
+        amountCompleteII_ = saveFile.readLine().toInt();
         isQuestComplete_ = saveFile.readLine().toInt();
         isQuestActive_ = saveFile.readLine().toInt();
         questTitle_ = saveFile.readLine();
         objectiveProgress_ = saveFile.readLine();
         questType_ = saveFile.readLine().toInt();
+        numObjectives_ = saveFile.readLine().toInt();
         file.close();
     }
 }
@@ -103,6 +125,16 @@ void quests::setObjective(int objective)
     objective_ = objective;
 }
 
+int quests::getObjectiveII()
+{
+    return objectiveII_;
+}
+
+void quests::setObjectiveII(int objectiveII)
+{
+    objectiveII_ = objectiveII;
+}
+
 int quests::getAmountComplete()
 {
     return amountComplete_;
@@ -112,6 +144,17 @@ void quests::setAmountComplete(int amountComplete)
 {
     if (amountComplete_ != objective_)
         amountComplete_ += amountComplete;
+}
+
+int quests::getAmountCompleteII()
+{
+    return amountCompleteII_;
+}
+
+void quests::setAmountCompleteII(int amountCompleteII)
+{
+    if (amountCompleteII_ != objectiveII_)
+        amountCompleteII_ += amountCompleteII;
 }
 
 QString quests::getQuestTitle()
@@ -162,4 +205,9 @@ int quests::getQuestType()
 void quests::setQuestType(int questType)
 {
     questType_ = questType;
+}
+
+int quests::getNumObjectives()
+{
+    return numObjectives_;
 }
