@@ -11,7 +11,7 @@
 
 
 Player::Player(int health, int maxHealth, int maxAttackPower, int minAttackPower,
-               int vitality, int strength, int agility, int luck, int intelligence, int hit,
+               int vitality, int strength, int agility, int luck, int intelligence, int hit, int stamina, int maxStamina,
                int agilityDefault, int luckDefault)
     : health_(health),
       maxHealth_(maxHealth),
@@ -23,6 +23,8 @@ Player::Player(int health, int maxHealth, int maxAttackPower, int minAttackPower
       luck_(luck),
       intelligence_(intelligence),
       hit_(hit),
+      stamina_(stamina),
+      maxStamina_(maxStamina),
       agilityDefault_(agilityDefault),
       luckDefault_(luckDefault)
 {
@@ -31,6 +33,7 @@ Player::Player(int health, int maxHealth, int maxAttackPower, int minAttackPower
     XPTillLevel_ = 500;
     isAlive_ = true;
     potion_ = 0;
+    ration_ = 0;
     gold_ = 0;
     skillpoints_ = 0;
     specialAbilityCharge_ = 0;
@@ -48,6 +51,7 @@ Player::Player(int health, int maxHealth, int maxAttackPower, int minAttackPower
     isSpecialAbilityLearned_ = false;
     isSpecialReady_ = false;
     questsCompleted_ = 0;
+    location_ = 0;
     qsrand(QTime::currentTime().msec());
 }
 
@@ -64,7 +68,13 @@ int Player::doAttack(QString enemy)
 
     critRoll   = rand() % ((20 + 1) - 1) + 1;
 
-    if (critRoll == luckDefault_ - luckBonus_)
+    if (stamina_ == 0)
+        attackDmg_ = attackDmg_ / 2;
+
+    if (attackDmg_ == 0)
+        attackDmg_ = 1;
+
+    if (critRoll >= luckDefault_ - luckBonus_)
     {
         attackDmg_*= 2;
         message_ = name_ + " Attacks " + enemy + " for " + QString("%1").arg(attackDmg_) + " damage. CRITICAL HIT!\n";
@@ -80,6 +90,10 @@ int Player::doAttack(QString enemy)
 int Player::doSpecialAbility(QString enemy)
 {
     attackDmg_ = maxAttackPower_ * 3;
+
+    if (stamina_ == 0)
+        attackDmg_ = attackDmg_ / 2;
+
     message_ = name_ + " Attacks " + enemy + " for " + QString("%1").arg(attackDmg_) + " damage.\n";
 
     isSpecialReady_ = false;
@@ -97,13 +111,18 @@ int Player::doHitRoll()
 
 void Player::doHit(int dmg, int enemyHitRoll, QString enemyName, bool isEnemyAlive)
 {
+    int dodgeChance = agilityDefault_ + agilityBonus_;
+
+    if (stamina_ == 0)
+        dodgeChance = (agilityDefault_ + agilityBonus_) / 2;
+
     if (!isEnemyAlive)
     {
         message_ = name_ + " Wins the battle!\n\n";
     }
     else
     {
-        if (enemyHitRoll >= agilityDefault_ + agilityBonus_)
+        if (enemyHitRoll >= dodgeChance)
         {
             health_ = health_ - dmg;
             if (health_ <= 0)
@@ -156,6 +175,7 @@ void Player::doLevelUp()
         level_+= 1;
         //maxHealth_+= 10;
         health_ = maxHealth_;
+        stamina_ = maxStamina_;
         //maxAttackPower_+= 10;
         //minAttackPower_+= 10;
 
@@ -171,7 +191,7 @@ void Player::doLevelUp()
             msgBox.setText("<b>You achieved your first level up!</b><br>"
                            "---------------------------------------------------------------------<br><br>"
                            "Every time you level, you get 4 skill points to distribute between<br>"
-                           "any of these 5 stats<br><br>"
+                           "any of these 6 stats<br><br>"
                            "<b>Vitality</b><br>"
                            "Determines the amount of damage you can take from enemies.<br>"
                            "Each point towards Vitality increases your HP by 2<br><br>"
@@ -179,6 +199,9 @@ void Player::doLevelUp()
                            "Determines how much damage you can do to enemies<br>"
                            "Each point towards Strength increases your maximum amount of damage by 1<br>"
                            "and every 5 points increases your minimum amount of damage by 5<br><br>"
+                           "<b>Stamina</b><br>"
+                           "Determines how many actions you can take in  day<br>"
+                           "Each point towards stamina increases you maximum amount of stamina by 1<br><br>"
                            "<b>Agility</b><br>"
                            "Determines the chance at which you can dodge an enemy's attack<br>"
                            "Each 5 points towards Agility increases your chance at dodging<br>"
@@ -189,7 +212,7 @@ void Player::doLevelUp()
                            "damaging an enemy<br>"
                            "critical strikes cause 2x your maximum damage potential but can<br>"
                            "still be dodged by an enemy<br><br>"
-                           "<b>Hit</b><br>"
+                           "<b>Precision</b><br>"
                            "Determines the chance at which you can successfully strike an enemy<br>"
                            "Each 5 points towards Hit increases your chance to successfully "
                            "strike an enemy<br><br>"
@@ -224,7 +247,7 @@ void Player::usePotion()
             msgBox.setText("Your health is full.");
             msgBox.exec();
         }
-        else if (level_ <= 14)
+        else
         {
             health_ += 5;
             potion_ -= 1;
@@ -236,30 +259,6 @@ void Player::usePotion()
             msgBox.setText("      Potion used.            ");
             msgBox.exec();
 
-        }
-        else if (level_ >= 15 && level_ <= 29)
-        {
-            health_ += 100;
-            potion_ -= 1;
-            if (health_ > maxHealth_)
-                health_ = maxHealth_;
-            QSound::play("Sounds\\drinkPotion.wav");
-            QMessageBox msgBox;
-            msgBox.setWindowTitle("Use Potion");
-            msgBox.setText("      Potion used.            ");
-            msgBox.exec();
-        }
-        else if (level_ >= 30)
-        {
-            health_ += 100;
-            potion_ -= 1;
-            if (health_ > maxHealth_)
-                health_ = maxHealth_;
-            QSound::play("Sounds\\drinkPotion.wav");
-            QMessageBox msgBox;
-            msgBox.setWindowTitle("Use Potion");
-            msgBox.setText("      Potion used.            ");
-            msgBox.exec();
         }
     }
     else
@@ -273,7 +272,7 @@ void Player::usePotion()
 
 void Player::buyPotion()
 {
-    if (gold_ >= 5)
+    if (gold_ >= 20)
     {
         if (potion_ == 10)
         {
@@ -282,30 +281,10 @@ void Player::buyPotion()
             msgBox.setText("You cannot carry any more potions.");
             msgBox.exec();
         }
-        else if (level_<= 12)
+        else
         {
             QSound::play("Sounds\\potionDrop.wav");
-            gold_ -= 5;
-            potion_ += 1;
-            QMessageBox msgBox;
-            msgBox.setWindowTitle("Buy Potion");
-            msgBox.setText("You bought a potion.");
-            msgBox.exec();
-        }
-        else if (level_ >= 13 && level_ <= 14)
-        {
-            QSound::play("Sounds\\potionDrop.wav");
-            gold_ -= 8;
-            potion_ += 1;
-            QMessageBox msgBox;
-            msgBox.setWindowTitle("Buy Potion");
-            msgBox.setText("You bought a potion.");
-            msgBox.exec();
-        }
-        else if (level_ >= 15)
-        {
-            QSound::play("Sounds\\potionDrop.wav");
-            gold_ -= 10;
+            gold_ -= 20;
             potion_ += 1;
             QMessageBox msgBox;
             msgBox.setWindowTitle("Buy Potion");
@@ -317,6 +296,71 @@ void Player::buyPotion()
     {
         QMessageBox msgBox;
         msgBox.setWindowTitle("Buy Potion");
+        msgBox.setText("You do not have enough gold.");
+        msgBox.exec();
+    }
+}
+
+void Player::useRation()
+{
+    if (ration_ >= 1)
+    {
+        if (stamina_ == maxStamina_)
+        {
+            QMessageBox msgBox;
+            msgBox.setWindowTitle("Use Ration");
+            msgBox.setText("Your stamina is full.");
+            msgBox.exec();
+        }
+        else
+        {
+            stamina_ += 5;
+            ration_ -= 1;
+            if (stamina_ > maxStamina_)
+                stamina_ = maxStamina_;
+            QSound::play("Sounds\\eatRation.wav");
+            QMessageBox msgBox;
+            msgBox.setWindowTitle("Use Ration");
+            msgBox.setText("      Ration used.            ");
+            msgBox.exec();
+
+        }
+    }
+    else
+    {
+        QMessageBox msgBox;
+        msgBox.setWindowTitle("Use Ration");
+        msgBox.setText("You do not have a ration.");
+        msgBox.exec();
+    }
+}
+
+void Player::buyRation()
+{
+    if (gold_ >= 30)
+    {
+        if (ration_ == 10)
+        {
+            QMessageBox msgBox;
+            msgBox.setWindowTitle("Buy Ration");
+            msgBox.setText("You cannot carry any more rations.");
+            msgBox.exec();
+        }
+        else
+        {
+            QSound::play("Sounds\\rationDrop.wav");
+            gold_ -= 30;
+            ration_ += 1;
+            QMessageBox msgBox;
+            msgBox.setWindowTitle("Buy Ration");
+            msgBox.setText("You bought a ration.");
+            msgBox.exec();
+        }
+    }
+    else
+    {
+        QMessageBox msgBox;
+        msgBox.setWindowTitle("Buy Ration");
         msgBox.setText("You do not have enough gold.");
         msgBox.exec();
     }
@@ -352,6 +396,7 @@ void Player::save()
     saveFile << agilityDefault_ << "\n";
     saveFile << luck_ << "\n";
     saveFile << luckBonus_ << "\n";
+    saveFile << luckDefault_ << "\n";
     saveFile << intelligence_ << "\n";
     saveFile << intelligenceBonus_ << "\n";
     saveFile << agilityCount_ << "\n";
@@ -361,6 +406,10 @@ void Player::save()
     saveFile << hit_ << "\n";
     saveFile << hitCount_ << "\n";
     saveFile << hitBonus_ << "\n";
+    saveFile << stamina_ << "\n";
+    saveFile << maxStamina_ << "\n";
+    saveFile << ration_ << "\n";
+    saveFile << location_ << "\n";
     file.close();
 }
 
@@ -396,6 +445,7 @@ void Player::load(QString playerName)
         agilityDefault_ = saveFile.readLine().toInt();
         luck_ = saveFile.readLine().toInt();
         luckBonus_ = saveFile.readLine().toInt();
+        luckDefault_ = saveFile.readLine().toInt();
         intelligence_ = saveFile.readLine().toInt();
         intelligenceBonus_ = saveFile.readLine().toInt();
         agilityCount_ = saveFile.readLine().toInt();
@@ -405,6 +455,10 @@ void Player::load(QString playerName)
         hit_ = saveFile.readLine().toInt();
         hitCount_ = saveFile.readLine().toInt();
         hitBonus_ = saveFile.readLine().toInt();
+        stamina_ = saveFile.readLine().toInt();
+        maxStamina_ = saveFile.readLine().toInt();
+        ration_ = saveFile.readLine().toInt();
+        location_ = saveFile.readLine().toInt();
         file.close();
     }
 }
@@ -506,6 +560,46 @@ int Player::getHit()
     return hit_;
 }
 
+void Player::setStamina(int stamina)
+{
+    stamina_ = stamina;
+}
+
+void Player::addStamina(int stamina)
+{
+    stamina_ += stamina;
+
+    if (stamina_ > maxStamina_)
+        stamina_ = maxStamina_;
+}
+
+void Player::removeStamina(int action)
+{
+    if (action == 0) //travel
+        stamina_ -= 2;
+    else if (action == 1) //battle
+        stamina_ -= 1;
+
+    if (stamina_ <= 0)
+        stamina_ = 0;
+}
+
+int Player::getStamina()
+{
+    return stamina_;
+}
+
+int Player::getMaxStamina()
+{
+    return maxStamina_;
+}
+
+void Player::addMaxStamina(int maxStamina)
+{
+    maxStamina_ += maxStamina;
+    stamina_ = maxStamina_;
+}
+
 bool Player::isAlive()
 {
     return isAlive_;
@@ -519,6 +613,14 @@ int Player::getHealth()
 void Player::setHealth(int health)
 {
     health_ = health;
+}
+
+void Player::addHealth(int health)
+{
+    health_ += health;
+
+    if (health_ > maxHealth_)
+        health_ = maxHealth_;
 }
 
 int Player::getMaxAttackPower()
@@ -605,6 +707,11 @@ int Player::getPotion()
     return potion_;
 }
 
+int Player::getRation()
+{
+    return ration_;
+}
+
 void Player::addPotion(int potion)
 {
     if (potion_ == 10)
@@ -618,6 +725,24 @@ void Player::addPotion(int potion)
         potion_ += potion;
 }
 
+void Player::addRation(int ration)
+{
+    if (ration_ == 10)
+    {
+        QMessageBox msgBox;
+        msgBox.setWindowTitle("Buy Ration");
+        msgBox.setText("You cannot carry any more rations.");
+        msgBox.exec();
+    }
+    else
+        ration_ += ration;
+}
+
+void Player::removeRation()
+{
+    ration_ -= 1;
+}
+
 int Player::getGold()
 {
     return gold_;
@@ -626,6 +751,21 @@ int Player::getGold()
 void Player::addGold(int gold)
 {
     gold_ += gold;
+}
+
+void Player::removeGold(int gold)
+{
+    gold_ -= gold;
+}
+
+int Player::getLocation()
+{
+    return location_;
+}
+
+void Player::setLocation(int location)
+{
+    location_ = location;
 }
 
 QString Player::getName()

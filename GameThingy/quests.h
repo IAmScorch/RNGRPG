@@ -15,11 +15,14 @@ private:
     int isQuestActive_;
     int questType_;
     int numObjectives_;
+    int handInLocation_;
     QString questTitle_;
     QString objectiveProgress_;
+    QString handInNPC_;
 
 public:
-    quests(int xpReward, int objective, int objectiveII, int amountComplete, int amountCompleteII, int isQuestComplete, int isQuestActive, int questType, int numObjectives);
+    quests(int xpReward, int objective, int objectiveII, int amountComplete, int amountCompleteII,
+           int isQuestComplete, int isQuestActive, int questType, int numObjectives, int handInLocation, QString handInNPC);
     ~quests(void);
 
     void beginQuest(QString title, QString objective, int isQuestActive);
@@ -59,6 +62,8 @@ public:
     void setQuestType(int questType);
 
     int getNumObjectives();
+    int getHandInLocation();
+    QString getHandInNPC();
 };
 
 #endif // QUESTS_H

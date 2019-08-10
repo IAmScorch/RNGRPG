@@ -16,6 +16,7 @@ private:
     int skillpoints_;
     int level_;
     int potion_;
+    int ration_;
     int gold_;
     int specialAbilityMaxCharges_;
     int specialAbilityCharged_;
@@ -27,6 +28,8 @@ private:
     int luck_;
     int intelligence_;
     int hit_;
+    int stamina_;
+    int maxStamina_;
 
     int strengthCount_;
     int agilityCount_;
@@ -50,10 +53,12 @@ private:
     QString name_;
     QString message_;
 
+    int location_;
+
     void doLevelUp();
 public:
     Player(int health, int maxHealth, int maxAttackPower, int minAttackPower,
-           int vitality, int strength, int agility, int luck, int intelligence, int hit,
+           int vitality, int strength, int agility, int luck, int intelligence, int hit, int stamina, int maxStamina,
            int agilityDefault, int luckDefault);
     ~Player(void);
 
@@ -64,6 +69,8 @@ public:
     void checkXP();
     void usePotion();
     void buyPotion();
+    void useRation();
+    void buyRation();
     void save();
     void load(QString playerName);
     void addHealthUpgrade(int health);
@@ -87,8 +94,17 @@ public:
     void addHit(int hit);
     int getHit();
 
+    void setStamina(int stamina);
+    void removeStamina(int action);
+    void addStamina(int stamina);
+    int getStamina();
+
+    int getMaxStamina();
+    void addMaxStamina(int maxStamina);
+
     int getHealth();
     void setHealth(int health);
+    void addHealth(int health);
 
     int getMaxHealth();
     void setMaxHealth(int maxHealth);
@@ -117,8 +133,16 @@ public:
     int getPotion();
     void addPotion(int potion);
 
+    int getRation();
+    void addRation(int ration);
+    void removeRation();
+
     int getGold();
     void addGold(int gold);
+    void removeGold(int gold);
+
+    int getLocation();
+    void setLocation(int location);
 
     QString getName();
     void setName(QString name);

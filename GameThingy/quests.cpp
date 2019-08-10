@@ -8,7 +8,8 @@
 #include <QMessageBox>
 #include "quests.h"
 
-quests::quests(int xpReward, int objective, int objectiveII, int amountComplete, int amountCompleteII, int isQuestComplete, int isQuestActive, int questType, int numObjectives)
+quests::quests(int xpReward, int objective, int objectiveII, int amountComplete, int amountCompleteII,
+               int isQuestComplete, int isQuestActive, int questType, int numObjectives, int handInLocation, QString handInNPC)
     : xpReward_(xpReward),
       objective_(objective),
       objectiveII_(objectiveII),
@@ -17,7 +18,9 @@ quests::quests(int xpReward, int objective, int objectiveII, int amountComplete,
       isQuestComplete_(isQuestComplete),
       isQuestActive_(isQuestActive),
       questType_(questType),
-      numObjectives_(numObjectives)
+      numObjectives_(numObjectives),
+      handInLocation_(handInLocation),
+      handInNPC_(handInNPC)
 {
     qsrand(QTime::currentTime().msec());
 }
@@ -78,7 +81,9 @@ void quests::save(QString playerName)
     saveFile << questTitle_ << "\n";
     saveFile << objectiveProgress_ << "\n";
     saveFile << questType_ << "\n";
-    saveFile << numObjectives_ << "/n";
+    saveFile << numObjectives_ << "\n";
+    saveFile << handInLocation_ << "\n";
+    saveFile << handInNPC_ << "\n";
     file.close();
 }
 
@@ -101,6 +106,8 @@ void quests::load(QString playerName)
         objectiveProgress_ = saveFile.readLine();
         questType_ = saveFile.readLine().toInt();
         numObjectives_ = saveFile.readLine().toInt();
+        handInLocation_ = saveFile.readLine().toInt();
+        handInNPC_ = saveFile.readLine();
         file.close();
     }
 }
@@ -210,4 +217,14 @@ void quests::setQuestType(int questType)
 int quests::getNumObjectives()
 {
     return numObjectives_;
+}
+
+int quests::getHandInLocation()
+{
+    return handInLocation_;
+}
+
+QString quests::getHandInNPC()
+{
+    return handInNPC_;
 }

@@ -60,6 +60,7 @@ private slots:
     void openCharacterTab();
     void openQuestTab();
     void setPlayerHealth();
+    void setPlayerStamina();
     void setEnemyHealth();
     void resetQuestInfo();
 
@@ -69,7 +70,49 @@ private slots:
 
     void on_btnIncreaseHitChance_clicked();
 
+    void on_btnIncreaseStamina_clicked();
+
+    void on_btnUseRationBS_clicked();
+
+    void on_btnTravel_clicked();
+
+    void on_btnBuyRation_clicked();
+
+    void on_btnUseRation_clicked();
+
+    void on_btnRestBS_clicked();
+
 private:
+    //Locations
+    //0 - Windlehelm
+    //1 - Bandit Barracks
+    //2 - Deepwood Forest
+    //3 - Riverbane
+    //4 - Riverbane Mine
+    //5 - Andorjaul
+    enum locations_ {
+        windlehelm = 0,
+        banditBarracks,
+        deepwoodForest,
+        riverbane,
+        riverbaneMine,
+        andorjaul
+    };
+
+    QString strLocations_[6] = {"Windlehelm",
+                                "Bandit Barracks",
+                                "Deepwood Forest",
+                                "Riverbane",
+                                "Riverbane Mine",
+                                "Andorjaul"};
+
+    QString strRestLocation_[6] = {"City",
+                                   "Camp",
+                                   "Camp",
+                                   "Town",
+                                   "Camp",
+                                   "Town"};
+
     Ui::GameLogic *ui;
     Player *player_;
     Bandit *bandit_;
@@ -96,12 +139,14 @@ private:
     QShortcut *qsAbandonSC_;
     QShortcut *qsHandInSC_;
     int enemyMaxHP_;
+    locations_ location_;
 
     void checkLevel();
     void createCharacter();
     void setPlayerInfo();
     void checkSkillPoints();
     void checkQuest();
+    void checkLocation();
 };
 
 #endif // GAMELOGIC_H

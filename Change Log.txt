@@ -1,0 +1,23 @@
+Current Version: 0.3.0
+
+Change Date: 08/09/2019
+Version 0.3.0
+Major change to gameplay in this version
+New stat: Stamina has been added
+New item: Ration. Used to restore stamina. They also restore Health when used at camp
+Cost of potions has gone up
+Items can only be bought when in a town or city
+Stamina indicates how many actions you can take duirng a day. An action is battling or traveling
+You now have to travel to areas which cost Stamina. Battles also comsume stamina. When you run out of stamina, you can no longer travel until you restore your stamina.
+Health and Stamina are restored in multiple was now. Potions restore Health. Rations restore Stamina. When in a city or town, you can stay at an Inn to restore health and stamina. Inns cost to rest at for the night. City Inns restore all your health and stamina. Town Inns restore a small amount of health and stamina. Or you can camp for free at any location. Camping only restores a tiny amount of stamina and no health. If you have Rations you can use them to restore health a camp.
+When begining or handing in quests, you now have to be in a specific area to pick them up.
+Updated how drop rates work for items. Enemies still always drop gold, and some times a potion and they now also some times drop rations.
+
+Change Date: 08/07/2019
+Version 0.2.1
+Made changes so that quests can gave 2 objectives
+
+Change Date: 11/28/2018
+Version 0.2.0
+his version includes some huge changes to leveling, progression and stats. The old quests and battle locations are gone and replaced with new ones.
+This version is more of a test of the new leveling, stats and progression system and includes the first 6 quests of the story line which is still being worked on. Lore popups have also been added that when you go to the battle screen and choose a battle location before starting a quest, it will give you information on those locations.

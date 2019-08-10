@@ -32,20 +32,23 @@ int Bandit::doAttack(QString enemy)
 {
 
     //bool doesCrit;
-    int critical;
-    if (critNum_ == 0)
-        critNum_ = (rand() % critChance_ + 1);
+    //int critical;
+    int critRoll;
+    //if (critNum_ == 0)
+    //    critNum_ = (rand() % critChance_ + 1);
+
+    critRoll   = rand() % ((20 + 1) - 1) + 1;
 
     //attackDmg_ = (rand() % 5 + minAttackPower_);
     attackDmg_ = rand() % ((maxAttackPower_ + 1) - minAttackPower_) + minAttackPower_;
-    critical   = (rand() % critChance_ + 1);
-    critDmg_   = (rand() % 10 + 5);
+  //  critical   = (rand() % critChance_ + 1);
+  //  critDmg_   = (rand() % 10 + 5);
 
     if (isAlive_)
     {
-        if (critical == critNum_)
+        if (critRoll >= critChance_)
         {
-            attackDmg_+= critDmg_;
+            attackDmg_ *= 2;
             message_ = name_ + " Attacks " + enemy + " for " + QString("%1").arg(attackDmg_) + " damage. CRITICAL HIT!\n";
         }
         else
