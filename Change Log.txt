@@ -1,4 +1,9 @@
-Current Version: 0.3.0
+Current Version: 0.3.1
+
+Change Date: 03/09/2020
+Version 0.3.1
+Added a new item drop system for enemys
+Minor change for now since it currently just says things have dropped and doesn't actually do anything with the dropped items yet.
 
 Change Date: 08/09/2019
 Version 0.3.0

@@ -4,10 +4,11 @@
 #include <QTime>
 #include <QMessageBox>
 #include <QSound>
+#include <algorithm>
 #include "bandit.h"
 
 Bandit::Bandit(QString name, int health, int maxAttackPower, int minAttackPower,
-               int critChance, int XPReward, int level, int enemyType, int agility, int objType)
+               int critChance, int XPReward, int level, int enemyType, int agility, int objType, int itemDropChance)
     :name_(name),
     health_(health),
     maxAttackPower_(maxAttackPower),
@@ -17,10 +18,17 @@ Bandit::Bandit(QString name, int health, int maxAttackPower, int minAttackPower,
     level_(level),
     enemyType_(enemyType),
     agility_(agility),
-    objType_(objType)
+    objType_(objType),
+    itemDropChance_(itemDropChance)
 {
     qsrand(QTime::currentTime().msec());
     isAlive_ = true;
+
+//    int drop = rand()% 17 + 1;
+//    QMessageBox msgBox;
+//    msgBox.setWindowTitle("Loot Drop");
+//    msgBox.setText(QString("Bandit Leader dropped %1.").arg(banditItemDrops_[drop][0]));
+//    msgBox.exec();
 }
 
 
@@ -128,6 +136,98 @@ int Bandit::goldDrop()
         msgBox.exec();
     }
     return gold;
+}
+
+QString Bandit::doLootDrop(QString enemyName, int enemyType, int itemDropChance)
+{
+    int dropChance;
+    int oddsRoll;
+    QString itemChance;
+    int itemsToDropped;
+    int itemsDropped;
+    QString lootMessage;
+
+    dropChance = rand()% 100 + 1;
+    lootMessage = enemyName + " dropped no loot";
+    oddsRoll = 0;
+    itemChance = "";
+
+    if (dropChance <= itemDropChance)
+    {
+        lootMessage = enemyName + " dropped:\n";
+        itemsToDropped = rand()% 3 + 1;
+        itemsDropped = 0;
+
+        for (int i = 0; i < itemsToDropped; i++)
+        {
+            if (enemyType == 1 || enemyType == 2 || enemyType == 3 || enemyType == 4 || enemyType == 5)
+            {
+                int cols = sizeof(*banditItemDropsChance_)/(sizeof (int *));
+                int rows =  sizeof banditItemDrops_ / sizeof banditItemDrops_[0];
+
+                int count = 0;
+                QVector<QString> odds;
+
+                for (int x = 0; x < cols; x++)
+                {
+                    count += banditItemDropsChance_[0][x].toInt();
+                    for (int y = 0; y < banditItemDropsChance_[0][x].toInt(); y++)
+                    {
+                        odds.push_back(banditItemDropsChance_[0][x]);
+                    }
+                }
+
+                QString vector;
+                for (int z = 0; z < odds.length(); z++)
+                {
+                    vector += odds.value(z) + ", ";
+                }
+                vector = "";
+                for (int b = 0; b < odds.length(); b++)
+                {
+                    std::random_shuffle (odds.begin(), odds.end());
+                }
+                for (int a = 0; a < odds.length(); a++)
+                {
+                    vector += odds.value(a) + ", ";
+                }
+
+                oddsRoll = rand()% odds.length();
+                itemChance = odds.value(oddsRoll);
+
+                for (int c = 0; c < cols; c++)
+                {
+                    if (itemChance == banditItemDropsChance_[0][c])
+                    {
+                        QVector<QString> numItems;
+                        for (int e = 0; e < rows; e++)
+                        {
+                            if (itemChance == banditItemDrops_[e][15])
+                            {
+                                numItems.push_back(banditItemDrops_[e][0]);
+                            }
+                        }
+
+                        for (int f = 0; f < numItems.length(); f++)
+                        {
+                            std::random_shuffle (numItems.begin(), numItems.end());
+                        }
+
+                        int whichItem = rand()% numItems.length();
+                        lootMessage += numItems.value(whichItem) + "\n";
+                    }
+                }
+            }
+        }
+    }
+
+
+    QMessageBox msgBox3;
+    msgBox3.setWindowTitle("Loot Drop");
+    msgBox3.setText(QString(lootMessage));
+    msgBox3.exec();
+
+    return 0;
 }
 
 bool Bandit::isAlive()
@@ -238,5 +338,10 @@ int Bandit::getEnemyType()
 void Bandit::setEnemyType(int enemyType)
 {
     enemyType_ = enemyType;
+}
+
+int Bandit::getItemDropChance()
+{
+    return itemDropChance_;
 }
 

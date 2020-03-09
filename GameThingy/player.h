@@ -2,6 +2,7 @@
 #define PLAYER_H
 #include <string>
 #include <QString>
+#include <QVector>
 
 class Player
 {
@@ -52,6 +53,7 @@ private:
     bool isAlive_;
     QString name_;
     QString message_;
+    QVector<QString> inventory_;
 
     int location_;
 

@@ -91,8 +91,8 @@ GameLogic::GameLogic(QWidget *parent) :
     ui->btnLoad->setStyleSheet("background-color: rgb(225, 225, 225, 200)");
     ui->btnSave->setStyleSheet("background-color: rgb(225, 225, 225, 200)");
     ui->btnQuit->setStyleSheet("background-color: rgb(225, 225, 225, 200)");
-    bandit_ = new Bandit("", 0, 0, 0, 0, 0, 0, 0, 0, 0);
-    banditBoss_ = new Bandit("", 0, 0, 0, 0, 0, 0, 0, 0, 0);
+    bandit_ = new Bandit("", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+    banditBoss_ = new Bandit("", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
     warrior_ = new Warrior("", 0, 0, 0, 0, 0);
     warriorBoss_ = new Warrior("", 0, 0, 0, 0, 0);
     player_ = new Player(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
@@ -163,8 +163,8 @@ void GameLogic::on_btnNewGame_clicked()
                            "The <b>Action</b> tab allows you to buy and use your potions and rations<br><br>"
                            "The <b>Character</b> tab shows you information about your character. This is also<br>"
                            "where you go when you level up to spread your skill points between stats<br><br>"
-                           "Quests will give you rewards such gold, potions, ration and equipment as well<br>"
-                           "as experience to level up your characer. You must also complete Quests if you<br>"
+                           "Quests will give you rewards such gold, potions, rations and equipment as well<br>"
+                           "as experience to level up your character. You must also complete quests if you<br>"
                            "wish to progress the story.<br>"
                            "Go to the <b>Quests</b> tab to start, abandon, or hand in quests.<br><br>"
                            "Speaking of quests, it looks like Bormier has a quest for you here in Windlehelm.<br>"
@@ -248,27 +248,28 @@ void GameLogic::on_btnAttack_clicked()
             int potChance = rand() % 100 + 1;
             int ratChance = rand() % 100 + 1;
             player_->addGold(bandit_->goldDrop());
+            bandit_->doLootDrop(bandit_->getName(), bandit_->getEnemyType(), bandit_->getItemDropChance());
             ui->lblGoldAmount->setText(QString("Gold: %1").arg(player_->getGold()));
             if (potChance <= 20)
             {
-                QSound::play("Sounds\\potionDrop.wav");
-                QMessageBox msgBox;
-                msgBox.setWindowTitle("Item Drop");
-                msgBox.setText(QString("%1 dropped a potion").arg(bandit_->getName()));
-                msgBox.exec();
-                player_->addPotion(1);
-                ui->lblPotionAmount->setText(QString("Potions: %1").arg(player_->getPotion()));
+//                QSound::play("Sounds\\potionDrop.wav");
+//                QMessageBox msgBox;
+//                msgBox.setWindowTitle("Item Drop");
+//                msgBox.setText(QString("%1 dropped a potion").arg(bandit_->getName()));
+//                msgBox.exec();
+//                player_->addPotion(1);
+//                ui->lblPotionAmount->setText(QString("Potions: %1").arg(player_->getPotion()));
             }
 
             if (ratChance <= 7)
             {
-                QSound::play("Sounds\\rationDrop.wav");
-                QMessageBox msgBox;
-                msgBox.setWindowTitle("Item Drop");
-                msgBox.setText(QString("%1 dropped a ration").arg(bandit_->getName()));
-                msgBox.exec();
-                player_->addRation(1);
-                ui->lblRationAmount->setText(QString("Rations: %1").arg(player_->getPotion()));
+//                QSound::play("Sounds\\rationDrop.wav");
+//                QMessageBox msgBox;
+//                msgBox.setWindowTitle("Item Drop");
+//                msgBox.setText(QString("%1 dropped a ration").arg(bandit_->getName()));
+//                msgBox.exec();
+//                player_->addRation(1);
+//                ui->lblRationAmount->setText(QString("Rations: %1").arg(player_->getPotion()));
             }
 
             player_->removeStamina(1);
@@ -684,11 +685,11 @@ void GameLogic::checkLevel()
     {
         if (quest_->getQuestType() == 0)
         {
-            bandit_ = new Bandit("banditName", 0, 0, 0, 0, 0, 0, 999, 0, 0);
+            bandit_ = new Bandit("banditName", 0, 0, 0, 0, 0, 0, 999, 0, 0, 0);
         }
         else if (quest_->getQuestType() >= 4)
         {
-            bandit_ = new Bandit("banditName", 0, 0, 0, 0, 0, 0, 999, 0, 0);
+            bandit_ = new Bandit("banditName", 0, 0, 0, 0, 0, 0, 999, 0, 0, 0);
         }
         else
         {
@@ -707,6 +708,7 @@ void GameLogic::checkLevel()
             int banditType = 0;
             int banditAgility = 3;
             int objType = 1;
+            int banditDropChance = 90;
 
             if (quest_->getQuestType() == 2 && quest_->getIsQuestActive() == 1 && trainerChance >= 75)
             {
@@ -720,6 +722,7 @@ void GameLogic::checkLevel()
                 banditType = 2;
                 banditLevel = 2;
                 banditAgility = 5;
+
             }
             else
             {
@@ -733,14 +736,14 @@ void GameLogic::checkLevel()
             }
 
             bandit_ = new Bandit(banditName, banditHealth, banditMaxAttackPower, banditMinAttackPower,
-                                 banditCritChance, banditXPReward, banditLevel, banditType, banditAgility, objType);
+                                 banditCritChance, banditXPReward, banditLevel, banditType, banditAgility, objType, banditDropChance);
         }
     }
     else if (location_ == deepwoodForest)
     {
         if (player_->getQuestsCompleted() < 2)
         {
-            bandit_ = new Bandit("banditName", 0, 0, 0, 0, 0, 0, 999, 0, 0);
+            bandit_ = new Bandit("banditName", 0, 0, 0, 0, 0, 0, 999, 0, 0, 0);
         }
         else
         {
@@ -759,6 +762,7 @@ void GameLogic::checkLevel()
             int banditType = 0;
             int banditAgility = 3;
             int objType = 1;
+            int banditDropChance = 90;
 
             if (quest_->getQuestType() == 3 && quest_->getIsQuestActive() == 1 && trainerChance >= 85)
             {
@@ -796,18 +800,18 @@ void GameLogic::checkLevel()
             }
 
             bandit_ = new Bandit(banditName, banditHealth, banditMaxAttackPower, banditMinAttackPower,
-                                 banditCritChance, banditXPReward, banditLevel, banditType, banditAgility, objType);
+                                 banditCritChance, banditXPReward, banditLevel, banditType, banditAgility, objType, banditDropChance);
         }
     }
     else if (location_ == riverbane)
     {
         if (quest_->getQuestType() < 4 )
         {
-            bandit_ = new Bandit("banditName", 0, 0, 0, 0, 0, 0, 999, 0, 0);
+            bandit_ = new Bandit("banditName", 0, 0, 0, 0, 0, 0, 999, 0, 0, 0);
         }
         else if (quest_->getQuestType() > 4)
         {
-            bandit_ = new Bandit("banditName", 0, 0, 0, 0, 0, 0, 999, 0, 0);
+            bandit_ = new Bandit("banditName", 0, 0, 0, 0, 0, 0, 999, 0, 0, 0);
         }
         else
         {
@@ -825,6 +829,7 @@ void GameLogic::checkLevel()
             int banditType = 4;
             int banditAgility = 4;
             int objType = 1;
+            int banditDropChance = 90;
 
             banditHealth = rand() % ((12 + 1) - 9) + 9;
             enemyMaxHP_ = banditHealth;
@@ -834,19 +839,19 @@ void GameLogic::checkLevel()
             banditXPReward = 12;
 
             bandit_ = new Bandit(banditName, banditHealth, banditMaxAttackPower, banditMinAttackPower,
-                                 banditCritChance, banditXPReward, banditLevel, banditType, banditAgility, objType);
+                                 banditCritChance, banditXPReward, banditLevel, banditType, banditAgility, objType, banditDropChance);
         }
     }
     else if (location_ == riverbaneMine)
     {
         if (quest_->getQuestType() < 7 )
         {
-            bandit_ = new Bandit("banditName", 0, 0, 0, 0, 0, 0, 999, 0, 0);
+            bandit_ = new Bandit("banditName", 0, 0, 0, 0, 0, 0, 999, 0, 0, 0);
         }
         else if (quest_->getQuestType() > 7 || player_->getQuestsCompleted() == 7 ||
                  (quest_->getQuestType() == 7 && quest_->getAmountCompleteII() == quest_->getObjectiveII()))
         {
-            bandit_ = new Bandit("banditName", 0, 0, 0, 0, 0, 0, 999, 0, 0);
+            bandit_ = new Bandit("banditName", 0, 0, 0, 0, 0, 0, 999, 0, 0, 0);
         }
         else
         {
@@ -864,6 +869,7 @@ void GameLogic::checkLevel()
             int banditType = 7;
             int banditAgility = 4;
             int objType = 1;
+            int banditDropChance = 90;
 
             if (quest_->getAmountComplete() == quest_->getObjective())
             {
@@ -889,14 +895,14 @@ void GameLogic::checkLevel()
             }
 
             bandit_ = new Bandit(banditName, banditHealth, banditMaxAttackPower, banditMinAttackPower,
-                                 banditCritChance, banditXPReward, banditLevel, banditType, banditAgility, objType);
+                                 banditCritChance, banditXPReward, banditLevel, banditType, banditAgility, objType, banditDropChance);
         }
     }
     else if (location_ == andorjaul)
     {
         if (quest_->getQuestType() < 6 && player_->getQuestsCompleted() < 7)
         {
-            bandit_ = new Bandit("banditName", 0, 0, 0, 0, 0, 0, 999, 0, 0);
+            bandit_ = new Bandit("banditName", 0, 0, 0, 0, 0, 0, 999, 0, 0, 0);
         }
         else
         {
@@ -914,6 +920,7 @@ void GameLogic::checkLevel()
             int banditType = 4;
             int banditAgility = 5;
             int objType = 1;
+            int banditDropChance = 75;
             int andorjaulSettlerChance = rand() % ((100 + 1) - 1) + 1;
 
             if (quest_->getQuestType() == 6  && quest_->getIsQuestActive() == 1 && andorjaulSettlerChance >= 60)
@@ -939,12 +946,12 @@ void GameLogic::checkLevel()
             }
 
             bandit_ = new Bandit(banditName, banditHealth, banditMaxAttackPower, banditMinAttackPower,
-                                 banditCritChance, banditXPReward, banditLevel, banditType, banditAgility, objType);
+                                 banditCritChance, banditXPReward, banditLevel, banditType, banditAgility, objType, banditDropChance);
         }
     }
     else
     {
-        bandit_ = new Bandit("banditName", 0, 0, 0, 0, 0, 0, 998, 0, 0);
+        bandit_ = new Bandit("banditName", 0, 0, 0, 0, 0, 0, 998, 0, 0, 0);
     }
 }
 
@@ -2211,7 +2218,7 @@ void GameLogic::on_btnBeginQuest_clicked()
                                    "a huge group of Bandit Initiates have set up camp inside the forest<br>"
                                    "lead by a high value target. They're lead by Gren, one of Thragg's<br>"
                                    "most trusted trainers.<br><br>"
-                                   "They've set up their camp just out of site of a main trail through<br>"
+                                   "They've set up their camp just out of site of a main road through<br>"
                                    "Deepwood Forest. Odds are they are setting up to ambush our convoys.<br><br>"
                                    "Gren will be hard to get to as he always throws his initiates ahead<br>"
                                    "of him into battle and retreats the second he gets a chance. My scouts<br>"

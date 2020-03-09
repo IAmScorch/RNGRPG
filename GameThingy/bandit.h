@@ -18,19 +18,70 @@ private:
     int enemyType_;
     int agility_;
     int objType_;
+    int itemDropChance_;
     bool isAlive_;
     bool isHit_;
     QString message_;
 
+    QString banditItemDrops_ [17][16] = {
+        {"Tattered Shirt",      "0","9","0","0","0","0","0","5","0","1","0","0","0","0","90"},
+        {"Weak potion",         "0","1","0","0","1","2","0","2","1","1","0","0","0","0","60"},
+        {"Weak Dagger",         "1","2","0","0","0","0","1","10","0","2","1","3","0","2","40"},
+        {"Weak Short Sword",    "1","2","0","0","0","0","1","15","0","4","1","4","0","1","40"},
+        {"Weak Wooden Sheild",  "1","4","0","0","0","0","1","10","0","5","0","0","4","2","40"},
+        {"Wooden Sheild",       "1","4","0","0","0","0","1","12","0","5","0","0","5","2","40"},
+        {"Weak Long Sword",     "1","2","0","0","0","0","1","20","0","6","1","7","0","3","35"},
+        {"Ration",              "0","1","0","0","2","5","0","10","1","1","0","0","0","0","20"},
+        {"Short Sword",         "1","2","0","0","0","0","1","17","0","4","2","5","0","1","20"},
+        {"Dagger",              "1","2","0","0","0","0","1","12","0","2","1","4","0","2","20"},
+        {"Long Sword",          "1","2","0","0","0","0","1","25","0","6","3","7","0","3","15"},
+        {"Sharp Dagger",        "1","2","0","0","0","0","1","15","0","2","1","5","0","2","10"},
+        {"Sharp Short Sword",   "1","2","0","0","0","0","1","20","0","4","2","7","0","1","10"},
+        {"Sharp Long Sword",    "1","2","0","0","0","0","1","27","0","6","3","9","0","3","10"},
+        {"Steel Sheild",        "1","4","0","0","0","0","1","15","0","6","0","0","7","2","10"},
+        {"Uncommon Item",       "2","8","0","0","0","0","1","0","0","0","0","0","0","0","5"},
+        {"Rare Item",           "3","8","0","0","0","0","1","0","0","0","0","0","0","0","1"}
+    };
+
+    QString banditItemDropsChance_ [2][9] = {
+        {"90","60","40","35","20","15","10","5","1"},
+        {"1", "1", "4", "1", "3", "1", "4", "1","1"}
+    };
+
+    QString banditInitiateItemDrops_ [1][16] = {
+        {"Bandit Initiate Armour","0","9","0","0","0","0","0","7","0","3","0","0","0","0","50"}
+    };
+
+    QString banditTrainerItemDrops_ [2][16] = {
+        {"Bandit Trainer Armour","0","9","0","0","0","0","0","7","0","3","0","0","0","0","50"},
+        {"Potion","0","1","0","0","1","5","0","10","0","1","0","0","0","0","30"}
+    };
+
+    QString banditGrenItemDrops_ [2][16] = {
+        {"Trainer Gren's Head","0","9","0","0","0","0","0","7","0","3","0","0","0","0","100"},
+        {"Potion","0","1","0","0","1","5","0","10","0","1","0","0","0","0","30"}
+    };
+
+    QString banditRaiderItemDrops_ [2][16] = {
+        {"Bandit Raider Armour","0","9","0","0","0","0","0","7","0","3","0","0","0","0","50"},
+        {"Potion","0","1","0","0","1","5","0","10","0","1","0","0","0","0","30"}
+    };
+
+    QString banditAmbusherItemDrops_ [2][16] = {
+        {"Bandit Initiate Armour","0","9","0","0","0","0","0","7","0","3","0","0","0","0","50"},
+        {"Potion","0","1","0","0","1","5","0","10","0","1","0","0","0","0","30"}
+    };
+
 public:
     Bandit(QString name, int health, int maxAttackPower, int minAttackPower,
-        int critChance, int XPReward, int level, int enemyType, int agility, int objType);
+        int critChance, int XPReward, int level, int enemyType, int agility, int objType, int itemDropChance);
     ~Bandit(void);
 
     int doAttack(QString enemy);
     int doHitRoll();
     void doHit(int dmg, int playerHitRoll, QString playerName);
     int goldDrop();
+    QString doLootDrop(QString enemyName, int enemyType, int itemDropChance);
 
     int getHealth();
     void setHealth(int health);
@@ -67,6 +118,8 @@ public:
 
     int getEnemyType();
     void setEnemyType(int enemyType);
+
+    int getItemDropChance();
 };
 
 #endif // BANDIT_H
