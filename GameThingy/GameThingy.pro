@@ -13,6 +13,8 @@ TEMPLATE = app
 QMAKE_CXXFLAGS += -std=c++11
 
 SOURCES += main.cpp\
+    inventorybag.cpp \
+    itemcrossreference.cpp \
     player.cpp \
     bandit.cpp \
     warrior.cpp \
@@ -20,9 +22,13 @@ SOURCES += main.cpp\
     quests.cpp
 
 HEADERS  += gamelogic.h \
+    inventorybag.h \
+    item.h \
+    itemcrossreference.h \
     player.h \
     bandit.h \
     warrior.h \
     quests.h
 
-FORMS    += IntroMenu.ui
+FORMS    += IntroMenu.ui \
+    inventorybag.ui

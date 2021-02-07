@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>InventoryBag</class>
+ <widget class="QDialog" name="InventoryBag">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>300</height>
+   </rect>
+  </property>
+  <property name="contextMenuPolicy">
+   <enum>Qt::DefaultContextMenu</enum>
+  </property>
+  <property name="windowTitle">
+   <string>Inventory</string>
+  </property>
+  <widget class="QListWidget" name="lstEquipment">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>35</y>
+     <width>185</width>
+     <height>110</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QListWidget" name="lstInventory">
+   <property name="geometry">
+    <rect>
+     <x>205</x>
+     <y>35</y>
+     <width>185</width>
+     <height>210</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QLabel" name="lblInventory">
+   <property name="geometry">
+    <rect>
+     <x>205</x>
+     <y>10</y>
+     <width>150</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">color: rgb(255, 255, 255);</string>
+   </property>
+   <property name="text">
+    <string>Inventory</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="lblEquipment">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>10</y>
+     <width>150</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">color: rgb(255, 255, 255);</string>
+   </property>
+   <property name="text">
+    <string>Equipment</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btnClose">
+   <property name="geometry">
+    <rect>
+     <x>80</x>
+     <y>210</y>
+     <width>80</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Close</string>
+   </property>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

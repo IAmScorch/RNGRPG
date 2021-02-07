@@ -1,6 +1,7 @@
 #ifndef BANDIT_H
 #define BANDIT_H
 #include <QString>
+#include "item.h"
 
 class Bandit
 {
@@ -23,13 +24,23 @@ private:
     bool isHit_;
     QString message_;
 
+    QString itemStatNames[9] = {"Vitality","Strength","Stamina","Agility","Luck","Precision","Dodge","Block","Hit"};
+    QString weaponTypes[3] = {"Dagger","Short Sword","Long Sword"};
+    QString armourTypes[4] = {"Cloth","Leather","Mail","Plate"};
+    QString weaponPrefixes[20] = {"Sharp", "Sharpened", "Pointy", "Radient", "Rigid", "Immaculate", "Gouging", "Dangerous", "Vibrant", "Fancy",
+                                  "Menacing", "Slick",  "Jagged", "Dancing", "Blistering", "Mincing","Elegant", "Ravenous", "Fierce",  "Righteous"};
+    QString armourPrefixes[7] = {"Radient","Immaculate","Vibrant","Fancy","Slick","Elegant","Righteous"};
+    QString ShieldPrefixes[7] = {"Steel", "Tower", "Buckler", "Small", "Kiting", "Large", "Aspis"};
+    QString ringPrefixes[3] = {"Copper", "Silver", "Gold"};
+    QString trinketPrefixes[3] = {"Small", "Medium", "Large"};
+
     QString banditItemDrops_ [17][16] = {
-        {"Tattered Shirt",      "0","9","0","0","0","0","0","5","0","1","0","0","0","0","90"},
-        {"Weak potion",         "0","1","0","0","1","2","0","2","1","1","0","0","0","0","60"},
+        {"Tattered Shirt",      "0","9","0","0","0","0","0","5","0","1","0","0","0","0","200"},
+        {"Weak potion",         "0","1","0","0","1","2","0","2","1","1","0","0","0","0","100"},
         {"Weak Dagger",         "1","2","0","0","0","0","1","10","0","2","1","3","0","2","40"},
         {"Weak Short Sword",    "1","2","0","0","0","0","1","15","0","4","1","4","0","1","40"},
-        {"Weak Wooden Sheild",  "1","4","0","0","0","0","1","10","0","5","0","0","4","2","40"},
-        {"Wooden Sheild",       "1","4","0","0","0","0","1","12","0","5","0","0","5","2","40"},
+        {"Weak Wooden Shield",  "1","4","0","0","0","0","1","10","0","5","0","0","4","2","40"},
+        {"Wooden Shield",       "1","4","0","0","0","0","1","12","0","5","0","0","5","2","40"},
         {"Weak Long Sword",     "1","2","0","0","0","0","1","20","0","6","1","7","0","3","35"},
         {"Ration",              "0","1","0","0","2","5","0","10","1","1","0","0","0","0","20"},
         {"Short Sword",         "1","2","0","0","0","0","1","17","0","4","2","5","0","1","20"},
@@ -38,13 +49,13 @@ private:
         {"Sharp Dagger",        "1","2","0","0","0","0","1","15","0","2","1","5","0","2","10"},
         {"Sharp Short Sword",   "1","2","0","0","0","0","1","20","0","4","2","7","0","1","10"},
         {"Sharp Long Sword",    "1","2","0","0","0","0","1","27","0","6","3","9","0","3","10"},
-        {"Steel Sheild",        "1","4","0","0","0","0","1","15","0","6","0","0","7","2","10"},
+        {"Steel Shield",        "1","4","0","0","0","0","1","15","0","6","0","0","7","2","10"},
         {"Uncommon Item",       "2","8","0","0","0","0","1","0","0","0","0","0","0","0","5"},
-        {"Rare Item",           "3","8","0","0","0","0","1","0","0","0","0","0","0","0","1"}
+        {"Rare Item",           "3","8","0","0","0","0","1","0","0","0","0","0","0","0","101"}
     };
 
     QString banditItemDropsChance_ [2][9] = {
-        {"90","60","40","35","20","15","10","5","1"},
+        {"200","100","40","35","20","15","10","5","101"},
         {"1", "1", "4", "1", "3", "1", "4", "1","1"}
     };
 
@@ -81,7 +92,7 @@ public:
     int doHitRoll();
     void doHit(int dmg, int playerHitRoll, QString playerName);
     int goldDrop();
-    QString doLootDrop(QString enemyName, int enemyType, int itemDropChance);
+    QVector<Item> doLootDrop(QString enemyName, int enemyType, int itemDropChance);
 
     int getHealth();
     void setHealth(int health);

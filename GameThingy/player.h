@@ -3,6 +3,7 @@
 #include <string>
 #include <QString>
 #include <QVector>
+#include "item.h"
 
 class Player
 {
@@ -51,9 +52,12 @@ private:
     bool isSpecialAbilityLearned_;
     bool isSpecialReady_;
     bool isAlive_;
+    bool wasHealed_;
+    bool rationConsumed_;
     QString name_;
     QString message_;
-    QVector<QString> inventory_;
+    QVector<Item> inventory_;
+    QVector<Item> equipment_;
 
     int location_;
 
@@ -69,9 +73,9 @@ public:
     int doHitRoll();
     void doHit(int dmg, int enemyHitRoll, QString enemyName, bool isEnemyAlive);
     void checkXP();
-    void usePotion();
+    void usePotion(int healAmount);
     void buyPotion();
-    void useRation();
+    void useRation(int stamAmount);
     void buyRation();
     void save();
     void load(QString playerName);
@@ -143,6 +147,14 @@ public:
     void addGold(int gold);
     void removeGold(int gold);
 
+    QVector<Item> getInventory();
+    void addItemsToInventory(QVector<Item> items);
+    void removeItemFromInventory(int index);
+
+    QVector<Item> getEquiped();
+    void addEquipment(Item item);
+    void removeEquipment(int index);
+
     int getLocation();
     void setLocation(int location);
 
@@ -168,6 +180,9 @@ public:
 
     bool IsSpecialReady();
     void setIsSpecialReady(bool isSpecialReady);
+
+    bool wasHealed();
+    bool rationconsumed();
 
     int getSpecialAbilityCharged();
     void setSpecialAbilityCharged(int specialAbilityCharged);

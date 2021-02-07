@@ -7,7 +7,10 @@
 #include <QTextStream>
 #include <QMessageBox>
 #include <QSound>
+#include <QVector>
+#include <algorithm>
 #include "player.h"
+#include "item.h"
 
 
 Player::Player(int health, int maxHealth, int maxAttackPower, int minAttackPower,
@@ -50,6 +53,8 @@ Player::Player(int health, int maxHealth, int maxAttackPower, int minAttackPower
     hitBonus_ = 0;
     isSpecialAbilityLearned_ = false;
     isSpecialReady_ = false;
+    wasHealed_ = false;
+    rationConsumed_ = false;
     questsCompleted_ = 0;
     location_ = 0;
     qsrand(QTime::currentTime().msec());
@@ -236,21 +241,22 @@ void Player::doLevelUp()
     }
 }
 
-void Player::usePotion()
+void Player::usePotion(int healAmount)
 {
-    if (potion_ >= 1)
-    {
+    //if (potion_ >= 1)
+    //{
         if (health_ == maxHealth_)
         {
             QMessageBox msgBox;
             msgBox.setWindowTitle("Use Potion");
             msgBox.setText("Your health is full.");
             msgBox.exec();
+            wasHealed_ = false;
         }
         else
         {
-            health_ += 5;
-            potion_ -= 1;
+            health_ += healAmount;
+            //potion_ -= 1;
             if (health_ > maxHealth_)
                 health_ = maxHealth_;
             QSound::play("Sounds\\drinkPotion.wav");
@@ -258,16 +264,16 @@ void Player::usePotion()
             msgBox.setWindowTitle("Use Potion");
             msgBox.setText("      Potion used.            ");
             msgBox.exec();
-
+            wasHealed_ = true;
         }
-    }
-    else
-    {
-        QMessageBox msgBox;
-        msgBox.setWindowTitle("Use Potion");
-        msgBox.setText("You do not have a potion.");
-        msgBox.exec();
-    }
+   // }
+   // else
+//    {
+//        QMessageBox msgBox;
+//        msgBox.setWindowTitle("Use Potion");
+//        msgBox.setText("You do not have a potion.");
+//        msgBox.exec();
+//    }
 }
 
 void Player::buyPotion()
@@ -301,21 +307,22 @@ void Player::buyPotion()
     }
 }
 
-void Player::useRation()
+void Player::useRation(int stamAmount)
 {
-    if (ration_ >= 1)
-    {
+//    if (ration_ >= 1)
+//    {
         if (stamina_ == maxStamina_)
         {
             QMessageBox msgBox;
             msgBox.setWindowTitle("Use Ration");
             msgBox.setText("Your stamina is full.");
             msgBox.exec();
+            rationConsumed_ = false;
         }
         else
         {
-            stamina_ += 5;
-            ration_ -= 1;
+            stamina_ += stamAmount;
+            //ration_ -= 1;
             if (stamina_ > maxStamina_)
                 stamina_ = maxStamina_;
             QSound::play("Sounds\\eatRation.wav");
@@ -323,16 +330,16 @@ void Player::useRation()
             msgBox.setWindowTitle("Use Ration");
             msgBox.setText("      Ration used.            ");
             msgBox.exec();
-
+            rationConsumed_ = true;
         }
-    }
-    else
-    {
-        QMessageBox msgBox;
-        msgBox.setWindowTitle("Use Ration");
-        msgBox.setText("You do not have a ration.");
-        msgBox.exec();
-    }
+//    }
+//    else
+//    {
+//        QMessageBox msgBox;
+//        msgBox.setWindowTitle("Use Ration");
+//        msgBox.setText("You do not have a ration.");
+//        msgBox.exec();
+//    }
 }
 
 void Player::buyRation()
@@ -758,6 +765,84 @@ void Player::removeGold(int gold)
     gold_ -= gold;
 }
 
+QVector<Item> Player::getInventory()
+{
+    return inventory_;
+}
+
+void Player::addItemsToInventory(QVector<Item> items)
+{
+    for (int i = 0; i < items.length(); i++)
+    {
+//        if (inventory_.length() > 0)
+//        {
+//            for (int j = 0; j < inventory_.length(); j++)
+//            {
+//                if (inventory_.value(j).name == items.value(i).name)
+//                {
+//                    int invAmount = inventory_.value(j).amount;
+//                    int itemAmount = items.value(i).amount;
+//                    //inventory_.erase(inventory_.begin() + j);
+//                    inventory_.removeAt(j);
+//                    Item newItem;
+//                    newItem.name = items.value(i).name;
+//                    newItem.itemRarity = items.value(i).itemRarity;
+//                    newItem.itemType = items.value(i).itemType;
+//                    newItem.armourRating = items.value(i).armourRating;
+//                    newItem.armourType = items.value(i).armourType;
+//                    newItem.healType = items.value(i).healType;
+//                    newItem.healAmount = items.value(i).healAmount;
+//                    newItem.isEquippable = items.value(i).isEquippable;
+//                    newItem.sellPrice = items.value(i).sellPrice;
+//                    newItem.isUsable = items.value(i).isUsable;
+//                    newItem.weight = items.value(i).weight;
+//                    newItem.minAtk = items.value(i).minAtk;
+//                    newItem.maxAtk = items.value(i).maxAtk;
+//                    newItem.block = items.value(i).block;
+//                    newItem.holdType = items.value(i).holdType;
+//                    newItem.stat1 = items.value(i).stat1;
+//                    newItem.stat2 = items.value(i).stat2;
+//                    newItem.stat3 = items.value(i).stat3;
+//                    newItem.statType1 = items.value(i).statType1;
+//                    newItem.statType2 = items.value(i).statType2;
+//                    newItem.statType3 = items.value(i).statType3;
+//                    newItem.amount = invAmount + itemAmount;
+//                    inventory_.push_back(newItem);
+//                }
+//                else
+//                {
+//                    inventory_.push_back(items.value(i));
+//                }
+//            }
+//        }
+//        else
+//        {
+//            inventory_.push_back(items.value(i));
+//        }
+        inventory_.push_back(items.value(i));
+    }
+}
+
+void Player::removeItemFromInventory(int index)
+{
+    inventory_.remove(index);
+}
+
+QVector<Item> Player::getEquiped()
+{
+    return equipment_;
+}
+
+void Player::addEquipment(Item item)
+{
+    equipment_.push_back(item);
+}
+
+void Player::removeEquipment(int index)
+{
+    equipment_.remove(index);
+}
+
 int Player::getLocation()
 {
     return location_;
@@ -850,6 +935,16 @@ bool Player::IsSpecialReady()
 void Player::setIsSpecialReady(bool isSpecialReady)
 {
     isSpecialReady_ = isSpecialReady;
+}
+
+bool Player::wasHealed()
+{
+    return wasHealed_;
+}
+
+bool Player::rationconsumed()
+{
+    return rationConsumed_;
 }
 
 int Player::getQuestsCompleted()

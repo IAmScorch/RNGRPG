@@ -1,6 +1,6 @@
 Launching the Game
 -----------------------
-Open folder "RNG Simulator The Game V0.1.2\RNG Simulator The Game" and run GameThingy.exe
+Open folder "RNG Simulator The Game V0.3.2\RNG Simulator The Game" and run GameThingy.exe
 
 How To Play
 --------------
