@@ -364,7 +364,7 @@ QVector<Item> Bandit::doLootDrop(QString enemyName, int enemyType, int itemDropC
                                                     item.weight = 4;
                                                     item.minAtk = 2;
                                                     item.maxAtk = (7 + item.itemRarity);
-                                                    item.holdType = rand()%2 + 1;
+                                                    item.holdType = 1;
                                                 }
                                                 else if (item.name.contains("Long Sword"))
                                                 {
@@ -372,7 +372,7 @@ QVector<Item> Bandit::doLootDrop(QString enemyName, int enemyType, int itemDropC
                                                     item.weight = 6;
                                                     item.minAtk = 3;
                                                     item.maxAtk = (9 + item.itemRarity);
-                                                    item.holdType = rand()%2 + 1;
+                                                    item.holdType = 3;
                                                 }
                                                 break;
                                             case 3: //armour
