@@ -1,7 +1,7 @@
 #ifndef ITEM_H
 #define ITEM_H
 #include <QString>
-/*Item Types                      armourType	amourRating     statTypes
+/*Item Types                        armourType	amourRating     statTypes
   1 = Consumable	6 = Ring		1 = Cloth	+4 dodge        1 = Vitality	6 = Precision
   2 = Weapon		7 = Trinket		2 = Leather	+3 dodge        2 = Strength	7 = Dodge
   3 = Armour		8 = random		3 = Mail	+2 dodge        3 = Stamina     8 = Block
@@ -37,6 +37,7 @@
       int stat3;
       int statType3;
       int amount;
+      int numStats;
   };
 
 #endif // ITEM_H

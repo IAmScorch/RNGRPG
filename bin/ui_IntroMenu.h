@@ -44,6 +44,10 @@ public:
     QPushButton *btnBuyRation;
     QPushButton *btnUseRation;
     QLabel *lblRationAmount;
+    QLabel *lblFirestarterCost;
+    QPushButton *btnBuyFirestarterKit;
+    QPushButton *btnBuyBedroll;
+    QLabel *lblBedrollCost;
     QWidget *tabBattleScreen;
     QTextEdit *txtBattleInfo;
     QPushButton *btnAttack;
@@ -88,6 +92,7 @@ public:
     QLabel *lblCStamina;
     QPushButton *btnIncreaseStamina;
     QPushButton *btnViewInventory;
+    QLabel *lblCBlock;
     QWidget *tabQuestScreen;
     QPushButton *btnBeginQuest;
     QPushButton *btnCompleteQuest;
@@ -186,12 +191,12 @@ public:
         lblActionTabBG->setGeometry(QRect(-60, -60, 1001, 665));
         lblPotionCost = new QLabel(tabActionScreen);
         lblPotionCost->setObjectName(QStringLiteral("lblPotionCost"));
-        lblPotionCost->setGeometry(QRect(110, 60, 151, 41));
+        lblPotionCost->setGeometry(QRect(110, 60, 81, 41));
         lblPotionCost->setFont(font1);
         lblPotionCost->setStyleSheet(QStringLiteral("color: rgb(255, 255, 255);"));
         lblRationCost = new QLabel(tabActionScreen);
         lblRationCost->setObjectName(QStringLiteral("lblRationCost"));
-        lblRationCost->setGeometry(QRect(110, 110, 151, 41));
+        lblRationCost->setGeometry(QRect(110, 110, 81, 41));
         lblRationCost->setFont(font1);
         lblRationCost->setStyleSheet(QStringLiteral("color: rgb(255, 255, 255);"));
         btnBuyRation = new QPushButton(tabActionScreen);
@@ -207,6 +212,24 @@ public:
         lblRationAmount->setGeometry(QRect(110, 210, 151, 41));
         lblRationAmount->setFont(font1);
         lblRationAmount->setStyleSheet(QStringLiteral("color: rgb(255, 255, 255);"));
+        lblFirestarterCost = new QLabel(tabActionScreen);
+        lblFirestarterCost->setObjectName(QStringLiteral("lblFirestarterCost"));
+        lblFirestarterCost->setGeometry(QRect(290, 110, 91, 41));
+        lblFirestarterCost->setFont(font1);
+        lblFirestarterCost->setStyleSheet(QStringLiteral("color: rgb(255, 255, 255);"));
+        btnBuyFirestarterKit = new QPushButton(tabActionScreen);
+        btnBuyFirestarterKit->setObjectName(QStringLiteral("btnBuyFirestarterKit"));
+        btnBuyFirestarterKit->setGeometry(QRect(190, 110, 91, 41));
+        btnBuyFirestarterKit->setFont(font1);
+        btnBuyBedroll = new QPushButton(tabActionScreen);
+        btnBuyBedroll->setObjectName(QStringLiteral("btnBuyBedroll"));
+        btnBuyBedroll->setGeometry(QRect(190, 60, 91, 41));
+        btnBuyBedroll->setFont(font1);
+        lblBedrollCost = new QLabel(tabActionScreen);
+        lblBedrollCost->setObjectName(QStringLiteral("lblBedrollCost"));
+        lblBedrollCost->setGeometry(QRect(290, 60, 91, 41));
+        lblBedrollCost->setFont(font1);
+        lblBedrollCost->setStyleSheet(QStringLiteral("color: rgb(255, 255, 255);"));
         tabGame->addTab(tabActionScreen, QString());
         lblActionTabBG->raise();
         btnBuyPotion->raise();
@@ -218,6 +241,10 @@ public:
         btnBuyRation->raise();
         btnUseRation->raise();
         lblRationAmount->raise();
+        lblFirestarterCost->raise();
+        btnBuyFirestarterKit->raise();
+        btnBuyBedroll->raise();
+        lblBedrollCost->raise();
         tabBattleScreen = new QWidget();
         tabBattleScreen->setObjectName(QStringLiteral("tabBattleScreen"));
         txtBattleInfo = new QTextEdit(tabBattleScreen);
@@ -461,6 +488,11 @@ public:
         btnViewInventory = new QPushButton(tabCInfoScreen);
         btnViewInventory->setObjectName(QStringLiteral("btnViewInventory"));
         btnViewInventory->setGeometry(QRect(10, 140, 91, 31));
+        lblCBlock = new QLabel(tabCInfoScreen);
+        lblCBlock->setObjectName(QStringLiteral("lblCBlock"));
+        lblCBlock->setGeometry(QRect(270, 125, 100, 21));
+        lblCBlock->setFont(font1);
+        lblCBlock->setStyleSheet(QStringLiteral("color: rgb(255, 255, 255);"));
         tabGame->addTab(tabCInfoScreen, QString());
         lblCharTabBG->raise();
         lblCName->raise();
@@ -483,6 +515,7 @@ public:
         lblCStamina->raise();
         btnIncreaseStamina->raise();
         btnViewInventory->raise();
+        lblCBlock->raise();
         tabQuestScreen = new QWidget();
         tabQuestScreen->setObjectName(QStringLiteral("tabQuestScreen"));
         btnBeginQuest = new QPushButton(tabQuestScreen);
@@ -619,7 +652,7 @@ public:
 
         retranslateUi(GameLogic);
 
-        tabGame->setCurrentIndex(5);
+        tabGame->setCurrentIndex(3);
         btnBeginQuest->setDefault(false);
 
 
@@ -645,6 +678,10 @@ public:
         btnBuyRation->setText(QApplication::translate("GameLogic", "Buy Ration", nullptr));
         btnUseRation->setText(QApplication::translate("GameLogic", "Eat Ration", nullptr));
         lblRationAmount->setText(QApplication::translate("GameLogic", "Rations: 0", nullptr));
+        lblFirestarterCost->setText(QApplication::translate("GameLogic", "Cost: 75 Gold", nullptr));
+        btnBuyFirestarterKit->setText(QApplication::translate("GameLogic", "Buy Firestarter", nullptr));
+        btnBuyBedroll->setText(QApplication::translate("GameLogic", "Buy Bedroll", nullptr));
+        lblBedrollCost->setText(QApplication::translate("GameLogic", "Cost: 100 Gold", nullptr));
         tabGame->setTabText(tabGame->indexOf(tabActionScreen), QApplication::translate("GameLogic", "Action", nullptr));
         btnAttack->setText(QApplication::translate("GameLogic", "Attack", nullptr));
         lblEnemyName->setText(QString());
@@ -706,6 +743,10 @@ public:
         lblCStamina->setText(QApplication::translate("GameLogic", "Stamina:", nullptr));
         btnIncreaseStamina->setText(QApplication::translate("GameLogic", "+", nullptr));
         btnViewInventory->setText(QApplication::translate("GameLogic", "View Inventory", nullptr));
+#ifndef QT_NO_TOOLTIP
+        lblCBlock->setToolTip(QApplication::translate("GameLogic", "<html><head/><body><p><span style=\" color:#000000;\">Determines how many actions you can take per day. Fights cost 1 Stamina. Traveling costs 2 Stamina</span></p></body></html>", nullptr));
+#endif // QT_NO_TOOLTIP
+        lblCBlock->setText(QApplication::translate("GameLogic", "Block:", nullptr));
         tabGame->setTabText(tabGame->indexOf(tabCInfoScreen), QApplication::translate("GameLogic", "Character Info", nullptr));
         btnBeginQuest->setText(QApplication::translate("GameLogic", "Begin Quest", nullptr));
         btnCompleteQuest->setText(QApplication::translate("GameLogic", "Hand In Quest", nullptr));

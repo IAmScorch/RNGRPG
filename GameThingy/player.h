@@ -32,6 +32,7 @@ private:
     int hit_;
     int stamina_;
     int maxStamina_;
+    int block_;
 
     int strengthCount_;
     int agilityCount_;
@@ -83,30 +84,40 @@ public:
     void resetSpecialAbility();
 
     void addVitality(int vitality);
+    void removeVitality(int vitality);
     int getVitality();
 
     void addStrength(int strength);
+    void removeStrength(int strength);
     int getStrength();
 
     void addAgility(int agility);
+    void removeAgility(int agility);
     int getAgility();
 
     void addLuck(int luck);
+    void removeLuck(int luck);
     int getLuck();
 
     void addIntelligence(int intelligence);
     int getIntelligence();
 
     void addHit(int hit);
+    void removeHit(int hit);
     int getHit();
 
     void setStamina(int stamina);
     void removeStamina(int action);
     void addStamina(int stamina);
+    void removeStatStamina(int stamina);
     int getStamina();
 
     int getMaxStamina();
     void addMaxStamina(int maxStamina);
+
+    int getBlock();
+    void addBlock(int block);
+    void removeBlock(int block);
 
     int getHealth();
     void setHealth(int health);
@@ -149,6 +160,7 @@ public:
 
     QVector<Item> getInventory();
     void addItemsToInventory(QVector<Item> items);
+    void addItemToInventory(Item item);
     void removeItemFromInventory(int index);
 
     QVector<Item> getEquiped();

@@ -68,6 +68,10 @@ private slots:
     void setEnemyHealth();
     void resetQuestInfo();
     void closeBag();
+    void equipItem();
+    void unequipItem();
+    void useItem();
+    void sellItem();
 
     void on_tabGame_tabBarClicked(int index);
 
@@ -91,6 +95,8 @@ private slots:
 
     void setPlayerInventory();
 
+    void setPlayerEquipment();
+
     void setInventoryItemToolTip(QVector<QString> listItems);
 
     void setEquipmentItemToolTip(QVector<QString> listItems);
@@ -106,6 +112,16 @@ private slots:
     void on_btnSell_clicked();
 
     void on_btnDrop_clicked();
+
+    void on_lstInventory_doubleClicked(const QModelIndex &index);
+
+    void on_lstEquipment_itemDoubleClicked(QListWidgetItem *item);
+
+    void on_lstEquipment_itemClicked(QListWidgetItem *item);
+
+    void on_btnBuyBedroll_clicked();
+
+    void on_btnBuyFirestarterKit_clicked();
 
 private:
     //Locations
@@ -181,6 +197,7 @@ private:
     int enemyMaxHP_;
     bool isBagOpen_;
     locations_ location_;
+    bool isEquipping;
 
     void checkLevel();
     void createCharacter();

@@ -106,6 +106,7 @@ GameLogic::GameLogic(QWidget *parent) :
     quest_ = new quests(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "");
     itemXRef = new itemCrossReference();
     isBagOpen_ = false;
+    isEquipping = true;
     qsrand(QTime::currentTime().msec());
 }
 
@@ -1280,6 +1281,7 @@ void GameLogic::setPlayerInfo()
     ui->lblCLuck->setText(QString("Luck: %1").arg(player_->getLuck()));
     ui->lblCVitality->setText(QString("Vitality: %1").arg(player_->getVitality()));
     ui->lblCHit->setText(QString("Hit: %1").arg(player_->getHit()));
+    ui->lblCBlock->setText(QString("Block: %1").arg(player_->getBlock()));
     double xpPercent = (double(player_->getXP()) / double(player_->getXPTillLevel())) * 100;
     double xpPercent2 = (double(player_->getXP()) / double(player_->getXPTillLevel())) * 400;
     ui->lblXpPercent->setText(QString("%1%").arg(int(xpPercent)));
@@ -1371,6 +1373,149 @@ void GameLogic::resetQuestInfo()
 void GameLogic::closeBag()
 {
     isBagOpen_ = false;
+}
+
+void GameLogic::equipItem()
+{
+    ui->lstEquipment->clear();
+
+    int itemIndex;
+    QString itemName;
+    QVector<Item> inventoryItems;
+
+    inventoryItems = player_->getInventory();
+    itemName = ui->lstInventory->currentItem()->text();
+
+    for (int x = 0; x < inventoryItems.length(); x++)
+    {
+        if (itemName == inventoryItems.value(x).name)
+        {
+            itemIndex = x;
+        }
+    }
+
+    player_->addEquipment(inventoryItems.value(itemIndex));
+    player_->removeItemFromInventory(itemIndex);
+
+    setPlayerEquipment();
+}
+
+void GameLogic::unequipItem()
+{
+    int itemIndex;
+    QString itemName;
+    QVector<Item> equipedItems;
+    QVector<Item> removedItem;
+
+    equipedItems = player_->getEquiped();
+    itemName = ui->lstEquipment->currentItem()->text();
+
+    for (int x = 0; x < equipedItems.length(); x++)
+    {
+        if (itemName == equipedItems.value(x).name)
+        {
+            itemIndex = x;
+        }
+    }
+
+    removedItem.push_back(player_->getEquiped().value(itemIndex));
+    player_->removeEquipment(itemIndex);
+    player_->addItemsToInventory(removedItem);
+    setPlayerInfo();
+    setPlayerInventory();
+    setPlayerEquipment();
+}
+
+void GameLogic::useItem()
+{
+    int itemIndex;
+    QVector<Item> inventoryItems;
+    QString item = ui->lstInventory->currentItem()->text();
+
+    inventoryItems = player_->getInventory();
+
+    for (int a = 0; a < inventoryItems.length(); a++)
+    {
+        if (item == inventoryItems.value(a).name)
+        {
+            itemIndex = a;
+        }
+    }
+
+    if (inventoryItems.value(itemIndex).itemType == 1)
+    {
+        if (inventoryItems.value(itemIndex).healType == 1)
+        {
+            player_->usePotion(inventoryItems.value(itemIndex).healAmount);
+            if (player_->wasHealed())
+            {
+                player_->removeItemFromInventory(itemIndex);
+                setPlayerInfo();
+                setPlayerInventory();
+            }
+        }
+        else if (inventoryItems.value(itemIndex).healType == 2)
+        {
+            player_->useRation(inventoryItems.value(itemIndex).healAmount);
+            if (player_->rationconsumed())
+            {
+                player_->removeItemFromInventory(itemIndex);
+                setPlayerInfo();
+                setPlayerInventory();
+            }
+        }
+    }
+}
+
+void GameLogic::sellItem()
+{
+    QSound::play("Sounds\\goldDrop.wav");
+    int itemIndex;
+    int itemType;
+    QVector<Item> inventoryItems;
+    QVector<int> junkIndexs;
+    int junkAmount = 0;
+    QString item = ui->lstInventory->currentItem()->text();
+
+    inventoryItems = player_->getInventory();
+
+    for (int a = 0; a < inventoryItems.length(); a++)
+    {
+        if (item == inventoryItems.value(a).name)
+        {
+            itemIndex = a;
+        }
+    }
+
+    itemType = inventoryItems.value(itemIndex).itemType;
+
+    if (itemType != 9)
+    {
+        player_->addGold(inventoryItems.value(itemIndex).sellPrice);
+        player_->removeItemFromInventory(itemIndex);
+    }
+    else
+    {
+        for (int b = 0; b < inventoryItems.length(); b++)
+        {
+            if (item == inventoryItems.value(b).name)
+            {
+                junkIndexs.push_back(b);
+                junkAmount += 1;
+            }
+        }
+
+        player_->addGold(inventoryItems.value(itemIndex).sellPrice * junkAmount);
+        std::sort(junkIndexs.rbegin(), junkIndexs.rend());
+
+        for (int b = 0; b < junkIndexs.length(); b++)
+        {
+            player_->removeItemFromInventory(junkIndexs.value(b));
+        }
+    }
+
+    setPlayerInfo();
+    setPlayerInventory();
 }
 
 void GameLogic::on_btnRestBS_clicked()
@@ -2909,6 +3054,40 @@ void GameLogic::setPlayerInventory()
     ui->btnDrop->setEnabled(false);
 }
 
+void GameLogic::setPlayerEquipment()
+{
+    ui->lstEquipment->clear();
+
+    QString itemName;
+    QVector<Item> inventoryItems;
+    QVector<Item> equipedItems;
+    QVector<QString> itemNames;
+
+    equipedItems = player_->getEquiped();
+
+    for (int x = 0; x < equipedItems.length(); x++)
+    {
+        itemNames.push_back(equipedItems.value(x).name);
+    }
+
+    std::sort(itemNames.begin(), itemNames.end());
+
+    for (int i = 0; i < itemNames.length(); i++)
+    {
+        //ui->lstInventory->addItem(QString("%1 x%2\n").arg(itemNames.value(i)).arg(itemAmounts.value(i)));
+        ui->lstEquipment->addItem(QString("%1").arg(itemNames.value(i)));
+    }
+
+    setEquipmentItemToolTip(itemNames);
+    setPlayerInventory();
+    setPlayerInfo();
+
+    ui->btnUse->setEnabled(false);
+    ui->btnEquip->setEnabled(false);
+    ui->btnSell->setEnabled(false);
+    ui->btnDrop->setEnabled(false);
+}
+
 void GameLogic::setInventoryItemToolTip(QVector<QString> listItems)
 {
     int itemAmount;
@@ -2933,22 +3112,31 @@ void GameLogic::setInventoryItemToolTip(QVector<QString> listItems)
             }
         }
 
-        if (inventoryItems.value(itemIndex).itemType == 1)
+        if (inventoryItems.value(itemIndex).itemType == 1 || inventoryItems.value(itemIndex).itemType == 0)
         {
-            if (inventoryItems.value(itemIndex).healType == 1)
+            QString healType = "";
+
+            if (inventoryItems.value(itemIndex).itemType == 1)
             {
-                itemInfo = QString("Type: %1\nUse: +%5 HP\nSell Price: %2G\nWeight: %3\nAmount: %4").arg(itemXRef->getItemType(inventoryItems.value(itemIndex).itemType))
+                if (inventoryItems.value(itemIndex).healType == 1)
+                    healType = "Health";
+                else if (inventoryItems.value(itemIndex).healType == 2)
+                    healType = "Stamina";
+
+                itemInfo = QString("Type: %1\nUse: +%5 %6\nSell Price: %2G\nWeight: %3\nAmount: %4").arg(itemXRef->getItemType(inventoryItems.value(itemIndex).itemType))
                         .arg(inventoryItems.value(itemIndex).sellPrice)
                         .arg(inventoryItems.value(itemIndex).weight).arg(itemAmount)
-                        .arg(inventoryItems.value(itemIndex).healAmount);
+                        .arg(inventoryItems.value(itemIndex).healAmount).arg(healType);
             }
-            else if (inventoryItems.value(itemIndex).healType == 2)
+            else
             {
-                itemInfo = QString("Type: %1\nUse: +%5 Stamina\nSell Price: %2G\nWeight: %3\nAmount: %4").arg(itemXRef->getItemType(inventoryItems.value(itemIndex).itemType))
+                itemInfo = QString("Type: %1\nRarity: %5\n\nSell Price: %2G\nWeight: %3\nAmount: %4")
+                        .arg(itemXRef->getItemType(inventoryItems.value(itemIndex).itemType))
                         .arg(inventoryItems.value(itemIndex).sellPrice)
                         .arg(inventoryItems.value(itemIndex).weight).arg(itemAmount)
-                        .arg(inventoryItems.value(itemIndex).healAmount);
+                        .arg(itemXRef->getItemRarity(inventoryItems.value(itemIndex).itemRarity));
             }
+
         }
         else if (inventoryItems.value(itemIndex).itemType == 2)
         {
@@ -3519,6 +3707,7 @@ void GameLogic::on_lstInventory_itemClicked(QListWidgetItem *item)
              inventoryItems.value(itemIndex).itemType == 7)
     {
         ui->btnUse->setEnabled(false);
+        ui->btnEquip->setText("Equip");
         ui->btnEquip->setEnabled(true);
         ui->btnSell->setEnabled(true);
         ui->btnDrop->setEnabled(true);
@@ -3539,56 +3728,11 @@ void GameLogic::on_lstInventory_itemClicked(QListWidgetItem *item)
     }
 }
 
-void GameLogic::on_btnUse_clicked()
+void GameLogic::on_lstInventory_doubleClicked(const QModelIndex &index)
 {
-    int itemIndex;
-    QVector<Item> inventoryItems;
-    QString item = ui->lstInventory->currentItem()->text();
-
-    inventoryItems = player_->getInventory();
-
-    for (int a = 0; a < inventoryItems.length(); a++)
-    {
-        if (item == inventoryItems.value(a).name)
-        {
-            itemIndex = a;
-        }
-    }
-
-    if (inventoryItems.value(itemIndex).itemType == 1)
-    {
-        if (inventoryItems.value(itemIndex).healType == 1)
-        {
-            player_->usePotion(inventoryItems.value(itemIndex).healAmount);
-            if (player_->wasHealed())
-            {
-                player_->removeItemFromInventory(itemIndex);
-                setPlayerInfo();
-                setPlayerInventory();
-            }
-        }
-        else if (inventoryItems.value(itemIndex).healType == 2)
-        {
-            player_->useRation(inventoryItems.value(itemIndex).healAmount);
-            if (player_->rationconsumed())
-            {
-                player_->removeItemFromInventory(itemIndex);
-                setPlayerInfo();
-                setPlayerInventory();
-            }
-        }
-    }
-}
-
-void GameLogic::on_btnEquip_clicked()
-{
-    ui->lstEquipment->clear();
-
     int itemIndex;
     QString itemName;
     QVector<Item> inventoryItems;
-    QVector<Item> equipedItems;
-    QVector<QString> itemNames;
 
     inventoryItems = player_->getInventory();
     itemName = ui->lstInventory->currentItem()->text();
@@ -3601,53 +3745,48 @@ void GameLogic::on_btnEquip_clicked()
         }
     }
 
-    player_->addEquipment(inventoryItems.value(itemIndex));
-    player_->removeItemFromInventory(itemIndex);
-
-    equipedItems = player_->getEquiped();
-
-    for (int x = 0; x < equipedItems.length(); x++)
+    if (inventoryItems.value(itemIndex).isEquippable)
     {
-        itemNames.push_back(equipedItems.value(x).name);
+        equipItem();
     }
-
-    std::sort(itemNames.begin(), itemNames.end());
-
-    for (int i = 0; i < itemNames.length(); i++)
+    else
     {
-        //ui->lstInventory->addItem(QString("%1 x%2\n").arg(itemNames.value(i)).arg(itemAmounts.value(i)));
-        ui->lstEquipment->addItem(QString("%1").arg(itemNames.value(i)));
+        if (inventoryItems.value(itemIndex).itemType == 1)
+        {
+            useItem();
+        }
+        else if (inventoryItems.value(itemIndex).itemType == 9)
+        {
+           sellItem();
+        }
     }
+}
 
-    setEquipmentItemToolTip(itemNames);
-    setPlayerInventory();
+void GameLogic::on_lstEquipment_itemDoubleClicked(QListWidgetItem *item)
+{
+    unequipItem();
+}
 
-    ui->btnUse->setEnabled(false);
-    ui->btnEquip->setEnabled(false);
-    ui->btnSell->setEnabled(false);
-    ui->btnDrop->setEnabled(false);
+void GameLogic::on_btnUse_clicked()
+{
+    useItem();
+}
+
+void GameLogic::on_btnEquip_clicked()
+{
+    if (ui->btnEquip->text().toUpper() == "EQUIP")
+    {
+        equipItem();
+    }
+    else if (ui->btnEquip->text().toUpper() == "UNEQUIP")
+    {
+        unequipItem();
+    }
 }
 
 void GameLogic::on_btnSell_clicked()
 {
-    int itemIndex;
-    QVector<Item> inventoryItems;
-    QString item = ui->lstInventory->currentItem()->text();
-
-    inventoryItems = player_->getInventory();
-
-    for (int a = 0; a < inventoryItems.length(); a++)
-    {
-        if (item == inventoryItems.value(a).name)
-        {
-            itemIndex = a;
-        }
-    }
-
-    player_->addGold(inventoryItems.value(itemIndex).sellPrice);
-    player_->removeItemFromInventory(itemIndex);
-    setPlayerInfo();
-    setPlayerInventory();
+    sellItem();
 }
 
 void GameLogic::on_btnDrop_clicked()
@@ -3670,3 +3809,107 @@ void GameLogic::on_btnDrop_clicked()
     setPlayerInfo();
     setPlayerInventory();
 }
+
+
+void GameLogic::on_lstEquipment_itemClicked(QListWidgetItem *item)
+{
+    ui->btnEquip->setText("Unequip");
+    ui->btnEquip->setEnabled(true);
+}
+
+
+void GameLogic::on_btnBuyBedroll_clicked()
+{
+    if (strRestLocation_[player_->getLocation()] == "City" ||strRestLocation_[player_->getLocation()] == "Town")
+    {
+        Item item;
+        //numItems.push_back(banditItemDrops_[e][0]);
+
+        item.name = "Bedroll";
+        item.itemRarity = 1;
+        item.itemType = 0;
+        item.armourRating = 0;
+        item.armourType = 0;
+        item.healType = 0;
+        item.healAmount = 0;
+        item.isEquippable = false;
+        item.sellPrice = 50;
+        item.isUsable = false;
+        item.weight = 0;
+        item.minAtk = 0;
+        item.maxAtk = 0;
+        item.block = 0;
+        item.holdType = 0;
+        item.stat1 = 0;
+        item.stat2 = 0;
+        item.stat3 = 0;
+        item.statType1 = 0;
+        item.statType2 = 0;
+        item.statType3 = 0;
+        item.amount = 1;
+        item.numStats = 0;
+
+        player_->removeGold(100);
+        player_->addItemToInventory(item);
+        ui->lblGoldAmount->setText(QString("Gold: %1").arg(player_->getGold()));
+        ui->lblGoldInv->setText(QString("Gold: %1").arg(player_->getGold()));
+        setPlayerInfo();
+        setPlayerInventory();
+    }
+    else
+    {
+        QMessageBox msgBox;
+        msgBox.setWindowTitle("Buy Item");
+        msgBox.setText("You need to be in a City<br>or Town to buy items.");
+        msgBox.exec();
+    }
+}
+
+
+void GameLogic::on_btnBuyFirestarterKit_clicked()
+{
+    if (strRestLocation_[player_->getLocation()] == "City" ||strRestLocation_[player_->getLocation()] == "Town")
+    {
+        Item item;
+        //numItems.push_back(banditItemDrops_[e][0]);
+
+        item.name = "Firestarter Kit";
+        item.itemRarity = 1;
+        item.itemType = 0;
+        item.armourRating = 0;
+        item.armourType = 0;
+        item.healType = 0;
+        item.healAmount = 0;
+        item.isEquippable = false;
+        item.sellPrice = 50;
+        item.isUsable = false;
+        item.weight = 0;
+        item.minAtk = 0;
+        item.maxAtk = 0;
+        item.block = 0;
+        item.holdType = 0;
+        item.stat1 = 0;
+        item.stat2 = 0;
+        item.stat3 = 0;
+        item.statType1 = 0;
+        item.statType2 = 0;
+        item.statType3 = 0;
+        item.amount = 1;
+        item.numStats = 0;
+
+        player_->removeGold(75);
+        player_->addItemToInventory(item);
+        ui->lblGoldAmount->setText(QString("Gold: %1").arg(player_->getGold()));
+        ui->lblGoldInv->setText(QString("Gold: %1").arg(player_->getGold()));
+        setPlayerInfo();
+        setPlayerInventory();
+    }
+    else
+    {
+        QMessageBox msgBox;
+        msgBox.setWindowTitle("Buy Item");
+        msgBox.setText("You need to be in a City<br>or Town to buy items.");
+        msgBox.exec();
+    }
+}
+

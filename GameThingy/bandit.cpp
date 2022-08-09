@@ -222,6 +222,7 @@ QVector<Item> Bandit::doLootDrop(QString enemyName, int enemyType, int itemDropC
                                 item.statType2 = 0;
                                 item.statType3 = 0;
                                 item.amount = 1;
+                                item.numStats = 0;
 
                                 if (item.itemRarity > 1)
                                 {
@@ -251,6 +252,7 @@ QVector<Item> Bandit::doLootDrop(QString enemyName, int enemyType, int itemDropC
                                             case 2: //uncommon
                                                 item.statType1 = itemStatType1;
                                                 item.stat1 = 1;
+                                                item.numStats = 1;
                                                 numStats = 1;
                                                 break;
                                             case 3: //rare
@@ -258,6 +260,7 @@ QVector<Item> Bandit::doLootDrop(QString enemyName, int enemyType, int itemDropC
                                                 item.statType2 = itemStatType2;
                                                 item.stat1 = 1;
                                                 item.stat2 = 1;
+                                                item.numStats = 2;
                                                 numStats = 2;
                                                 break;
                                             case 4: //epic
@@ -267,6 +270,7 @@ QVector<Item> Bandit::doLootDrop(QString enemyName, int enemyType, int itemDropC
                                                 item.stat1 = 1;
                                                 item.stat2 = 1;
                                                 item.stat3 = 1;
+                                                item.numStats = 3;
                                                 numStats = 3;
                                                 break;
                                             case 5: //legendary
@@ -276,6 +280,7 @@ QVector<Item> Bandit::doLootDrop(QString enemyName, int enemyType, int itemDropC
                                                 item.stat1 = rand()% 2 + 1;
                                                 item.stat2 = rand()% 2 + 1;
                                                 item.stat3 = rand()% 2 + 1;
+                                                item.numStats = 3;
                                                 numStats = 3;
                                                 break;
                                         }
@@ -307,6 +312,7 @@ QVector<Item> Bandit::doLootDrop(QString enemyName, int enemyType, int itemDropC
                                             case 2: //uncommon
                                                 item.statType1 = itemStatType1;
                                                 item.stat1 = 1;
+                                                item.numStats = 1;
                                                 statName1 = itemStatNames[itemStatType1 - 1];
                                                 numStats = 1;
                                                 break;
@@ -315,6 +321,7 @@ QVector<Item> Bandit::doLootDrop(QString enemyName, int enemyType, int itemDropC
                                                 item.statType2 = itemStatType2;
                                                 item.stat1 = 1;
                                                 item.stat2 = 1;
+                                                item.numStats = 2;
                                                 statName1 = itemStatNames[itemStatType1 - 1];
                                                 statName2 = itemStatNames[itemStatType2 - 1];
                                                 numStats = 2;
@@ -326,6 +333,7 @@ QVector<Item> Bandit::doLootDrop(QString enemyName, int enemyType, int itemDropC
                                                 item.stat1 = 1;
                                                 item.stat2 = 1;
                                                 item.stat3 = 1;
+                                                item.numStats = 3;
                                                 statName1 = itemStatNames[itemStatType1 - 1];
                                                 statName2 = itemStatNames[itemStatType2 - 1];
                                                 statName3 = itemStatNames[itemStatType3 - 1];
@@ -338,6 +346,7 @@ QVector<Item> Bandit::doLootDrop(QString enemyName, int enemyType, int itemDropC
                                                 item.stat1 = rand()% 2 + 1;
                                                 item.stat2 = rand()% 2 + 1;
                                                 item.stat3 = rand()% 2 + 1;
+                                                item.numStats = 3;
                                                 statName1 = itemStatNames[itemStatType1 - 1];
                                                 statName2 = itemStatNames[itemStatType2 - 1];
                                                 statName3 = itemStatNames[itemStatType3 - 1];
@@ -364,7 +373,7 @@ QVector<Item> Bandit::doLootDrop(QString enemyName, int enemyType, int itemDropC
                                                     item.weight = 4;
                                                     item.minAtk = 2;
                                                     item.maxAtk = (7 + item.itemRarity);
-                                                    item.holdType = 1;
+                                                    item.holdType = rand()%1 + 1;
                                                 }
                                                 else if (item.name.contains("Long Sword"))
                                                 {

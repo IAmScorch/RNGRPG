@@ -51,6 +51,7 @@ Player::Player(int health, int maxHealth, int maxAttackPower, int minAttackPower
     luckBonus_ = 0;
     intelligenceBonus_ = 0;
     hitBonus_ = 0;
+    block_ = 0;
     isSpecialAbilityLearned_ = false;
     isSpecialReady_ = false;
     wasHealed_ = false;
@@ -219,7 +220,7 @@ void Player::doLevelUp()
                            "still be dodged by an enemy<br><br>"
                            "<b>Precision</b><br>"
                            "Determines the chance at which you can successfully strike an enemy<br>"
-                           "Each 5 points towards Hit increases your chance to successfully "
+                           "Each 5 points towards Precision increases your chance to successfully "
                            "strike an enemy<br><br>"
                            "Each skill can be raised to a maximum of 20, so spend your<br>"
                            "skill points wisely.");
@@ -417,6 +418,7 @@ void Player::save()
     saveFile << maxStamina_ << "\n";
     saveFile << ration_ << "\n";
     saveFile << location_ << "\n";
+    saveFile << block_ << "\n";
     file.close();
 }
 
@@ -466,6 +468,7 @@ void Player::load(QString playerName)
         maxStamina_ = saveFile.readLine().toInt();
         ration_ = saveFile.readLine().toInt();
         location_ = saveFile.readLine().toInt();
+        block_ = saveFile.readLine().toInt();
         file.close();
     }
 }
@@ -474,6 +477,12 @@ void Player::addVitality(int vitality)
 {
     vitality_ += vitality;
     maxHealth_ += 2;
+}
+
+void Player::removeVitality(int vitality)
+{
+    vitality_ -= vitality;
+    maxHealth_ -= 2;
 }
 
 int Player::getVitality()
@@ -494,6 +503,19 @@ void Player::addStrength(int strength)
     }
 }
 
+void Player::removeStrength(int strength)
+{
+    strength_ -= strength;
+    strengthCount_ -= strength;
+    maxAttackPower_ -= strength;
+
+    if (strength_ == 4 || strength_ == 9 || strength_ == 14 || strength_ == 19)
+    {
+        minAttackPower_ -= 5;
+        strengthCount_ = 4;
+    }
+}
+
 int Player::getStrength()
 {
     return strength_;
@@ -511,6 +533,18 @@ void Player::addAgility(int agility)
     }
 }
 
+void Player::removeAgility(int agility)
+{
+    agility_ -= agility;
+    agilityCount_ -= agility;
+
+    if (agility_ == 4 || agility_ == 9 || agility_ == 14 || agility_ == 19)
+    {
+        agilityBonus_ -= 1;
+        agilityCount_ = 4;
+    }
+}
+
 int Player::getAgility()
 {
     return agility_;
@@ -525,6 +559,18 @@ void Player::addLuck(int luck)
     {
         luckBonus_ += 1;
         luckCount_ = 0;
+    }
+}
+
+void Player::removeLuck(int luck)
+{
+    luck_ -= luck;
+    luckCount_ -= luck;
+
+    if (luckCount_ == 4 || luckCount_ == 9 || luckCount_ == 14 || luckCount_ == 19)
+    {
+        luckBonus_ -= 1;
+        luckCount_ = 4;
     }
 }
 
@@ -562,6 +608,18 @@ void Player::addHit(int hit)
     }
 }
 
+void Player::removeHit(int hit)
+{
+    hit_ -= hit;
+    hitCount_ -= hit;
+
+    if (hitCount_ == 4 || hitCount_ == 9 || hitCount_ == 14 || hitCount_ == 19)
+    {
+        hitBonus_ -= 1;
+        hitCount_ = 4;
+    }
+}
+
 int Player::getHit()
 {
     return hit_;
@@ -575,6 +633,14 @@ void Player::setStamina(int stamina)
 void Player::addStamina(int stamina)
 {
     stamina_ += stamina;
+
+    if (stamina_ > maxStamina_)
+        stamina_ = maxStamina_;
+}
+
+void Player::removeStatStamina(int stamina)
+{
+    stamina_ -= stamina;
 
     if (stamina_ > maxStamina_)
         stamina_ = maxStamina_;
@@ -605,6 +671,21 @@ void Player::addMaxStamina(int maxStamina)
 {
     maxStamina_ += maxStamina;
     stamina_ = maxStamina_;
+}
+
+int Player::getBlock()
+{
+    return block_;
+}
+
+void Player::addBlock(int block)
+{
+    block_ += block;
+}
+
+void Player::removeBlock(int block)
+{
+    block_ -= block;
 }
 
 bool Player::isAlive()
@@ -774,53 +855,13 @@ void Player::addItemsToInventory(QVector<Item> items)
 {
     for (int i = 0; i < items.length(); i++)
     {
-//        if (inventory_.length() > 0)
-//        {
-//            for (int j = 0; j < inventory_.length(); j++)
-//            {
-//                if (inventory_.value(j).name == items.value(i).name)
-//                {
-//                    int invAmount = inventory_.value(j).amount;
-//                    int itemAmount = items.value(i).amount;
-//                    //inventory_.erase(inventory_.begin() + j);
-//                    inventory_.removeAt(j);
-//                    Item newItem;
-//                    newItem.name = items.value(i).name;
-//                    newItem.itemRarity = items.value(i).itemRarity;
-//                    newItem.itemType = items.value(i).itemType;
-//                    newItem.armourRating = items.value(i).armourRating;
-//                    newItem.armourType = items.value(i).armourType;
-//                    newItem.healType = items.value(i).healType;
-//                    newItem.healAmount = items.value(i).healAmount;
-//                    newItem.isEquippable = items.value(i).isEquippable;
-//                    newItem.sellPrice = items.value(i).sellPrice;
-//                    newItem.isUsable = items.value(i).isUsable;
-//                    newItem.weight = items.value(i).weight;
-//                    newItem.minAtk = items.value(i).minAtk;
-//                    newItem.maxAtk = items.value(i).maxAtk;
-//                    newItem.block = items.value(i).block;
-//                    newItem.holdType = items.value(i).holdType;
-//                    newItem.stat1 = items.value(i).stat1;
-//                    newItem.stat2 = items.value(i).stat2;
-//                    newItem.stat3 = items.value(i).stat3;
-//                    newItem.statType1 = items.value(i).statType1;
-//                    newItem.statType2 = items.value(i).statType2;
-//                    newItem.statType3 = items.value(i).statType3;
-//                    newItem.amount = invAmount + itemAmount;
-//                    inventory_.push_back(newItem);
-//                }
-//                else
-//                {
-//                    inventory_.push_back(items.value(i));
-//                }
-//            }
-//        }
-//        else
-//        {
-//            inventory_.push_back(items.value(i));
-//        }
         inventory_.push_back(items.value(i));
     }
+}
+
+void Player::addItemToInventory(Item item)
+{
+    inventory_.push_back(item);
 }
 
 void Player::removeItemFromInventory(int index)
@@ -836,11 +877,220 @@ QVector<Item> Player::getEquiped()
 void Player::addEquipment(Item item)
 {
     equipment_.push_back(item);
+
+    if (item.itemType == 2)
+    {
+        minAttackPower_ += item.minAtk;
+        maxAttackPower_ += item.maxAtk;
+    }
+
+    if (item.itemType == 4)
+    {
+        addBlock(item.block);
+    }
+
+    switch (item.statType1)
+    {
+        case 1: //Vitality
+            addVitality(item.stat1);
+            break;
+        case 2: //Strength
+            addStrength(item.stat1);
+            break;
+        case 3: //Stamina
+            addStamina(item.stat1);
+            break;
+        case 4: //Agility
+            addAgility(item.stat1);
+            break;
+        case 5: //Luck
+            addLuck(item.stat1);
+            break;
+        case 6: //Precision
+            addHit(item.stat1);
+            break;
+        case 7: //Dodge
+            addAgility(item.stat1);
+            break;
+        case 8: //Block
+            //do nothing
+            break;
+        case 9: //Hit
+            addHit(item.stat1);
+            break;
+    }
+
+    switch (item.statType2)
+    {
+        case 1: //Vitality
+            addVitality(item.stat2);
+            break;
+        case 2: //Strength
+            addStrength(item.stat2);
+            break;
+        case 3: //Stamina
+            addStamina(item.stat2);
+            break;
+        case 4: //Agility
+            addAgility(item.stat2);
+            break;
+        case 5: //Luck
+            addLuck(item.stat2);
+            break;
+        case 6: //Precision
+            addHit(item.stat2);
+            break;
+        case 7: //Dodge
+            addAgility(item.stat2);
+            break;
+        case 8: //Block
+            //do nothing
+            break;
+        case 9: //Hit
+            addHit(item.stat2);
+            break;
+    }
+
+    switch (item.statType3)
+    {
+        case 1: //Vitality
+            addVitality(item.stat3);
+            break;
+        case 2: //Strength
+            addStrength(item.stat3);
+            break;
+        case 3: //Stamina
+            addStamina(item.stat3);
+            break;
+        case 4: //Agility
+            addAgility(item.stat3);
+            break;
+        case 5: //Luck
+            addLuck(item.stat3);
+            break;
+        case 6: //Precision
+            addHit(item.stat3);
+            break;
+        case 7: //Dodge
+            addAgility(item.stat3);
+            break;
+        case 8: //Block
+            //do nothing
+            break;
+        case 9: //Hit
+            addHit(item.stat3);
+            break;
+    }
 }
 
 void Player::removeEquipment(int index)
 {
+    Item item = equipment_.value(index);
     equipment_.remove(index);
+
+    if (item.itemType == 2)
+    {
+        minAttackPower_ -= item.minAtk;
+        maxAttackPower_ -= item.maxAtk;
+    }
+
+    if (item.itemType == 4)
+    {
+        removeBlock(item.block);
+    }
+
+    switch (item.statType1)
+    {
+        case 1: //Vitality
+            removeVitality(item.stat1);
+            break;
+        case 2: //Strength
+            removeStrength(item.stat1);
+            break;
+        case 3: //Stamina
+            removeStamina(item.stat1);
+            break;
+        case 4: //Agility
+            removeAgility(item.stat1);
+            break;
+        case 5: //Luck
+            removeLuck(item.stat1);
+            break;
+        case 6: //Precision
+            removeHit(item.stat1);
+            break;
+        case 7: //Dodge
+            removeAgility(item.stat1);
+            break;
+        case 8: //Block
+            //do nothing
+            break;
+        case 9: //Hit
+            removeHit(item.stat1);
+            break;
+    }
+
+    switch (item.statType2)
+    {
+        case 1: //Vitality
+            removeVitality(item.stat2);
+            break;
+        case 2: //Strength
+            removeStrength(item.stat2);
+            break;
+        case 3: //Stamina
+            removeStamina(item.stat2);
+            break;
+        case 4: //Agility
+            removeAgility(item.stat2);
+            break;
+        case 5: //Luck
+            removeLuck(item.stat2);
+            break;
+        case 6: //Precision
+            removeHit(item.stat2);
+            break;
+        case 7: //Dodge
+            removeAgility(item.stat2);
+            break;
+        case 8: //Block
+            //do nothing
+            break;
+        case 9: //Hit
+            removeHit(item.stat2);
+            break;
+    }
+
+    switch (item.statType3)
+    {
+        case 1: //Vitality
+            removeVitality(item.stat3);
+            break;
+        case 2: //Strength
+            removeStrength(item.stat3);
+            break;
+        case 3: //Stamina
+            removeStamina(item.stat3);
+            break;
+        case 4: //Agility
+            removeAgility(item.stat3);
+            break;
+        case 5: //Luck
+            removeLuck(item.stat3);
+            break;
+        case 6: //Precision
+            removeHit(item.stat3);
+            break;
+        case 7: //Dodge
+            removeAgility(item.stat3);
+            break;
+        case 8: //Block
+            //do nothing
+            break;
+        case 9: //Hit
+            removeHit(item.stat3);
+            break;
+    }
 }
 
 int Player::getLocation()

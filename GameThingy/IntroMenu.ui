@@ -27,7 +27,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>5</number>
+     <number>3</number>
     </property>
     <widget class="QWidget" name="tabMenuScreen">
      <attribute name="title">
@@ -242,7 +242,7 @@
        <rect>
         <x>110</x>
         <y>60</y>
-        <width>151</width>
+        <width>81</width>
         <height>41</height>
        </rect>
       </property>
@@ -263,7 +263,7 @@
        <rect>
         <x>110</x>
         <y>110</y>
-        <width>151</width>
+        <width>81</width>
         <height>41</height>
        </rect>
       </property>
@@ -336,6 +336,84 @@
        <string>Rations: 0</string>
       </property>
      </widget>
+     <widget class="QLabel" name="lblFirestarterCost">
+      <property name="geometry">
+       <rect>
+        <x>290</x>
+        <y>110</y>
+        <width>91</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color: rgb(255, 255, 255);</string>
+      </property>
+      <property name="text">
+       <string>Cost: 75 Gold</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnBuyFirestarterKit">
+      <property name="geometry">
+       <rect>
+        <x>190</x>
+        <y>110</y>
+        <width>91</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>Buy Firestarter</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnBuyBedroll">
+      <property name="geometry">
+       <rect>
+        <x>190</x>
+        <y>60</y>
+        <width>91</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>Buy Bedroll</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="lblBedrollCost">
+      <property name="geometry">
+       <rect>
+        <x>290</x>
+        <y>60</y>
+        <width>91</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color: rgb(255, 255, 255);</string>
+      </property>
+      <property name="text">
+       <string>Cost: 100 Gold</string>
+      </property>
+     </widget>
      <zorder>lblActionTabBG</zorder>
      <zorder>btnBuyPotion</zorder>
      <zorder>btnUsePotion</zorder>
@@ -346,6 +424,10 @@
      <zorder>btnBuyRation</zorder>
      <zorder>btnUseRation</zorder>
      <zorder>lblRationAmount</zorder>
+     <zorder>lblFirestarterCost</zorder>
+     <zorder>btnBuyFirestarterKit</zorder>
+     <zorder>btnBuyBedroll</zorder>
+     <zorder>lblBedrollCost</zorder>
     </widget>
     <widget class="QWidget" name="tabBattleScreen">
      <attribute name="title">
@@ -1241,6 +1323,30 @@
        <string>View Inventory</string>
       </property>
      </widget>
+     <widget class="QLabel" name="lblCBlock">
+      <property name="geometry">
+       <rect>
+        <x>270</x>
+        <y>125</y>
+        <width>100</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+       </font>
+      </property>
+      <property name="toolTip">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#000000;&quot;&gt;Determines how many actions you can take per day. Fights cost 1 Stamina. Traveling costs 2 Stamina&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color: rgb(255, 255, 255);</string>
+      </property>
+      <property name="text">
+       <string>Block:</string>
+      </property>
+     </widget>
      <zorder>lblCharTabBG</zorder>
      <zorder>lblCName</zorder>
      <zorder>lblCHealth</zorder>
@@ -1262,6 +1368,7 @@
      <zorder>lblCStamina</zorder>
      <zorder>btnIncreaseStamina</zorder>
      <zorder>btnViewInventory</zorder>
+     <zorder>lblCBlock</zorder>
     </widget>
     <widget class="QWidget" name="tabQuestScreen">
      <attribute name="title">
