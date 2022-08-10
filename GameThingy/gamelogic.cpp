@@ -390,7 +390,6 @@ void GameLogic::on_btnSpecialAbility_clicked()
             msgBox.setText(QString("%1 dropped a potion").arg(bandit_->getName()));
             msgBox.exec();
             player_->addPotion(1);
-            ui->lblPotionAmount->setText(QString("Potions: %1").arg(player_->getPotion()));
         }
 
         if (ratChance <= 7)
@@ -1184,7 +1183,6 @@ void GameLogic::on_btnLoad_clicked()
             checkLocation();
             ui->lblGoldAmount->setText(QString("Gold: %1").arg(player_->getGold()));
             ui->lblGoldInv->setText(QString("Gold: %1").arg(player_->getGold()));
-            ui->lblPotionAmount->setText(QString("Potions: %1").arg(player_->getPotion()));
             //ui->txtBattleInfo->setText("");
             ui->lblEHealth->setFixedWidth(0);
             ui->lblEHealthAmount->setText("0");
@@ -1209,26 +1207,60 @@ void GameLogic::on_btnLoad_clicked()
     }
 }
 
-void GameLogic::on_btnUsePotion_clicked()
-{
-
-}
-
 void GameLogic::on_btnBuyPotion_clicked()
 {
-    if (strRestLocation_[player_->getLocation()] == "City" ||strRestLocation_[player_->getLocation()] == "Town")
+    if (player_->getGold() >= 50)
     {
-        player_->buyPotion();
-        ui->lblGoldAmount->setText(QString("Gold: %1").arg(player_->getGold()));
-        ui->lblGoldInv->setText(QString("Gold: %1").arg(player_->getGold()));
-        ui->lblPotionAmount->setText(QString("Potions: %1").arg(player_->getPotion()));
-        setPlayerInfo();
+        if (strRestLocation_[player_->getLocation()] == "City" || strRestLocation_[player_->getLocation()] == "Town")
+        {
+            Item item;
+            //numItems.push_back(banditItemDrops_[e][0]);
+
+            item.name = "Potion";
+            item.itemRarity = 0;
+            item.itemType = 1;
+            item.armourRating = 0;
+            item.armourType = 0;
+            item.healType = 1;
+            item.healAmount = 5;
+            item.isEquippable = false;
+            item.sellPrice = 10;
+            item.isUsable = true;
+            item.weight = 0;
+            item.minAtk = 0;
+            item.maxAtk = 0;
+            item.block = 0;
+            item.holdType = 0;
+            item.stat1 = 0;
+            item.stat2 = 0;
+            item.stat3 = 0;
+            item.statType1 = 0;
+            item.statType2 = 0;
+            item.statType3 = 0;
+            item.amount = 1;
+            item.numStats = 0;
+
+            QSound::play("Sounds\\potionDrop.wav");
+            player_->removeGold(50);
+            player_->addItemToInventory(item);
+            ui->lblGoldAmount->setText(QString("Gold: %1").arg(player_->getGold()));
+            ui->lblGoldInv->setText(QString("Gold: %1").arg(player_->getGold()));
+            setPlayerInfo();
+            setPlayerInventory();
+        }
+        else
+        {
+            QMessageBox msgBox;
+            msgBox.setWindowTitle("Buy Item");
+            msgBox.setText("You need to be in a City<br>or Town to buy items.");
+            msgBox.exec();
+        }
     }
     else
     {
         QMessageBox msgBox;
         msgBox.setWindowTitle("Buy Item");
-        msgBox.setText("You need to be in a City<br>or Town to buy items.");
+        msgBox.setText("You do not have enough gold for this item.");
         msgBox.exec();
     }
 }
@@ -1240,19 +1272,29 @@ void GameLogic::on_btnUseRation_clicked()
 
 void GameLogic::on_btnBuyRation_clicked()
 {
-    if (strRestLocation_[player_->getLocation()] == "City" ||strRestLocation_[player_->getLocation()] == "Town")
+    if (player_->getGold() >= 75)
     {
-        player_->buyRation();
-        ui->lblGoldAmount->setText(QString("Gold: %1").arg(player_->getGold()));
-        ui->lblGoldInv->setText(QString("Gold: %1").arg(player_->getGold()));
-        ui->lblRationAmount->setText(QString("Rations: %1").arg(player_->getRation()));
-        setPlayerInfo();
+        if (strRestLocation_[player_->getLocation()] == "City" ||strRestLocation_[player_->getLocation()] == "Town")
+        {
+            player_->buyRation();
+            ui->lblGoldAmount->setText(QString("Gold: %1").arg(player_->getGold()));
+            ui->lblGoldInv->setText(QString("Gold: %1").arg(player_->getGold()));
+            ui->lblRationAmount->setText(QString("Rations: %1").arg(player_->getRation()));
+            setPlayerInfo();
+        }
+        else
+        {
+            QMessageBox msgBox;
+            msgBox.setWindowTitle("Buy Item");
+            msgBox.setText("You need to be in a City<br>or Town to buy items.");
+            msgBox.exec();
+        }
     }
     else
     {
         QMessageBox msgBox;
         msgBox.setWindowTitle("Buy Item");
-        msgBox.setText("You need to be in a City<br>or Town to buy items.");
+        msgBox.setText("You do not have enough gold for this item.");
         msgBox.exec();
     }
 }
@@ -1268,7 +1310,6 @@ void GameLogic::setPlayerInfo()
     ui->lblCSkillPoints->setText(QString("Skill Points: %1").arg(player_->getSkillPoints()));
     ui->lblGoldAmount->setText(QString("Gold: %1").arg(player_->getGold()));
     ui->lblGoldInv->setText(QString("Gold: %1").arg(player_->getGold()));
-    ui->lblPotionAmount->setText(QString("Potions: %1").arg(player_->getPotion()));
     ui->lblRationAmount->setText(QString("Ration: %1").arg(player_->getRation()));
     ui->lblPLevel->setText(QString("%1").arg(player_->getLevel()));
     ui->lblCStrength->setText(QString("Strength: %1").arg(player_->getStrength()));
@@ -3887,47 +3928,57 @@ void GameLogic::on_lstEquipment_itemClicked(QListWidgetItem *item)
 
 void GameLogic::on_btnBuyBedroll_clicked()
 {
-    if (strRestLocation_[player_->getLocation()] == "City" ||strRestLocation_[player_->getLocation()] == "Town")
+    if (player_->getGold() >= 100)
     {
-        Item item;
-        //numItems.push_back(banditItemDrops_[e][0]);
+        if (strRestLocation_[player_->getLocation()] == "City" ||strRestLocation_[player_->getLocation()] == "Town")
+        {
+            Item item;
+            //numItems.push_back(banditItemDrops_[e][0]);
 
-        item.name = "Bedroll";
-        item.itemRarity = 1;
-        item.itemType = 0;
-        item.armourRating = 0;
-        item.armourType = 0;
-        item.healType = 0;
-        item.healAmount = 0;
-        item.isEquippable = false;
-        item.sellPrice = 50;
-        item.isUsable = false;
-        item.weight = 0;
-        item.minAtk = 0;
-        item.maxAtk = 0;
-        item.block = 0;
-        item.holdType = 0;
-        item.stat1 = 0;
-        item.stat2 = 0;
-        item.stat3 = 0;
-        item.statType1 = 0;
-        item.statType2 = 0;
-        item.statType3 = 0;
-        item.amount = 1;
-        item.numStats = 0;
+            item.name = "Bedroll";
+            item.itemRarity = 1;
+            item.itemType = 0;
+            item.armourRating = 0;
+            item.armourType = 0;
+            item.healType = 0;
+            item.healAmount = 0;
+            item.isEquippable = false;
+            item.sellPrice = 50;
+            item.isUsable = false;
+            item.weight = 0;
+            item.minAtk = 0;
+            item.maxAtk = 0;
+            item.block = 0;
+            item.holdType = 0;
+            item.stat1 = 0;
+            item.stat2 = 0;
+            item.stat3 = 0;
+            item.statType1 = 0;
+            item.statType2 = 0;
+            item.statType3 = 0;
+            item.amount = 1;
+            item.numStats = 0;
 
-        player_->removeGold(100);
-        player_->addItemToInventory(item);
-        ui->lblGoldAmount->setText(QString("Gold: %1").arg(player_->getGold()));
-        ui->lblGoldInv->setText(QString("Gold: %1").arg(player_->getGold()));
-        setPlayerInfo();
-        setPlayerInventory();
+            player_->removeGold(100);
+            player_->addItemToInventory(item);
+            ui->lblGoldAmount->setText(QString("Gold: %1").arg(player_->getGold()));
+            ui->lblGoldInv->setText(QString("Gold: %1").arg(player_->getGold()));
+            setPlayerInfo();
+            setPlayerInventory();
+        }
+        else
+        {
+            QMessageBox msgBox;
+            msgBox.setWindowTitle("Buy Item");
+            msgBox.setText("You need to be in a City<br>or Town to buy items.");
+            msgBox.exec();
+        }
     }
     else
     {
         QMessageBox msgBox;
         msgBox.setWindowTitle("Buy Item");
-        msgBox.setText("You need to be in a City<br>or Town to buy items.");
+        msgBox.setText("You do not have enough gold for this item.");
         msgBox.exec();
     }
 }
@@ -3935,47 +3986,57 @@ void GameLogic::on_btnBuyBedroll_clicked()
 
 void GameLogic::on_btnBuyFirestarterKit_clicked()
 {
-    if (strRestLocation_[player_->getLocation()] == "City" ||strRestLocation_[player_->getLocation()] == "Town")
+    if (player_->getGold() >= 75)
     {
-        Item item;
-        //numItems.push_back(banditItemDrops_[e][0]);
+        if (strRestLocation_[player_->getLocation()] == "City" ||strRestLocation_[player_->getLocation()] == "Town")
+        {
+            Item item;
+            //numItems.push_back(banditItemDrops_[e][0]);
 
-        item.name = "Firestarter Kit";
-        item.itemRarity = 1;
-        item.itemType = 0;
-        item.armourRating = 0;
-        item.armourType = 0;
-        item.healType = 0;
-        item.healAmount = 0;
-        item.isEquippable = false;
-        item.sellPrice = 50;
-        item.isUsable = false;
-        item.weight = 0;
-        item.minAtk = 0;
-        item.maxAtk = 0;
-        item.block = 0;
-        item.holdType = 0;
-        item.stat1 = 0;
-        item.stat2 = 0;
-        item.stat3 = 0;
-        item.statType1 = 0;
-        item.statType2 = 0;
-        item.statType3 = 0;
-        item.amount = 1;
-        item.numStats = 0;
+            item.name = "Firestarter Kit";
+            item.itemRarity = 1;
+            item.itemType = 0;
+            item.armourRating = 0;
+            item.armourType = 0;
+            item.healType = 0;
+            item.healAmount = 0;
+            item.isEquippable = false;
+            item.sellPrice = 35;
+            item.isUsable = false;
+            item.weight = 0;
+            item.minAtk = 0;
+            item.maxAtk = 0;
+            item.block = 0;
+            item.holdType = 0;
+            item.stat1 = 0;
+            item.stat2 = 0;
+            item.stat3 = 0;
+            item.statType1 = 0;
+            item.statType2 = 0;
+            item.statType3 = 0;
+            item.amount = 1;
+            item.numStats = 0;
 
-        player_->removeGold(75);
-        player_->addItemToInventory(item);
-        ui->lblGoldAmount->setText(QString("Gold: %1").arg(player_->getGold()));
-        ui->lblGoldInv->setText(QString("Gold: %1").arg(player_->getGold()));
-        setPlayerInfo();
-        setPlayerInventory();
+            player_->removeGold(75);
+            player_->addItemToInventory(item);
+            ui->lblGoldAmount->setText(QString("Gold: %1").arg(player_->getGold()));
+            ui->lblGoldInv->setText(QString("Gold: %1").arg(player_->getGold()));
+            setPlayerInfo();
+            setPlayerInventory();
+        }
+        else
+        {
+            QMessageBox msgBox;
+            msgBox.setWindowTitle("Buy Item");
+            msgBox.setText("You need to be in a City<br>or Town to buy items.");
+            msgBox.exec();
+        }
     }
     else
     {
         QMessageBox msgBox;
         msgBox.setWindowTitle("Buy Item");
-        msgBox.setText("You need to be in a City<br>or Town to buy items.");
+        msgBox.setText("You do not have enough gold for this item.");
         msgBox.exec();
     }
 }

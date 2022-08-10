@@ -266,37 +266,6 @@ void Player::usePotion(int healAmount, int itemIndex)
     }
 }
 
-void Player::buyPotion()
-{
-    if (gold_ >= 20)
-    {
-        if (potion_ == 10)
-        {
-            QMessageBox msgBox;
-            msgBox.setWindowTitle("Buy Potion");
-            msgBox.setText("You cannot carry any more potions.");
-            msgBox.exec();
-        }
-        else
-        {
-            QSound::play("Sounds\\potionDrop.wav");
-            gold_ -= 20;
-            potion_ += 1;
-            QMessageBox msgBox;
-            msgBox.setWindowTitle("Buy Potion");
-            msgBox.setText("You bought a potion.");
-            msgBox.exec();
-        }
-    }
-    else
-    {
-        QMessageBox msgBox;
-        msgBox.setWindowTitle("Buy Potion");
-        msgBox.setText("You do not have enough gold.");
-        msgBox.exec();
-    }
-}
-
 void Player::useRation(int stamAmount, int itemIndex)
 {
     if (stamina_ == maxStamina_)

@@ -37,8 +37,6 @@ private slots:
 
     void on_btnLoad_clicked();
 
-    void on_btnUsePotion_clicked();
-
     void on_btnBuyPotion_clicked();
 
     void on_btnUsePotionBS_clicked();

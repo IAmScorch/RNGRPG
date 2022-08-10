@@ -164,24 +164,6 @@
        <string>Buy Potion</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="btnUsePotion">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>160</y>
-        <width>91</width>
-        <height>41</height>
-       </rect>
-      </property>
-      <property name="font">
-       <font>
-        <pointsize>10</pointsize>
-       </font>
-      </property>
-      <property name="text">
-       <string>Drink Potion</string>
-      </property>
-     </widget>
      <widget class="QLabel" name="lblGoldAmount">
       <property name="geometry">
        <rect>
@@ -201,27 +183,6 @@
       </property>
       <property name="text">
        <string>Gold: 0</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="lblPotionAmount">
-      <property name="geometry">
-       <rect>
-        <x>110</x>
-        <y>160</y>
-        <width>151</width>
-        <height>41</height>
-       </rect>
-      </property>
-      <property name="font">
-       <font>
-        <pointsize>10</pointsize>
-       </font>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">color: rgb(255, 255, 255);</string>
-      </property>
-      <property name="text">
-       <string>Potions: 0</string>
       </property>
      </widget>
      <widget class="QLabel" name="lblActionTabBG">
@@ -255,7 +216,7 @@
        <string notr="true">color: rgb(255, 255, 255);</string>
       </property>
       <property name="text">
-       <string>Cost: 20 Gold</string>
+       <string>Cost: 50 Gold</string>
       </property>
      </widget>
      <widget class="QLabel" name="lblRationCost">
@@ -416,9 +377,7 @@
      </widget>
      <zorder>lblActionTabBG</zorder>
      <zorder>btnBuyPotion</zorder>
-     <zorder>btnUsePotion</zorder>
      <zorder>lblGoldAmount</zorder>
-     <zorder>lblPotionAmount</zorder>
      <zorder>lblPotionCost</zorder>
      <zorder>lblRationCost</zorder>
      <zorder>btnBuyRation</zorder>
