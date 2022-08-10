@@ -74,9 +74,9 @@ public:
     int doHitRoll();
     void doHit(int dmg, int enemyHitRoll, QString enemyName, bool isEnemyAlive);
     void checkXP();
-    void usePotion(int healAmount);
+    void usePotion(int healAmount, int itemIndex);
     void buyPotion();
-    void useRation(int stamAmount);
+    void useRation(int stamAmount, int itemIndex);
     void buyRation();
     void save();
     void load(QString playerName);

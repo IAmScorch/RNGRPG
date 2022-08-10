@@ -1211,9 +1211,7 @@ void GameLogic::on_btnLoad_clicked()
 
 void GameLogic::on_btnUsePotion_clicked()
 {
-    player_->usePotion(5);
-    setPlayerInfo();
-    ui->lblPotionAmount->setText(QString("Potions: %1").arg(player_->getPotion()));
+
 }
 
 void GameLogic::on_btnBuyPotion_clicked()
@@ -1444,23 +1442,15 @@ void GameLogic::useItem()
     {
         if (inventoryItems.value(itemIndex).healType == 1)
         {
-            player_->usePotion(inventoryItems.value(itemIndex).healAmount);
-            if (player_->wasHealed())
-            {
-                player_->removeItemFromInventory(itemIndex);
-                setPlayerInfo();
-                setPlayerInventory();
-            }
+            player_->usePotion(inventoryItems.value(itemIndex).healAmount, itemIndex);
+            setPlayerInfo();
+            setPlayerInventory();
         }
         else if (inventoryItems.value(itemIndex).healType == 2)
         {
-            player_->useRation(inventoryItems.value(itemIndex).healAmount);
-            if (player_->rationconsumed())
-            {
-                player_->removeItemFromInventory(itemIndex);
-                setPlayerInfo();
-                setPlayerInventory();
-            }
+            player_->useRation(inventoryItems.value(itemIndex).healAmount, itemIndex);
+            setPlayerInfo();
+            setPlayerInventory();
         }
     }
 }
@@ -1693,9 +1683,61 @@ void GameLogic::on_btnRestBS_clicked()
 
 void GameLogic::on_btnUsePotionBS_clicked()
 {
-    player_->usePotion(5);
-    ui->lblPotionAmount->setText(QString("Potions: %1").arg(player_->getPotion()));
-    setPlayerHealth();
+    bool hasPotion = false;
+    QString lastPotionType = "";
+    QVector<Item> inventoryItems;
+    QVector<QString> potionNames;
+
+    inventoryItems = player_->getInventory();
+
+    for (int a = 0; a < inventoryItems.length(); a++)
+    {
+        if (inventoryItems.value(a).name.toUpper().contains("POTION"))
+        {
+            hasPotion = true;
+
+            if (potionNames.length() > 0)
+            {
+                if (std::find(potionNames.begin(), potionNames.end(), inventoryItems.value(a).name) != potionNames.end())
+                {
+                    //do nothing
+                }
+                else
+                {
+                    potionNames.push_back(inventoryItems.value(a).name);
+                }
+            }
+            else
+            {
+                potionNames.push_back(inventoryItems.value(a).name);
+            }
+        }
+    }
+
+    if (hasPotion)
+    {
+        if (potionNames.length() == 1)
+        {
+            for (int i = 0; i < inventoryItems.length(); i++)
+            {
+                if (inventoryItems.value(i).name.toUpper() == potionNames.value(0).toUpper())
+                {
+                    player_->usePotion(inventoryItems.value(i).healAmount, i);
+                    break;
+                }
+            }
+        }
+
+        setPlayerInfo();
+        setPlayerInventory();
+    }
+    else
+    {
+        QMessageBox msgBox;
+        msgBox.setWindowTitle("Drink Ration");
+        msgBox.setText("    You have no Potions         ");
+        msgBox.exec();
+    }
 }
 
 void GameLogic::on_btnUseRationBS_clicked()
@@ -1718,8 +1760,7 @@ void GameLogic::on_btnUseRationBS_clicked()
 
     if (hasRation)
     {
-        player_->useRation(inventoryItems.value(itemIndex).healAmount);
-        player_->removeItemFromInventory(itemIndex);
+        player_->useRation(inventoryItems.value(itemIndex).healAmount, itemIndex);
 
         setPlayerInfo();
         setPlayerInventory();

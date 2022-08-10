@@ -242,39 +242,28 @@ void Player::doLevelUp()
     }
 }
 
-void Player::usePotion(int healAmount)
+void Player::usePotion(int healAmount, int itemIndex)
 {
-    //if (potion_ >= 1)
-    //{
-        if (health_ == maxHealth_)
-        {
-            QMessageBox msgBox;
-            msgBox.setWindowTitle("Use Potion");
-            msgBox.setText("Your health is full.");
-            msgBox.exec();
-            wasHealed_ = false;
-        }
-        else
-        {
-            health_ += healAmount;
-            //potion_ -= 1;
-            if (health_ > maxHealth_)
-                health_ = maxHealth_;
-            QSound::play("Sounds\\drinkPotion.wav");
-            QMessageBox msgBox;
-            msgBox.setWindowTitle("Use Potion");
-            msgBox.setText("      Potion used.            ");
-            msgBox.exec();
-            wasHealed_ = true;
-        }
-   // }
-   // else
-//    {
-//        QMessageBox msgBox;
-//        msgBox.setWindowTitle("Use Potion");
-//        msgBox.setText("You do not have a potion.");
-//        msgBox.exec();
-//    }
+    if (health_ == maxHealth_)
+    {
+        QMessageBox msgBox;
+        msgBox.setWindowTitle("Drink Potion");
+        msgBox.setText("Your health is full.");
+        msgBox.exec();
+    }
+    else
+    {
+        health_ += healAmount;
+        removeItemFromInventory(itemIndex);
+        //potion_ -= 1;
+        if (health_ > maxHealth_)
+            health_ = maxHealth_;
+        QSound::play("Sounds\\drinkPotion.wav");
+        QMessageBox msgBox;
+        msgBox.setWindowTitle("Drink Potion");
+        msgBox.setText("      Potion used.            ");
+        msgBox.exec();
+    }
 }
 
 void Player::buyPotion()
@@ -308,7 +297,7 @@ void Player::buyPotion()
     }
 }
 
-void Player::useRation(int stamAmount)
+void Player::useRation(int stamAmount, int itemIndex)
 {
     if (stamina_ == maxStamina_)
     {
@@ -320,6 +309,7 @@ void Player::useRation(int stamAmount)
     else
     {
         stamina_ += stamAmount;
+        removeItemFromInventory(itemIndex);
         //ration_ -= 1;
         if (stamina_ > maxStamina_)
             stamina_ = maxStamina_;
