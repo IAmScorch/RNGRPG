@@ -279,44 +279,12 @@ void Player::useRation(int stamAmount, int itemIndex)
     {
         stamina_ += stamAmount;
         removeItemFromInventory(itemIndex);
-        //ration_ -= 1;
         if (stamina_ > maxStamina_)
             stamina_ = maxStamina_;
         QSound::play("Sounds\\eatRation.wav");
         QMessageBox msgBox;
         msgBox.setWindowTitle("Eat Ration");
         msgBox.setText("      Ration Eaten.            ");
-        msgBox.exec();
-    }
-}
-
-void Player::buyRation()
-{
-    if (gold_ >= 30)
-    {
-        if (ration_ == 10)
-        {
-            QMessageBox msgBox;
-            msgBox.setWindowTitle("Buy Ration");
-            msgBox.setText("You cannot carry any more rations.");
-            msgBox.exec();
-        }
-        else
-        {
-            QSound::play("Sounds\\rationDrop.wav");
-            gold_ -= 30;
-            ration_ += 1;
-            QMessageBox msgBox;
-            msgBox.setWindowTitle("Buy Ration");
-            msgBox.setText("You bought a ration.");
-            msgBox.exec();
-        }
-    }
-    else
-    {
-        QMessageBox msgBox;
-        msgBox.setWindowTitle("Buy Ration");
-        msgBox.setText("You do not have enough gold.");
         msgBox.exec();
     }
 }

@@ -84,8 +84,6 @@ private slots:
 
     void on_btnBuyRation_clicked();
 
-    void on_btnUseRation_clicked();
-
     void on_btnRestBS_clicked();
 
     void on_btnViewInventory_clicked();

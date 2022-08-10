@@ -400,7 +400,6 @@ void GameLogic::on_btnSpecialAbility_clicked()
             msgBox.setText(QString("%1 dropped a ration").arg(bandit_->getName()));
             msgBox.exec();
             player_->addRation(1);
-            ui->lblRationAmount->setText(QString("Rations: %1").arg(player_->getPotion()));
         }
 
         player_->removeStamina(1);
@@ -1265,22 +1264,46 @@ void GameLogic::on_btnBuyPotion_clicked()
     }
 }
 
-void GameLogic::on_btnUseRation_clicked()
-{
-
-}
-
 void GameLogic::on_btnBuyRation_clicked()
 {
-    if (player_->getGold() >= 75)
+    if (player_->getGold() >= 50)
     {
-        if (strRestLocation_[player_->getLocation()] == "City" ||strRestLocation_[player_->getLocation()] == "Town")
+        if (strRestLocation_[player_->getLocation()] == "City" || strRestLocation_[player_->getLocation()] == "Town")
         {
-            player_->buyRation();
+            Item item;
+            //numItems.push_back(banditItemDrops_[e][0]);
+
+            item.name = "Ration";
+            item.itemRarity = 0;
+            item.itemType = 1;
+            item.armourRating = 0;
+            item.armourType = 0;
+            item.healType = 2;
+            item.healAmount = 5;
+            item.isEquippable = false;
+            item.sellPrice = 10;
+            item.isUsable = true;
+            item.weight = 0;
+            item.minAtk = 0;
+            item.maxAtk = 0;
+            item.block = 0;
+            item.holdType = 0;
+            item.stat1 = 0;
+            item.stat2 = 0;
+            item.stat3 = 0;
+            item.statType1 = 0;
+            item.statType2 = 0;
+            item.statType3 = 0;
+            item.amount = 1;
+            item.numStats = 0;
+
+            QSound::play("Sounds\\rationDrop.wav");
+            player_->removeGold(75);
+            player_->addItemToInventory(item);
             ui->lblGoldAmount->setText(QString("Gold: %1").arg(player_->getGold()));
             ui->lblGoldInv->setText(QString("Gold: %1").arg(player_->getGold()));
-            ui->lblRationAmount->setText(QString("Rations: %1").arg(player_->getRation()));
             setPlayerInfo();
+            setPlayerInventory();
         }
         else
         {
@@ -1310,7 +1333,6 @@ void GameLogic::setPlayerInfo()
     ui->lblCSkillPoints->setText(QString("Skill Points: %1").arg(player_->getSkillPoints()));
     ui->lblGoldAmount->setText(QString("Gold: %1").arg(player_->getGold()));
     ui->lblGoldInv->setText(QString("Gold: %1").arg(player_->getGold()));
-    ui->lblRationAmount->setText(QString("Ration: %1").arg(player_->getRation()));
     ui->lblPLevel->setText(QString("%1").arg(player_->getLevel()));
     ui->lblCStrength->setText(QString("Strength: %1").arg(player_->getStrength()));
     ui->lblCStamina->setText(QString("Stamina: %1").arg(player_->getMaxStamina()));
