@@ -11,7 +11,6 @@
 #include "quests.h"
 #include "inventorybag.h"
 #include "itemcrossreference.h"
-#include "ui_bag.h"
 
 namespace Ui {
 class GameLogic;

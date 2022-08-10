@@ -310,37 +310,25 @@ void Player::buyPotion()
 
 void Player::useRation(int stamAmount)
 {
-//    if (ration_ >= 1)
-//    {
-        if (stamina_ == maxStamina_)
-        {
-            QMessageBox msgBox;
-            msgBox.setWindowTitle("Use Ration");
-            msgBox.setText("Your stamina is full.");
-            msgBox.exec();
-            rationConsumed_ = false;
-        }
-        else
-        {
-            stamina_ += stamAmount;
-            //ration_ -= 1;
-            if (stamina_ > maxStamina_)
-                stamina_ = maxStamina_;
-            QSound::play("Sounds\\eatRation.wav");
-            QMessageBox msgBox;
-            msgBox.setWindowTitle("Use Ration");
-            msgBox.setText("      Ration used.            ");
-            msgBox.exec();
-            rationConsumed_ = true;
-        }
-//    }
-//    else
-//    {
-//        QMessageBox msgBox;
-//        msgBox.setWindowTitle("Use Ration");
-//        msgBox.setText("You do not have a ration.");
-//        msgBox.exec();
-//    }
+    if (stamina_ == maxStamina_)
+    {
+        QMessageBox msgBox;
+        msgBox.setWindowTitle("Eat Ration");
+        msgBox.setText("Your stamina is full.");
+        msgBox.exec();
+    }
+    else
+    {
+        stamina_ += stamAmount;
+        //ration_ -= 1;
+        if (stamina_ > maxStamina_)
+            stamina_ = maxStamina_;
+        QSound::play("Sounds\\eatRation.wav");
+        QMessageBox msgBox;
+        msgBox.setWindowTitle("Eat Ration");
+        msgBox.setText("      Ration Eaten.            ");
+        msgBox.exec();
+    }
 }
 
 void Player::buyRation()

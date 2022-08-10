@@ -652,7 +652,7 @@ public:
 
         retranslateUi(GameLogic);
 
-        tabGame->setCurrentIndex(3);
+        tabGame->setCurrentIndex(0);
         btnBeginQuest->setDefault(false);
 
 

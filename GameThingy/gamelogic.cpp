@@ -1237,9 +1237,7 @@ void GameLogic::on_btnBuyPotion_clicked()
 
 void GameLogic::on_btnUseRation_clicked()
 {
-    player_->useRation(5);
-    setPlayerInfo();
-    ui->lblRationAmount->setText(QString("Rations: %1").arg(player_->getRation()));
+
 }
 
 void GameLogic::on_btnBuyRation_clicked()
@@ -1702,9 +1700,37 @@ void GameLogic::on_btnUsePotionBS_clicked()
 
 void GameLogic::on_btnUseRationBS_clicked()
 {
-    player_->useRation(5);
-    ui->lblRationAmount->setText(QString("Rations: %1").arg(player_->getRation()));
-    setPlayerStamina();
+    int itemIndex;
+    bool hasRation = false;
+    QVector<Item> inventoryItems;
+
+    inventoryItems = player_->getInventory();
+
+    for (int a = 0; a < inventoryItems.length(); a++)
+    {
+        if (inventoryItems.value(a).name.toUpper() == "RATION")
+        {
+            itemIndex = a;
+            hasRation = true;
+            break;
+        }
+    }
+
+    if (hasRation)
+    {
+        player_->useRation(inventoryItems.value(itemIndex).healAmount);
+        player_->removeItemFromInventory(itemIndex);
+
+        setPlayerInfo();
+        setPlayerInventory();
+    }
+    else
+    {
+        QMessageBox msgBox;
+        msgBox.setWindowTitle("Eat Ration");
+        msgBox.setText("    You have no Rations         ");
+        msgBox.exec();
+    }
 }
 
 void GameLogic::checkSkillPoints()
