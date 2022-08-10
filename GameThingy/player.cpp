@@ -42,7 +42,6 @@ Player::Player(int health, int maxHealth, int maxAttackPower, int minAttackPower
     specialAbilityCharge_ = 0;
     specialAbilityCharged_ = 0;
     specialAbilityMaxCharges_ = 0;
-    strengthCount_ = 0;
     agilityCount_ = 0;
     luckCount_ = 0;
     intelligenceCount_ = 0;
@@ -408,26 +407,22 @@ int Player::getVitality()
 void Player::addStrength(int strength)
 {
     strength_ += strength;
-    strengthCount_ += strength;
     maxAttackPower_ += strength;
 
-    if (strengthCount_ == 5)
+    if (strength_ % 5 == 0)
     {
         minAttackPower_ += 5;
-        strengthCount_ = 0;
     }
 }
 
 void Player::removeStrength(int strength)
 {
     strength_ -= strength;
-    strengthCount_ -= strength;
     maxAttackPower_ -= strength;
 
-    if (strength_ == 4 || strength_ == 9 || strength_ == 14 || strength_ == 19)
+    if (strength_ % 5-4 == 0 )
     {
         minAttackPower_ -= 5;
-        strengthCount_ = 4;
     }
 }
 

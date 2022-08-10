@@ -34,7 +34,6 @@ private:
     int maxStamina_;
     int block_;
 
-    int strengthCount_;
     int agilityCount_;
     int luckCount_;
     int intelligenceCount_;
