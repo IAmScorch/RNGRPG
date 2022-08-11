@@ -49,8 +49,6 @@ Player::Player(int health, int maxHealth, int maxAttackPower, int minAttackPower
     block_ = 0;
     isSpecialAbilityLearned_ = false;
     isSpecialReady_ = false;
-    wasHealed_ = false;
-    rationConsumed_ = false;
     questsCompleted_ = 0;
     location_ = 0;
     qsrand(QTime::currentTime().msec());
@@ -1069,16 +1067,6 @@ bool Player::IsSpecialReady()
 void Player::setIsSpecialReady(bool isSpecialReady)
 {
     isSpecialReady_ = isSpecialReady;
-}
-
-bool Player::wasHealed()
-{
-    return wasHealed_;
-}
-
-bool Player::rationconsumed()
-{
-    return rationConsumed_;
 }
 
 int Player::getQuestsCompleted()

@@ -47,8 +47,6 @@ private:
     bool isSpecialAbilityLearned_;
     bool isSpecialReady_;
     bool isAlive_;
-    bool wasHealed_;
-    bool rationConsumed_;
     QString name_;
     QString message_;
     QVector<Item> inventory_;
@@ -184,9 +182,6 @@ public:
 
     bool IsSpecialReady();
     void setIsSpecialReady(bool isSpecialReady);
-
-    bool wasHealed();
-    bool rationconsumed();
 
     int getSpecialAbilityCharged();
     void setSpecialAbilityCharged(int specialAbilityCharged);

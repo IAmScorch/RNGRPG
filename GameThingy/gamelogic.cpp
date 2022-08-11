@@ -255,34 +255,11 @@ void GameLogic::on_btnAttack_clicked()
                     quest_->setAmountCompleteII(1);
             }
 
-            int potChance = rand() % 100 + 1;
-            int ratChance = rand() % 100 + 1;
             player_->addGold(bandit_->goldDrop());
             player_->addItemsToInventory(bandit_->doLootDrop(bandit_->getName(), bandit_->getEnemyType(), bandit_->getItemDropChance()));
             setPlayerInventory();
             ui->lblGoldAmount->setText(QString("Gold: %1").arg(player_->getGold()));
             ui->lblGoldInv->setText(QString("Gold: %1").arg(player_->getGold()));
-            if (potChance <= 20)
-            {
-//                QSound::play("Sounds\\potionDrop.wav");
-//                QMessageBox msgBox;
-//                msgBox.setWindowTitle("Item Drop");
-//                msgBox.setText(QString("%1 dropped a potion").arg(bandit_->getName()));
-//                msgBox.exec();
-//                player_->addPotion(1);
-//                ui->lblPotionAmount->setText(QString("Potions: %1").arg(player_->getPotion()));
-            }
-
-            if (ratChance <= 7)
-            {
-//                QSound::play("Sounds\\rationDrop.wav");
-//                QMessageBox msgBox;
-//                msgBox.setWindowTitle("Item Drop");
-//                msgBox.setText(QString("%1 dropped a ration").arg(bandit_->getName()));
-//                msgBox.exec();
-//                player_->addRation(1);
-//                ui->lblRationAmount->setText(QString("Rations: %1").arg(player_->getPotion()));
-            }
 
             player_->removeStamina(1);
             player_->checkXP();
@@ -377,30 +354,9 @@ void GameLogic::on_btnSpecialAbility_clicked()
                 quest_->setAmountCompleteII(1);
         }
 
-        int potChance = rand() % 100 + 1;
-        int ratChance = rand() % 100 + 1;
         player_->addGold(bandit_->goldDrop());
         ui->lblGoldAmount->setText(QString("Gold: %1").arg(player_->getGold()));
         ui->lblGoldInv->setText(QString("Gold: %1").arg(player_->getGold()));
-        if (potChance <= 20)
-        {
-            QSound::play("Sounds\\potionDrop.wav");
-            QMessageBox msgBox;
-            msgBox.setWindowTitle("Item Drop");
-            msgBox.setText(QString("%1 dropped a potion").arg(bandit_->getName()));
-            msgBox.exec();
-            player_->addPotion(1);
-        }
-
-        if (ratChance <= 7)
-        {
-            QSound::play("Sounds\\rationDrop.wav");
-            QMessageBox msgBox;
-            msgBox.setWindowTitle("Item Drop");
-            msgBox.setText(QString("%1 dropped a ration").arg(bandit_->getName()));
-            msgBox.exec();
-            player_->addRation(1);
-        }
 
         player_->removeStamina(1);
         player_->checkXP();
