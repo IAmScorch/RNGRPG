@@ -791,10 +791,7 @@ void Player::addEquipment(Item item)
         case 6: //Precision
             addPrecision(item.stat1);
             break;
-        case 7: //Dodge
-            addAgility(item.stat1);
-            break;
-        case 8: //Block
+        case 7: //Block
             //do nothing
             break;
     }
@@ -819,10 +816,7 @@ void Player::addEquipment(Item item)
         case 6: //Precision
             addPrecision(item.stat2);
             break;
-        case 7: //Dodge
-            addAgility(item.stat2);
-            break;
-        case 8: //Block
+        case 7: //Block
             //do nothing
             break;
     }
@@ -847,10 +841,7 @@ void Player::addEquipment(Item item)
         case 6: //Precision
             addPrecision(item.stat3);
             break;
-        case 7: //Dodge
-            addAgility(item.stat3);
-            break;
-        case 8: //Block
+        case 7: //Block
             //do nothing
             break;
     }
@@ -892,10 +883,7 @@ void Player::removeEquipment(int index)
         case 6: //Precision
             removePrecision(item.stat1);
             break;
-        case 7: //Dodge
-            removeAgility(item.stat1);
-            break;
-        case 8: //Block
+        case 7: //Block
             //do nothing
             break;
     }
@@ -920,10 +908,7 @@ void Player::removeEquipment(int index)
         case 6: //Precision
             removePrecision(item.stat2);
             break;
-        case 7: //Dodge
-            removeAgility(item.stat2);
-            break;
-        case 8: //Block
+        case 7: //Block
             //do nothing
             break;
     }
@@ -948,10 +933,7 @@ void Player::removeEquipment(int index)
         case 6: //Precision
             removePrecision(item.stat3);
             break;
-        case 7: //Dodge
-            removeAgility(item.stat3);
-            break;
-        case 8: //Block
+        case 7: //Block
             //do nothing
             break;
     }

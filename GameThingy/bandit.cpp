@@ -226,7 +226,7 @@ QVector<Item> Bandit::doLootDrop(QString enemyName, int enemyType, int itemDropC
 
                                 if (item.itemRarity > 1)
                                 {
-                                    int itemStatTypes[7] = {1,2,3,4,5,6,7};
+                                    int itemStatTypes[7] = {1,2,3,4,5,6};
                                     int itemStatType1 = 0;
                                     int itemStatType2 = 0;
                                     int itemStatType3 = 0;
@@ -240,9 +240,9 @@ QVector<Item> Bandit::doLootDrop(QString enemyName, int enemyType, int itemDropC
                                     }
                                     else
                                     {
-                                        itemStatType1 = itemStatTypes[rand()% 7];
-                                        itemStatType2 = itemStatTypes[rand()% 7];
-                                        itemStatType3 = itemStatTypes[rand()% 7];
+                                        itemStatType1 = itemStatTypes[rand()% 6];
+                                        itemStatType2 = itemStatTypes[rand()% 6];
+                                        itemStatType3 = itemStatTypes[rand()% 6];
                                     }
 
                                     if (item.itemType != 8)
@@ -296,15 +296,15 @@ QVector<Item> Bandit::doLootDrop(QString enemyName, int enemyType, int itemDropC
 
                                         if (item.itemType == 4)
                                         {
-                                            itemStatType1 = rand()% 8 + 1;
-                                            itemStatType2 = rand()% 8 + 1;
-                                            itemStatType3 = rand()% 8 + 1;
+                                            itemStatType1 = rand()% 7 + 1;
+                                            itemStatType2 = rand()% 7 + 1;
+                                            itemStatType3 = rand()% 7 + 1;
                                         }
                                         else
                                         {
-                                            itemStatType1 = itemStatTypes[rand()% 7];
-                                            itemStatType2 = itemStatTypes[rand()% 7];
-                                            itemStatType3 = itemStatTypes[rand()% 7];
+                                            itemStatType1 = itemStatTypes[rand()% 6];
+                                            itemStatType2 = itemStatTypes[rand()% 6];
+                                            itemStatType3 = itemStatTypes[rand()% 6];
                                         }
 
                                         switch (item.itemRarity)

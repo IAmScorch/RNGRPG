@@ -11,7 +11,7 @@ private:
     //QString itemType_ [10] = {"", "", "",  "", "", "",  "",  "",  "",  ""};
     QString itemType_   [10] = {"Undefined", "Consumable", "Weapon",  "Armour", "Shield", "Quest",  "Ring",  "Trinket",  "random",  "Junk"};
     QString armourType_ [5]  = {"Undefined", "Cloth", "Leather", "Mail",  "Plate"};
-    QString statType_   [9] = {"Undefined", "Vitality", "Strength",  "Stamina", "Agility", "Luck",  "Precision",  "Dodge",  "Block"};
+    QString statType_   [8] =  {"Undefined", "Vitality", "Strength",  "Stamina", "Agility", "Luck",  "Precision",  "Block"};
     QString itemRarity_ [6]  = {"Undefined", "Common", "Uncommon",  "Rare", "Epic", "Legendary"};
     QString holdType_   [4]  = {"Undefined", "Main Hand", "1 Handed",  "2 Handed"};
 
