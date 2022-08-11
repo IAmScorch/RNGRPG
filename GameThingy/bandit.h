@@ -24,7 +24,7 @@ private:
     bool isHit_;
     QString message_;
 
-    QString itemStatNames[9] = {"Vitality","Strength","Stamina","Agility","Luck","Precision","Dodge","Block","Hit"};
+    QString itemStatNames[8] = {"Vitality","Strength","Stamina","Agility","Luck","Precision","Dodge","Block"};
     QString weaponTypes[3] = {"Dagger","Short Sword","Long Sword"};
     QString armourTypes[4] = {"Cloth","Leather","Mail","Plate"};
     QString weaponPrefixes[20] = {"Sharp", "Sharpened", "Pointy", "Radient", "Rigid", "Immaculate", "Gouging", "Dangerous", "Vibrant", "Fancy",

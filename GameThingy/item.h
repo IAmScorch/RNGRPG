@@ -5,7 +5,7 @@
   1 = Consumable	6 = Ring		1 = Cloth	+4 dodge        1 = Vitality	6 = Precision
   2 = Weapon		7 = Trinket		2 = Leather	+3 dodge        2 = Strength	7 = Dodge
   3 = Armour		8 = random		3 = Mail	+2 dodge        3 = Stamina     8 = Block
-  4 = Shield		9 = Junk		4 = Plate	+1 dodge        4 = Agility		9 = Hit
+  4 = Shield		9 = Junk		4 = Plate	+1 dodge        4 = Agility
   5 = Quest                                                     5 = Luck
 
   itemRarity          healType            Class Types                                       holdType

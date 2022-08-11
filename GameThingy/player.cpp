@@ -14,7 +14,7 @@
 
 
 Player::Player(int health, int maxHealth, int maxAttackPower, int minAttackPower,
-               int vitality, int strength, int agility, int luck, int intelligence, int hit, int stamina, int maxStamina,
+               int vitality, int strength, int agility, int luck, int intelligence, int precision, int stamina, int maxStamina,
                int agilityDefault, int luckDefault)
     : health_(health),
       maxHealth_(maxHealth),
@@ -25,7 +25,7 @@ Player::Player(int health, int maxHealth, int maxAttackPower, int minAttackPower
       agility_(agility),
       luck_(luck),
       intelligence_(intelligence),
-      hit_(hit),
+      precision_(precision),
       stamina_(stamina),
       maxStamina_(maxStamina),
       agilityDefault_(agilityDefault),
@@ -45,7 +45,7 @@ Player::Player(int health, int maxHealth, int maxAttackPower, int minAttackPower
     agilityBonus_ = 0;
     luckBonus_ = 0;
     intelligenceBonus_ = 0;
-    hitBonus_ = 0;
+    precisionBonus_ = 0;
     block_ = 0;
     isSpecialAbilityLearned_ = false;
     isSpecialReady_ = false;
@@ -105,7 +105,7 @@ int Player::doSpecialAbility(QString enemy)
 int Player::doHitRoll()
 {
     int hitRoll = rand()% ((20 + 1) - 1) + 1;
-    return hitRoll + hitBonus_;
+    return hitRoll + precisionBonus_;
 }
 
 void Player::doHit(int dmg, int enemyHitRoll, QString enemyName, bool isEnemyAlive)
@@ -316,8 +316,8 @@ void Player::save()
     saveFile << intelligence_ << "\n";
     saveFile << intelligenceBonus_ << "\n";
     saveFile << questsCompleted_ << "\n";
-    saveFile << hit_ << "\n";
-    saveFile << hitBonus_ << "\n";
+    saveFile << precision_ << "\n";
+    saveFile << precisionBonus_ << "\n";
     saveFile << stamina_ << "\n";
     saveFile << maxStamina_ << "\n";
     saveFile << ration_ << "\n";
@@ -362,8 +362,8 @@ void Player::load(QString playerName)
         intelligence_ = saveFile.readLine().toInt();
         intelligenceBonus_ = saveFile.readLine().toInt();
         questsCompleted_ = saveFile.readLine().toInt();
-        hit_ = saveFile.readLine().toInt();
-        hitBonus_ = saveFile.readLine().toInt();
+        precision_ = saveFile.readLine().toInt();
+        precisionBonus_ = saveFile.readLine().toInt();
         stamina_ = saveFile.readLine().toInt();
         maxStamina_ = saveFile.readLine().toInt();
         ration_ = saveFile.readLine().toInt();
@@ -482,29 +482,29 @@ int Player::getIntelligence()
     return intelligence_;
 }
 
-void Player::addHit(int hit)
+void Player::addPrecision(int precision)
 {
-    hit_ += hit;
+    precision_ += precision;
 
-    if (hit_ % 5 == 0)
+    if (precision_ % 5 == 0)
     {
-        hitBonus_ += 1;
+        precisionBonus_ += 1;
     }
 }
 
-void Player::removeHit(int hit)
+void Player::removePrecision(int precision)
 {
-    hit_ -= hit;
+    precision_ -= precision;
 
-    if (hit_ % 5-4 == 0)
+    if (precision_ % 5-4 == 0)
     {
-        hitBonus_ -= 1;
+        precisionBonus_ -= 1;
     }
 }
 
-int Player::getHit()
+int Player::getPrecision()
 {
-    return hit_;
+    return precision_;
 }
 
 void Player::setStamina(int stamina)
@@ -789,16 +789,13 @@ void Player::addEquipment(Item item)
             addLuck(item.stat1);
             break;
         case 6: //Precision
-            addHit(item.stat1);
+            addPrecision(item.stat1);
             break;
         case 7: //Dodge
             addAgility(item.stat1);
             break;
         case 8: //Block
             //do nothing
-            break;
-        case 9: //Hit
-            addHit(item.stat1);
             break;
     }
 
@@ -820,16 +817,13 @@ void Player::addEquipment(Item item)
             addLuck(item.stat2);
             break;
         case 6: //Precision
-            addHit(item.stat2);
+            addPrecision(item.stat2);
             break;
         case 7: //Dodge
             addAgility(item.stat2);
             break;
         case 8: //Block
             //do nothing
-            break;
-        case 9: //Hit
-            addHit(item.stat2);
             break;
     }
 
@@ -851,16 +845,13 @@ void Player::addEquipment(Item item)
             addLuck(item.stat3);
             break;
         case 6: //Precision
-            addHit(item.stat3);
+            addPrecision(item.stat3);
             break;
         case 7: //Dodge
             addAgility(item.stat3);
             break;
         case 8: //Block
             //do nothing
-            break;
-        case 9: //Hit
-            addHit(item.stat3);
             break;
     }
 }
@@ -899,16 +890,13 @@ void Player::removeEquipment(int index)
             removeLuck(item.stat1);
             break;
         case 6: //Precision
-            removeHit(item.stat1);
+            removePrecision(item.stat1);
             break;
         case 7: //Dodge
             removeAgility(item.stat1);
             break;
         case 8: //Block
             //do nothing
-            break;
-        case 9: //Hit
-            removeHit(item.stat1);
             break;
     }
 
@@ -930,16 +918,13 @@ void Player::removeEquipment(int index)
             removeLuck(item.stat2);
             break;
         case 6: //Precision
-            removeHit(item.stat2);
+            removePrecision(item.stat2);
             break;
         case 7: //Dodge
             removeAgility(item.stat2);
             break;
         case 8: //Block
             //do nothing
-            break;
-        case 9: //Hit
-            removeHit(item.stat2);
             break;
     }
 
@@ -961,16 +946,13 @@ void Player::removeEquipment(int index)
             removeLuck(item.stat3);
             break;
         case 6: //Precision
-            removeHit(item.stat3);
+            removePrecision(item.stat3);
             break;
         case 7: //Dodge
             removeAgility(item.stat3);
             break;
         case 8: //Block
             //do nothing
-            break;
-        case 9: //Hit
-            removeHit(item.stat3);
             break;
     }
 }

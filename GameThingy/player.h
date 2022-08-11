@@ -29,7 +29,7 @@ private:
     int agility_;
     int luck_;
     int intelligence_;
-    int hit_;
+    int precision_;
     int stamina_;
     int maxStamina_;
     int block_;
@@ -37,7 +37,7 @@ private:
     int agilityBonus_;
     int luckBonus_;
     int intelligenceBonus_;
-    int hitBonus_;
+    int precisionBonus_;
 
     int agilityDefault_;
     int luckDefault_;
@@ -92,9 +92,9 @@ public:
     void addIntelligence(int intelligence);
     int getIntelligence();
 
-    void addHit(int hit);
-    void removeHit(int hit);
-    int getHit();
+    void addPrecision(int precision);
+    void removePrecision(int precision_);
+    int getPrecision();
 
     void setStamina(int stamina);
     void removeStamina(int action);

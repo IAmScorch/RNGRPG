@@ -1295,7 +1295,7 @@ void GameLogic::setPlayerInfo()
     ui->lblCAgility->setText(QString("Agility: %1").arg(player_->getAgility()));
     ui->lblCLuck->setText(QString("Luck: %1").arg(player_->getLuck()));
     ui->lblCVitality->setText(QString("Vitality: %1").arg(player_->getVitality()));
-    ui->lblCHit->setText(QString("Hit: %1").arg(player_->getHit()));
+    ui->lblCHit->setText(QString("Hit: %1").arg(player_->getPrecision()));
     ui->lblCBlock->setText(QString("Block: %1").arg(player_->getBlock()));
     double xpPercent = (double(player_->getXP()) / double(player_->getXPTillLevel())) * 100;
     double xpPercent2 = (double(player_->getXP()) / double(player_->getXPTillLevel())) * 400;
@@ -1847,7 +1847,7 @@ void GameLogic::checkSkillPoints()
         ui->btnIncreaseCritChance->setVisible(false);
     }
 
-    if (player_->getHit() == 20)
+    if (player_->getPrecision() == 20)
     {
         ui->btnIncreaseHitChance->setEnabled(false);
         ui->btnIncreaseHitChance->setVisible(false);
@@ -2346,8 +2346,8 @@ void GameLogic::on_btnIncreaseCritChance_clicked()
 
 void GameLogic::on_btnIncreaseHitChance_clicked()
 {
-    player_->addHit(1);
-    ui->lblCHit->setText(QString("Hit: %1").arg(player_->getHit()));
+    player_->addPrecision(1);
+    ui->lblCHit->setText(QString("Hit: %1").arg(player_->getPrecision()));
     player_->setSkillPoints(1);
     ui->lblCSkillPoints->setText(QString("Skill Points: %1").arg(player_->getSkillPoints()));
     checkSkillPoints();
