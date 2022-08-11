@@ -42,10 +42,6 @@ Player::Player(int health, int maxHealth, int maxAttackPower, int minAttackPower
     specialAbilityCharge_ = 0;
     specialAbilityCharged_ = 0;
     specialAbilityMaxCharges_ = 0;
-    agilityCount_ = 0;
-    luckCount_ = 0;
-    intelligenceCount_ = 0;
-    hitCount_ = 0;
     agilityBonus_ = 0;
     luckBonus_ = 0;
     intelligenceBonus_ = 0;
@@ -321,12 +317,8 @@ void Player::save()
     saveFile << luckDefault_ << "\n";
     saveFile << intelligence_ << "\n";
     saveFile << intelligenceBonus_ << "\n";
-    saveFile << agilityCount_ << "\n";
-    saveFile << luckCount_ << "\n";
-    saveFile << intelligenceCount_ << "\n";
     saveFile << questsCompleted_ << "\n";
     saveFile << hit_ << "\n";
-    saveFile << hitCount_ << "\n";
     saveFile << hitBonus_ << "\n";
     saveFile << stamina_ << "\n";
     saveFile << maxStamina_ << "\n";
@@ -371,12 +363,8 @@ void Player::load(QString playerName)
         luckDefault_ = saveFile.readLine().toInt();
         intelligence_ = saveFile.readLine().toInt();
         intelligenceBonus_ = saveFile.readLine().toInt();
-        agilityCount_ = saveFile.readLine().toInt();
-        luckCount_ = saveFile.readLine().toInt();
-        intelligenceCount_ = saveFile.readLine().toInt();
         questsCompleted_ = saveFile.readLine().toInt();
         hit_ = saveFile.readLine().toInt();
-        hitCount_ = saveFile.readLine().toInt();
         hitBonus_ = saveFile.readLine().toInt();
         stamina_ = saveFile.readLine().toInt();
         maxStamina_ = saveFile.readLine().toInt();
@@ -434,24 +422,20 @@ int Player::getStrength()
 void Player::addAgility(int agility)
 {
     agility_ += agility;
-    agilityCount_ += agility;
 
-    if (agilityCount_ == 5)
+    if (agility_ % 5 == 0)
     {
         agilityBonus_ += 1;
-        agilityCount_ = 0;
     }
 }
 
 void Player::removeAgility(int agility)
 {
     agility_ -= agility;
-    agilityCount_ -= agility;
 
-    if (agility_ == 4 || agility_ == 9 || agility_ == 14 || agility_ == 19)
+    if (agility_ % 5-4 == 0)
     {
         agilityBonus_ -= 1;
-        agilityCount_ = 4;
     }
 }
 
@@ -463,24 +447,20 @@ int Player::getAgility()
 void Player::addLuck(int luck)
 {
     luck_ += luck;
-    luckCount_ += luck;
 
-    if (luckCount_ == 5)
+    if (luck_ % 5 == 0)
     {
         luckBonus_ += 1;
-        luckCount_ = 0;
     }
 }
 
 void Player::removeLuck(int luck)
 {
     luck_ -= luck;
-    luckCount_ -= luck;
 
-    if (luckCount_ == 4 || luckCount_ == 9 || luckCount_ == 14 || luckCount_ == 19)
+    if (luck_ % 5-4 == 0)
     {
         luckBonus_ -= 1;
-        luckCount_ = 4;
     }
 }
 
@@ -492,12 +472,10 @@ int Player::getLuck()
 void Player::addIntelligence(int intelligence)
 {
     intelligence_ += intelligence;
-    intelligenceCount_ += intelligence;
 
-    if (intelligenceCount_ == 5)
+    if (intelligence_ % 5 == 0)
     {
         intelligenceBonus_ += 1;
-        intelligenceCount_ = 0;
     }
 }
 
@@ -509,24 +487,20 @@ int Player::getIntelligence()
 void Player::addHit(int hit)
 {
     hit_ += hit;
-    hitCount_ += hit;
 
-    if (hitCount_ == 5)
+    if (hit_ % 5 == 0)
     {
         hitBonus_ += 1;
-        hitCount_ = 0;
     }
 }
 
 void Player::removeHit(int hit)
 {
     hit_ -= hit;
-    hitCount_ -= hit;
 
-    if (hitCount_ == 4 || hitCount_ == 9 || hitCount_ == 14 || hitCount_ == 19)
+    if (hit_ % 5-4 == 0)
     {
         hitBonus_ -= 1;
-        hitCount_ = 4;
     }
 }
 

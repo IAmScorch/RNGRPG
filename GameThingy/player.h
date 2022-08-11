@@ -34,11 +34,6 @@ private:
     int maxStamina_;
     int block_;
 
-    int agilityCount_;
-    int luckCount_;
-    int intelligenceCount_;
-    int hitCount_;
-
     int agilityBonus_;
     int luckBonus_;
     int intelligenceBonus_;
