@@ -522,10 +522,15 @@ void Player::addStamina(int stamina)
 
 void Player::removeStatStamina(int stamina)
 {
-    stamina_ -= stamina;
+    maxStamina_ -= stamina;
 
     if (stamina_ > maxStamina_)
         stamina_ = maxStamina_;
+}
+
+void Player::addStatStamina(int stamina)
+{
+    maxStamina_ += stamina;
 }
 
 void Player::removeStamina(int action)
@@ -780,7 +785,7 @@ void Player::addEquipment(Item item)
             addStrength(item.stat1);
             break;
         case 3: //Stamina
-            addStamina(item.stat1);
+            addStatStamina(item.stat1);
             break;
         case 4: //Agility
             addAgility(item.stat1);
@@ -805,7 +810,7 @@ void Player::addEquipment(Item item)
             addStrength(item.stat2);
             break;
         case 3: //Stamina
-            addStamina(item.stat2);
+            addStatStamina(item.stat2);
             break;
         case 4: //Agility
             addAgility(item.stat2);
@@ -830,7 +835,7 @@ void Player::addEquipment(Item item)
             addStrength(item.stat3);
             break;
         case 3: //Stamina
-            addStamina(item.stat3);
+            addStatStamina(item.stat3);
             break;
         case 4: //Agility
             addAgility(item.stat3);
@@ -872,7 +877,7 @@ void Player::removeEquipment(int index)
             removeStrength(item.stat1);
             break;
         case 3: //Stamina
-            removeStamina(item.stat1);
+            removeStatStamina(item.stat1);
             break;
         case 4: //Agility
             removeAgility(item.stat1);
@@ -897,7 +902,7 @@ void Player::removeEquipment(int index)
             removeStrength(item.stat2);
             break;
         case 3: //Stamina
-            removeStamina(item.stat2);
+            removeStatStamina(item.stat2);
             break;
         case 4: //Agility
             removeAgility(item.stat2);
@@ -922,7 +927,7 @@ void Player::removeEquipment(int index)
             removeStrength(item.stat3);
             break;
         case 3: //Stamina
-            removeStamina(item.stat3);
+            removeStatStamina(item.stat3);
             break;
         case 4: //Agility
             removeAgility(item.stat3);

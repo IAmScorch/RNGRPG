@@ -100,6 +100,7 @@ public:
     void removeStamina(int action);
     void addStamina(int stamina);
     void removeStatStamina(int stamina);
+    void addStatStamina(int stamina);
     int getStamina();
 
     int getMaxStamina();
