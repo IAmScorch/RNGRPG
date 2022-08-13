@@ -110,6 +110,9 @@ public:
     void addBlock(int block);
     void removeBlock(int block);
 
+    void equipArmour(int armourRating);
+    void unequipArmour(int armourRating);
+
     int getHealth();
     void setHealth(int health);
     void addHealth(int health);

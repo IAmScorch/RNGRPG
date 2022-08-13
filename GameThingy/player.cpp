@@ -575,6 +575,16 @@ void Player::removeBlock(int block)
     block_ -= block;
 }
 
+void Player::equipArmour(int armourRating)
+{
+    agilityDefault_ += armourRating;
+}
+
+void Player::unequipArmour(int armourRating)
+{
+    agilityDefault_ -= armourRating;
+}
+
 bool Player::isAlive()
 {
     return isAlive_;
@@ -776,6 +786,11 @@ void Player::addEquipment(Item item)
         addBlock(item.block);
     }
 
+    if (item.itemType == 3)
+    {
+        equipArmour(item.armourRating);
+    }
+
     switch (item.statType1)
     {
         case 1: //Vitality
@@ -866,6 +881,11 @@ void Player::removeEquipment(int index)
     if (item.itemType == 4)
     {
         removeBlock(item.block);
+    }
+
+    if (item.itemType == 3)
+    {
+        unequipArmour(item.armourRating);
     }
 
     switch (item.statType1)
