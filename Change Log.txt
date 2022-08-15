@@ -1,4 +1,26 @@
-Current Version: 0.3.3
+Current Version: 0.3.4
+
+Change Date: 08/15/2022
+Version 0.3.4
+Minor Enhancement #28: Remove 'weight' from Item Struct
+Minor Enhancement #26: Rename Action Tab to Store
+Minor Enhancement #25: Remove Inventory Button from Character Tab 
+Minor Enhancement #20: Add Functionality to the block_ stat 
+Minor Enhancement #35: Remove old ration and potion drop code
+Minor Enhancement #34: Update stats that increase on Multiples of 5
+Minor Enhancement #23: Buying a Ration from a store should add it to your inventory
+Minor Enhancement #22: Buying a Potion from a store should add it to your inventory
+Bug #21: Armour type items not chaning defaultAgility
+Bug #38: Uncommon and Rare weapons with Stamina Stat do not affect Player's Stamina
+Bug #43: Stamina not increasing properly from equipment points
+Bug #17: Stat Type 'Dodge' no longer needed
+Bug #16: Any randomly generated item drop with stats can get the block stat 
+Bug #10: Stat Type 'Hit' is no longer needed
+Bug #27: Remove 'rationConsumed_' variable from Player Class 
+Bug #29: Remove 'wasHealed_' variable from Player Class
+Bug #18: minAttack_ should be reduced if Strength is reduced 
+Bug #19: Fix 'Drink Potion' button in the 'Battle' Tab so it uses potions in your inventory
+Bug #20: Fix 'Eat Ration' button in the 'Battle' Tab so it uses rations in your inventory
 
 Change Date: 08/09/2022
 Version 0.3.3
