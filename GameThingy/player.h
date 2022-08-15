@@ -44,6 +44,8 @@ private:
 
     int questsCompleted_;
 
+    bool isShieldEquipped_;
+
     bool isSpecialAbilityLearned_;
     bool isSpecialReady_;
     bool isAlive_;
@@ -189,6 +191,9 @@ public:
 
     int getSpecialAbilityCharged();
     void setSpecialAbilityCharged(int specialAbilityCharged);
+
+    void equippedShield();
+    void unequippedShield();
 };
 
 #endif // PLAYER_H

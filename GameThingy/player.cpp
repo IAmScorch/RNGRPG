@@ -123,18 +123,24 @@ void Player::doHit(int dmg, int enemyHitRoll, QString enemyName, bool isEnemyAli
     {
         if (enemyHitRoll >= dodgeChance)
         {
-            health_ = health_ - dmg;
-            if (health_ <= 0)
+            if (enemyHitRoll >= block_)
             {
-                isAlive_ = false;
-                message_ = name_ + " takes " + QString("%1").arg(dmg) + " damage.\nAww you dead.\n\n";
-                QMessageBox msgBox;
-                msgBox.setWindowTitle("You Dead");
-                msgBox.setText("Aww you dead. Start a new game or load a previous one.");
-                msgBox.exec();
+                health_ = health_ - dmg;
+                if (health_ <= 0)
+                {
+                    isAlive_ = false;
+                    message_ = name_ + " takes " + QString("%1").arg(dmg) + " damage.\nAww you dead.\n\n";
+                    QMessageBox msgBox;
+                    msgBox.setWindowTitle("You Dead");
+                    msgBox.setText("Aww you dead. Start a new game or load a previous one.");
+                    msgBox.exec();
+                }
+                else
+                    message_ = name_ + " takes " + QString("%1").arg(dmg) + " damage.\n\n";
             }
             else
-                message_ = name_ + " takes " + QString("%1").arg(dmg) + " damage.\n\n";
+                message_ = name_ + " blocks " + enemyName + "'s attack.\n\n";
+
         }
         else
             message_ = name_ + " dodges " + enemyName + "'s attack.\n\n";
@@ -1032,6 +1038,16 @@ int Player::getSpecialAbilityCharged()
 void Player::setSpecialAbilityCharged(int specialAbilityCharged)
 {
     specialAbilityCharged_ = specialAbilityCharged;
+}
+
+void Player::equippedShield()
+{
+    isShieldEquipped_ = true;
+}
+
+void Player::unequippedShield()
+{
+    isShieldEquipped_ = false;
 }
 
 bool Player::isSpecialAbilityLeanred()
