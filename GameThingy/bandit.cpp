@@ -210,7 +210,6 @@ QVector<Item> Bandit::doLootDrop(QString enemyName, int enemyType, int itemDropC
                                 item.isEquippable = banditItemDrops_[e][7].toInt();
                                 item.sellPrice = banditItemDrops_[e][8].toInt();
                                 item.isUsable = banditItemDrops_[e][9].toInt();
-                                item.weight = banditItemDrops_[e][10].toInt();
                                 item.minAtk = banditItemDrops_[e][11].toInt();
                                 item.maxAtk = banditItemDrops_[e][12].toInt();
                                 item.block = banditItemDrops_[e][13].toInt();
@@ -362,7 +361,6 @@ QVector<Item> Bandit::doLootDrop(QString enemyName, int enemyType, int itemDropC
                                                 if (item.name.contains("Dagger"))
                                                 {
                                                     item.sellPrice = (15 * item.itemRarity) - 10;
-                                                    item.weight = 2;
                                                     item.minAtk = 1;
                                                     item.maxAtk = (5 + item.itemRarity) - 1;
                                                     item.holdType = 2;
@@ -370,7 +368,6 @@ QVector<Item> Bandit::doLootDrop(QString enemyName, int enemyType, int itemDropC
                                                 else if (item.name.contains("Short Sword"))
                                                 {
                                                     item.sellPrice = (20 * item.itemRarity) - 10;
-                                                    item.weight = 4;
                                                     item.minAtk = 2;
                                                     item.maxAtk = (7 + item.itemRarity);
                                                     item.holdType = rand()%1 + 1;
@@ -378,7 +375,6 @@ QVector<Item> Bandit::doLootDrop(QString enemyName, int enemyType, int itemDropC
                                                 else if (item.name.contains("Long Sword"))
                                                 {
                                                     item.sellPrice = (27 * item.itemRarity) - 15;
-                                                    item.weight = 6;
                                                     item.minAtk = 3;
                                                     item.maxAtk = (9 + item.itemRarity);
                                                     item.holdType = 3;
@@ -390,28 +386,24 @@ QVector<Item> Bandit::doLootDrop(QString enemyName, int enemyType, int itemDropC
                                                 if (item.name.contains("Cloth"))
                                                 {
                                                     item.sellPrice = (5 * item.itemRarity);
-                                                    item.weight = 3;
                                                     item.armourType = 1;
                                                     item.armourRating = 4;
                                                 }
                                                 else if (item.name.contains("Leather"))
                                                 {
                                                     item.sellPrice = (7 * item.itemRarity);
-                                                    item.weight = 8;
                                                     item.armourType = 2;
                                                     item.armourRating = 3;
                                                 }
                                                 else if (item.name.contains("Mail"))
                                                 {
                                                     item.sellPrice = (10 * item.itemRarity);
-                                                    item.weight = 30;
                                                     item.armourType = 3;
                                                     item.armourRating = 2;
                                                 }
                                                 else if (item.name.contains("Plate"))
                                                 {
                                                     item.sellPrice = (15 * item.itemRarity);
-                                                    item.weight = 50;
                                                     item.armourType = 4;
                                                     item.armourRating = 1;
                                                 }
@@ -419,18 +411,15 @@ QVector<Item> Bandit::doLootDrop(QString enemyName, int enemyType, int itemDropC
                                             case 4: //Shield
                                                 item.name = ShieldPrefixes[rand()%7] + " Shield";
                                                 item.sellPrice = (15 * item.itemRarity) - 5;
-                                                item.weight = 6;
                                                 item.block = (7 + item.itemRarity) - 1;
                                                 break;
                                             case 6: //ring
                                                 item.name = ringPrefixes[rand()%2] + " Ring";
                                                 item.sellPrice = (5 + item.itemRarity) - 3;
-                                                item.weight = 1;
                                                 break;
                                             case 7: //trinket
                                                 item.name = trinketPrefixes[rand()%3] + " Trinket";
                                                 item.sellPrice = (5 + item.itemRarity) - 3;
-                                                item.weight = 1;
                                                 break;
                                         }
 

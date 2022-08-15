@@ -1179,7 +1179,6 @@ void GameLogic::on_btnBuyPotion_clicked()
             item.isEquippable = false;
             item.sellPrice = 10;
             item.isUsable = true;
-            item.weight = 0;
             item.minAtk = 0;
             item.maxAtk = 0;
             item.block = 0;
@@ -1237,7 +1236,6 @@ void GameLogic::on_btnBuyRation_clicked()
             item.isEquippable = false;
             item.sellPrice = 10;
             item.isUsable = true;
-            item.weight = 0;
             item.minAtk = 0;
             item.maxAtk = 0;
             item.block = 0;
@@ -3153,17 +3151,16 @@ void GameLogic::setInventoryItemToolTip(QVector<QString> listItems)
                 else if (inventoryItems.value(itemIndex).healType == 2)
                     healType = "Stamina";
 
-                itemInfo = QString("Type: %1\nUse: +%5 %6\nSell Price: %2G\nWeight: %3\nAmount: %4").arg(itemXRef->getItemType(inventoryItems.value(itemIndex).itemType))
-                        .arg(inventoryItems.value(itemIndex).sellPrice)
-                        .arg(inventoryItems.value(itemIndex).weight).arg(itemAmount)
+                itemInfo = QString("Type: %1\nUse: +%4 %5\nSell Price: %2G\nAmount: %3")
+                        .arg(itemXRef->getItemType(inventoryItems.value(itemIndex).itemType))
+                        .arg(inventoryItems.value(itemIndex).sellPrice).arg(itemAmount)
                         .arg(inventoryItems.value(itemIndex).healAmount).arg(healType);
             }
             else
             {
-                itemInfo = QString("Type: %1\nRarity: %5\n\nSell Price: %2G\nWeight: %3\nAmount: %4")
+                itemInfo = QString("Type: %1\nRarity: %4\n\nSell Price: %2G\nAmount: %3")
                         .arg(itemXRef->getItemType(inventoryItems.value(itemIndex).itemType))
-                        .arg(inventoryItems.value(itemIndex).sellPrice)
-                        .arg(inventoryItems.value(itemIndex).weight).arg(itemAmount)
+                        .arg(inventoryItems.value(itemIndex).sellPrice).arg(itemAmount)
                         .arg(itemXRef->getItemRarity(inventoryItems.value(itemIndex).itemRarity));
             }
 
@@ -3172,10 +3169,9 @@ void GameLogic::setInventoryItemToolTip(QVector<QString> listItems)
         {
             if (inventoryItems.value(itemIndex).statType1 == 0 && inventoryItems.value(itemIndex).statType2 == 0 && inventoryItems.value(itemIndex).statType3 == 0)
             {
-                itemInfo = QString("Type: %1\nRarity: %5\n%6\nDamage: %7-%8\n\nSell Price: %2G\nWeight: %3\nAmount: %4")
+                itemInfo = QString("Type: %1\nRarity: %4\n%5\nDamage: %6-%7\n\nSell Price: %2G\nAmount: %3")
                         .arg(itemXRef->getItemType(inventoryItems.value(itemIndex).itemType))
-                        .arg(inventoryItems.value(itemIndex).sellPrice)
-                        .arg(inventoryItems.value(itemIndex).weight).arg(itemAmount)
+                        .arg(inventoryItems.value(itemIndex).sellPrice).arg(itemAmount)
                         .arg(itemXRef->getItemRarity(inventoryItems.value(itemIndex).itemRarity))
                         .arg(itemXRef->getHoldType(inventoryItems.value(itemIndex).holdType))
                         .arg(inventoryItems.value(itemIndex).minAtk)
@@ -3183,10 +3179,9 @@ void GameLogic::setInventoryItemToolTip(QVector<QString> listItems)
             }
             else if (inventoryItems.value(itemIndex).statType1 > 0 && inventoryItems.value(itemIndex).statType2 == 0 && inventoryItems.value(itemIndex).statType3 == 0)
             {
-                itemInfo = QString("Type: %1\nRarity: %5\n%6\nDamage: %7-%8\nItem Stats:\n+%9 %10\n\nSell Price: %2G\nWeight: %3\nAmount: %4")
+                itemInfo = QString("Type: %1\nRarity: %4\n%5\nDamage: %6-%7\nItem Stats:\n+%9 %10\n\nSell Price: %2G\nAmount: %3")
                         .arg(itemXRef->getItemType(inventoryItems.value(itemIndex).itemType))
-                        .arg(inventoryItems.value(itemIndex).sellPrice)
-                        .arg(inventoryItems.value(itemIndex).weight).arg(itemAmount)
+                        .arg(inventoryItems.value(itemIndex).sellPrice).arg(itemAmount)
                         .arg(itemXRef->getItemRarity(inventoryItems.value(itemIndex).itemRarity))
                         .arg(itemXRef->getHoldType(inventoryItems.value(itemIndex).holdType))
                         .arg(inventoryItems.value(itemIndex).minAtk)
@@ -3197,10 +3192,9 @@ void GameLogic::setInventoryItemToolTip(QVector<QString> listItems)
             {
                 if (inventoryItems.value(itemIndex).statType1 == inventoryItems.value(itemIndex).statType2)
                 {
-                    itemInfo = QString("Type: %1\nRarity: %5\n%6\nDamage: %7-%8\nItem Stats:\n+%9 %10\n\nSell Price: %2G\nWeight: %3\nAmount: %4")
+                    itemInfo = QString("Type: %1\nRarity: %4\n%5\nDamage: %6-%7\nItem Stats:\n+%9 %10\n\nSell Price: %2G\nAmount: %3")
                             .arg(itemXRef->getItemType(inventoryItems.value(itemIndex).itemType))
-                            .arg(inventoryItems.value(itemIndex).sellPrice)
-                            .arg(inventoryItems.value(itemIndex).weight).arg(itemAmount)
+                            .arg(inventoryItems.value(itemIndex).sellPrice).arg(itemAmount)
                             .arg(itemXRef->getItemRarity(inventoryItems.value(itemIndex).itemRarity))
                             .arg(itemXRef->getHoldType(inventoryItems.value(itemIndex).holdType))
                             .arg(inventoryItems.value(itemIndex).minAtk)
@@ -3209,10 +3203,9 @@ void GameLogic::setInventoryItemToolTip(QVector<QString> listItems)
                 }
                 else
                 {
-                    itemInfo = QString("Type: %1\nRarity: %5\n%6\nDamage: %7-%8\nItem Stats:\n+%9 %10\n+%11 %12\n\nSell Price: %2G\nWeight: %3\nAmount: %4")
+                    itemInfo = QString("Type: %1\nRarity: %4\n%5\nDamage: %6-%7\nItem Stats:\n+%8 %9\n+%10 %11\n\nSell Price: %2G\nAmount: %3")
                             .arg(itemXRef->getItemType(inventoryItems.value(itemIndex).itemType))
-                            .arg(inventoryItems.value(itemIndex).sellPrice)
-                            .arg(inventoryItems.value(itemIndex).weight).arg(itemAmount)
+                            .arg(inventoryItems.value(itemIndex).sellPrice).arg(itemAmount)
                             .arg(itemXRef->getItemRarity(inventoryItems.value(itemIndex).itemRarity))
                             .arg(itemXRef->getHoldType(inventoryItems.value(itemIndex).holdType))
                             .arg(inventoryItems.value(itemIndex).minAtk)
@@ -3223,10 +3216,9 @@ void GameLogic::setInventoryItemToolTip(QVector<QString> listItems)
             }
             else if (inventoryItems.value(itemIndex).statType1 > 0 && inventoryItems.value(itemIndex).statType2 > 0 && inventoryItems.value(itemIndex).statType3 > 0)
             {
-                itemInfo = QString("Type: %1\nRarity: %5\n%6\nDamage: %7-%8\nItem Stats:\n+%9 %10\n+%11 %12\n+%13 %14\n\nSell Price: %2G\nWeight: %3\nAmount: %4")
+                itemInfo = QString("Type: %1\nRarity: %4\n%5\nDamage: %6-%7\nItem Stats:\n+%8 %9\n+%10 %11\n+%12 %13\n\nSell Price: %2G\nAmount: %3")
                         .arg(itemXRef->getItemType(inventoryItems.value(itemIndex).itemType))
-                        .arg(inventoryItems.value(itemIndex).sellPrice)
-                        .arg(inventoryItems.value(itemIndex).weight).arg(itemAmount)
+                        .arg(inventoryItems.value(itemIndex).sellPrice).arg(itemAmount)
                         .arg(itemXRef->getItemRarity(inventoryItems.value(itemIndex).itemRarity))
                         .arg(itemXRef->getHoldType(inventoryItems.value(itemIndex).holdType))
                         .arg(inventoryItems.value(itemIndex).minAtk)
@@ -3241,20 +3233,18 @@ void GameLogic::setInventoryItemToolTip(QVector<QString> listItems)
         {
             if (inventoryItems.value(itemIndex).statType1 == 0 && inventoryItems.value(itemIndex).statType2 == 0 && inventoryItems.value(itemIndex).statType3 == 0)
             {
-                itemInfo = QString("Type: %1\nRarity: %5\n%6\n+%7 Dodge\n\nSell Price: %2G\nWeight: %3\nAmount: %4")
+                itemInfo = QString("Type: %1\nRarity: %4\n%5\n+%6 Dodge\n\nSell Price: %2G\nAmount: %3")
                         .arg(itemXRef->getItemType(inventoryItems.value(itemIndex).itemType))
-                        .arg(inventoryItems.value(itemIndex).sellPrice)
-                        .arg(inventoryItems.value(itemIndex).weight).arg(itemAmount)
+                        .arg(inventoryItems.value(itemIndex).sellPrice).arg(itemAmount)
                         .arg(itemXRef->getItemRarity(inventoryItems.value(itemIndex).itemRarity))
                         .arg(itemXRef->getArmourType(inventoryItems.value(itemIndex).armourType))
                         .arg(inventoryItems.value(itemIndex).armourRating);
             }
             else if (inventoryItems.value(itemIndex).statType1 > 0 && inventoryItems.value(itemIndex).statType2 == 0 && inventoryItems.value(itemIndex).statType3 == 0)
             {
-                itemInfo = QString("Type: %1\nRarity: %5\n%6\n+%7 Dodge\nItem Stats:\n+%8 %9\n\nSell Price: %2G\nWeight: %3\nAmount: %4")
+                itemInfo = QString("Type: %1\nRarity: %4\n%5\n+%6 Dodge\nItem Stats:\n+%7 %8\n\nSell Price: %2G\nAmount: %3")
                         .arg(itemXRef->getItemType(inventoryItems.value(itemIndex).itemType))
-                        .arg(inventoryItems.value(itemIndex).sellPrice)
-                        .arg(inventoryItems.value(itemIndex).weight).arg(itemAmount)
+                        .arg(inventoryItems.value(itemIndex).sellPrice).arg(itemAmount)
                         .arg(itemXRef->getItemRarity(inventoryItems.value(itemIndex).itemRarity))
                         .arg(itemXRef->getArmourType(inventoryItems.value(itemIndex).armourType))
                         .arg(inventoryItems.value(itemIndex).armourRating)
@@ -3264,10 +3254,9 @@ void GameLogic::setInventoryItemToolTip(QVector<QString> listItems)
             {
                 if (inventoryItems.value(itemIndex).statType1 == inventoryItems.value(itemIndex).statType2)
                 {
-                    itemInfo = QString("Type: %1\nRarity: %5\n%6\n+%7 Dodge\nItem Stats:\n+%8 %9\n\nSell Price: %2G\nWeight: %3\nAmount: %4")
+                    itemInfo = QString("Type: %1\nRarity: %4\n%5\n+%6 Dodge\nItem Stats:\n+%7 %8\n\nSell Price: %2G\nAmount: %3")
                             .arg(itemXRef->getItemType(inventoryItems.value(itemIndex).itemType))
-                            .arg(inventoryItems.value(itemIndex).sellPrice)
-                            .arg(inventoryItems.value(itemIndex).weight).arg(itemAmount)
+                            .arg(inventoryItems.value(itemIndex).sellPrice).arg(itemAmount)
                             .arg(itemXRef->getItemRarity(inventoryItems.value(itemIndex).itemRarity))
                             .arg(itemXRef->getArmourType(inventoryItems.value(itemIndex).armourType))
                             .arg(inventoryItems.value(itemIndex).armourRating)
@@ -3275,10 +3264,9 @@ void GameLogic::setInventoryItemToolTip(QVector<QString> listItems)
                 }
                 else
                 {
-                    itemInfo = QString("Type: %1\nRarity: %5\n%6\n+%7 Dodge\nItem Stats:\n+%8 %9\n+%10 %11\n\nSell Price: %2G\nWeight: %3\nAmount: %4")
+                    itemInfo = QString("Type: %1\nRarity: %4\n%5\n+%6 Dodge\nItem Stats:\n+%7 %8\n+%9 %10\n\nSell Price: %2G\nAmount: %3")
                             .arg(itemXRef->getItemType(inventoryItems.value(itemIndex).itemType))
-                            .arg(inventoryItems.value(itemIndex).sellPrice)
-                            .arg(inventoryItems.value(itemIndex).weight).arg(itemAmount)
+                            .arg(inventoryItems.value(itemIndex).sellPrice).arg(itemAmount)
                             .arg(itemXRef->getItemRarity(inventoryItems.value(itemIndex).itemRarity))
                             .arg(itemXRef->getArmourType(inventoryItems.value(itemIndex).armourType))
                             .arg(inventoryItems.value(itemIndex).armourRating)
@@ -3288,10 +3276,9 @@ void GameLogic::setInventoryItemToolTip(QVector<QString> listItems)
             }
             else if (inventoryItems.value(itemIndex).statType1 > 0 && inventoryItems.value(itemIndex).statType2 > 0 && inventoryItems.value(itemIndex).statType3 > 0)
             {
-                itemInfo = QString("Type: %1\nRarity: %5\n%6\n+%7 Dodge\nItem Stats:\n+%8 %9\n+%10 %11\n+%12 %13\n\nSell Price: %2G\nWeight: %3\nAmount: %4")
+                itemInfo = QString("Type: %1\nRarity: %4\n%5\n+%6 Dodge\nItem Stats:\n+%7 %8\n+%9 %10\n+%11 %12\n\nSell Price: %2G\nAmount: %3")
                         .arg(itemXRef->getItemType(inventoryItems.value(itemIndex).itemType))
-                        .arg(inventoryItems.value(itemIndex).sellPrice)
-                        .arg(inventoryItems.value(itemIndex).weight).arg(itemAmount)
+                        .arg(inventoryItems.value(itemIndex).sellPrice).arg(itemAmount)
                         .arg(itemXRef->getItemRarity(inventoryItems.value(itemIndex).itemRarity))
                         .arg(itemXRef->getArmourType(inventoryItems.value(itemIndex).armourType))
                         .arg(inventoryItems.value(itemIndex).armourRating)
@@ -3304,19 +3291,17 @@ void GameLogic::setInventoryItemToolTip(QVector<QString> listItems)
         {
             if (inventoryItems.value(itemIndex).statType1 == 0 && inventoryItems.value(itemIndex).statType2 == 0 && inventoryItems.value(itemIndex).statType3 == 0)
             {
-                itemInfo = QString("Type: %1\nRarity: %5\nItem Stats:\n+%6 Block\n\nSell Price: %2G\nWeight: %3\nAmount: %4")
+                itemInfo = QString("Type: %1\nRarity: %4\nItem Stats:\n+%5 Block\n\nSell Price: %2G\nAmount: %3")
                         .arg(itemXRef->getItemType(inventoryItems.value(itemIndex).itemType))
-                        .arg(inventoryItems.value(itemIndex).sellPrice)
-                        .arg(inventoryItems.value(itemIndex).weight).arg(itemAmount)
+                        .arg(inventoryItems.value(itemIndex).sellPrice).arg(itemAmount)
                         .arg(itemXRef->getItemRarity(inventoryItems.value(itemIndex).itemRarity))
                         .arg(inventoryItems.value(itemIndex).block);
             }
             else if (inventoryItems.value(itemIndex).statType1 > 0 && inventoryItems.value(itemIndex).statType2 == 0 && inventoryItems.value(itemIndex).statType3 == 0)
             {
-                itemInfo = QString("Type: %1\nRarity: %5\nItem Stats:\n+%6 Block\n+%7 %8\n\nSell Price: %2G\nWeight: %3\nAmount: %4")
+                itemInfo = QString("Type: %1\nRarity: %4\nItem Stats:\n+%5 Block\n+%6 %7\n\nSell Price: %2G\nAmount: %3")
                         .arg(itemXRef->getItemType(inventoryItems.value(itemIndex).itemType))
-                        .arg(inventoryItems.value(itemIndex).sellPrice)
-                        .arg(inventoryItems.value(itemIndex).weight).arg(itemAmount)
+                        .arg(inventoryItems.value(itemIndex).sellPrice).arg(itemAmount)
                         .arg(itemXRef->getItemRarity(inventoryItems.value(itemIndex).itemRarity))
                         .arg(inventoryItems.value(itemIndex).block)
                         .arg(inventoryItems.value(itemIndex).stat1).arg(itemXRef->getStatType(inventoryItems.value(itemIndex).statType1));
@@ -3325,20 +3310,18 @@ void GameLogic::setInventoryItemToolTip(QVector<QString> listItems)
             {
                 if (inventoryItems.value(itemIndex).statType1 == inventoryItems.value(itemIndex).statType2)
                 {
-                    itemInfo = QString("Type: %1\nRarity: %5\nItem Stats:\n+%6 Block\n+%7 %8\n\nSell Price: %2G\nWeight: %3\nAmount: %4")
+                    itemInfo = QString("Type: %1\nRarity: %4\nItem Stats:\n+%5 Block\n+%6 %7\n\nSell Price: %2G\nAmount: %3")
                             .arg(itemXRef->getItemType(inventoryItems.value(itemIndex).itemType))
-                            .arg(inventoryItems.value(itemIndex).sellPrice)
-                            .arg(inventoryItems.value(itemIndex).weight).arg(itemAmount)
+                            .arg(inventoryItems.value(itemIndex).sellPrice).arg(itemAmount)
                             .arg(itemXRef->getItemRarity(inventoryItems.value(itemIndex).itemRarity))
                             .arg(inventoryItems.value(itemIndex).block)
                             .arg(inventoryItems.value(itemIndex).stat1 + inventoryItems.value(itemIndex).stat2).arg(itemXRef->getStatType(inventoryItems.value(itemIndex).statType1));
                 }
                 else
                 {
-                    itemInfo = QString("Type: %1\nRarity: %5\nItem Stats:\n+%6 Block\n+%7 %8\n+%9 %10\n\nSell Price: %2G\nWeight: %3\nAmount: %4")
+                    itemInfo = QString("Type: %1\nRarity: %4\nItem Stats:\n+%5 Block\n+%6 %7\n+%8 %10\n\nSell Price: %2G\nAmount: %3")
                             .arg(itemXRef->getItemType(inventoryItems.value(itemIndex).itemType))
-                            .arg(inventoryItems.value(itemIndex).sellPrice)
-                            .arg(inventoryItems.value(itemIndex).weight).arg(itemAmount)
+                            .arg(inventoryItems.value(itemIndex).sellPrice).arg(itemAmount)
                             .arg(itemXRef->getItemRarity(inventoryItems.value(itemIndex).itemRarity))
                             .arg(inventoryItems.value(itemIndex).block)
                             .arg(inventoryItems.value(itemIndex).stat1).arg(itemXRef->getStatType(inventoryItems.value(itemIndex).statType1))
@@ -3348,10 +3331,9 @@ void GameLogic::setInventoryItemToolTip(QVector<QString> listItems)
             }
             else if (inventoryItems.value(itemIndex).statType1 > 0 && inventoryItems.value(itemIndex).statType2 > 0 && inventoryItems.value(itemIndex).statType3 > 0)
             {
-                itemInfo = QString("Type: %1\nRarity: %5\nItem Stats:\n+%6 Block\n+%7 %8\n+%9 %10\n+%11 %12\n\nSell Price: %2G\nWeight: %3\nAmount: %4")
+                itemInfo = QString("Type: %1\nRarity: %4\nItem Stats:\n+%5 Block\n+%6 %7\n+%8 %9\n+%10 %11\n\nSell Price: %2G\nAmount: %3")
                         .arg(itemXRef->getItemType(inventoryItems.value(itemIndex).itemType))
-                        .arg(inventoryItems.value(itemIndex).sellPrice)
-                        .arg(inventoryItems.value(itemIndex).weight).arg(itemAmount)
+                        .arg(inventoryItems.value(itemIndex).sellPrice).arg(itemAmount)
                         .arg(itemXRef->getItemRarity(inventoryItems.value(itemIndex).itemRarity))
                         .arg(inventoryItems.value(itemIndex).block)
                         .arg(inventoryItems.value(itemIndex).stat1).arg(itemXRef->getStatType(inventoryItems.value(itemIndex).statType1))
@@ -3367,18 +3349,16 @@ void GameLogic::setInventoryItemToolTip(QVector<QString> listItems)
         {
             if (inventoryItems.value(itemIndex).statType1 == 0 && inventoryItems.value(itemIndex).statType2 == 0 && inventoryItems.value(itemIndex).statType3 == 0)
             {
-                itemInfo = QString("Type: %1\nRarity: %5\n\nSell Price: %2G\nWeight: %3\nAmount: %4")
+                itemInfo = QString("Type: %1\nRarity: %4\n\nSell Price: %2G\nAmount: %3")
                         .arg(itemXRef->getItemType(inventoryItems.value(itemIndex).itemType))
-                        .arg(inventoryItems.value(itemIndex).sellPrice)
-                        .arg(inventoryItems.value(itemIndex).weight).arg(itemAmount)
+                        .arg(inventoryItems.value(itemIndex).sellPrice).arg(itemAmount)
                         .arg(itemXRef->getItemRarity(inventoryItems.value(itemIndex).itemRarity));
             }
             else if (inventoryItems.value(itemIndex).statType1 > 0 && inventoryItems.value(itemIndex).statType2 == 0 && inventoryItems.value(itemIndex).statType3 == 0)
             {
-                itemInfo = QString("Type: %1\nRarity: %5\nItem Stats:\n+%6 %7\n\nSell Price: %2G\nWeight: %3\nAmount: %4")
+                itemInfo = QString("Type: %1\nRarity: %4\nItem Stats:\n+%5 %6\n\nSell Price: %2G\nAmount: %3")
                         .arg(itemXRef->getItemType(inventoryItems.value(itemIndex).itemType))
-                        .arg(inventoryItems.value(itemIndex).sellPrice)
-                        .arg(inventoryItems.value(itemIndex).weight).arg(itemAmount)
+                        .arg(inventoryItems.value(itemIndex).sellPrice).arg(itemAmount)
                         .arg(itemXRef->getItemRarity(inventoryItems.value(itemIndex).itemRarity))
                         .arg(inventoryItems.value(itemIndex).stat1).arg(itemXRef->getStatType(inventoryItems.value(itemIndex).statType1));
             }
@@ -3386,19 +3366,17 @@ void GameLogic::setInventoryItemToolTip(QVector<QString> listItems)
             {
                 if (inventoryItems.value(itemIndex).statType1 == inventoryItems.value(itemIndex).statType2)
                 {
-                    itemInfo = QString("Type: %1\nRarity: %5\nItem Stats:\n+%6 %7\n\nSell Price: %2G\nWeight: %3\nAmount: %4")
+                    itemInfo = QString("Type: %1\nRarity: %4\nItem Stats:\n+%5 %6\n\nSell Price: %2G\nAmount: %3")
                             .arg(itemXRef->getItemType(inventoryItems.value(itemIndex).itemType))
-                            .arg(inventoryItems.value(itemIndex).sellPrice)
-                            .arg(inventoryItems.value(itemIndex).weight).arg(itemAmount)
+                            .arg(inventoryItems.value(itemIndex).sellPrice).arg(itemAmount)
                             .arg(itemXRef->getItemRarity(inventoryItems.value(itemIndex).itemRarity))
                             .arg(inventoryItems.value(itemIndex).stat1 + inventoryItems.value(itemIndex).stat2).arg(itemXRef->getStatType(inventoryItems.value(itemIndex).statType1));
                 }
                 else
                 {
-                    itemInfo = QString("Type: %1\nRarity: %5\nItem Stats:\n+%6 %7\n+%8 %9\n\nSell Price: %2G\nWeight: %3\nAmount: %4")
+                    itemInfo = QString("Type: %1\nRarity: %4\nItem Stats:\n+%5 %6\n+%7 %8\n\nSell Price: %2G\nAmount: %3")
                             .arg(itemXRef->getItemType(inventoryItems.value(itemIndex).itemType))
-                            .arg(inventoryItems.value(itemIndex).sellPrice)
-                            .arg(inventoryItems.value(itemIndex).weight).arg(itemAmount)
+                            .arg(inventoryItems.value(itemIndex).sellPrice).arg(itemAmount)
                             .arg(itemXRef->getItemRarity(inventoryItems.value(itemIndex).itemRarity))
                             .arg(inventoryItems.value(itemIndex).stat1).arg(itemXRef->getStatType(inventoryItems.value(itemIndex).statType1))
                             .arg(inventoryItems.value(itemIndex).stat2).arg(itemXRef->getStatType(inventoryItems.value(itemIndex).statType2));
@@ -3406,10 +3384,9 @@ void GameLogic::setInventoryItemToolTip(QVector<QString> listItems)
             }
             else if (inventoryItems.value(itemIndex).statType1 > 0 && inventoryItems.value(itemIndex).statType2 > 0 && inventoryItems.value(itemIndex).statType3 > 0)
             {
-                itemInfo = QString("Type: %1\nRarity: %5\nItem Stats:\n+%6 %7\n+%8 %9\n+%10 %11\n\nSell Price: %2G\nWeight: %3\nAmount: %4")
+                itemInfo = QString("Type: %1\nRarity: %4\nItem Stats:\n+%5 %6\n+%7 %8\n+%9 %10\n\nSell Price: %2G\nAmount: %3")
                         .arg(itemXRef->getItemType(inventoryItems.value(itemIndex).itemType))
-                        .arg(inventoryItems.value(itemIndex).sellPrice)
-                        .arg(inventoryItems.value(itemIndex).weight).arg(itemAmount)
+                        .arg(inventoryItems.value(itemIndex).sellPrice).arg(itemAmount)
                         .arg(itemXRef->getItemRarity(inventoryItems.value(itemIndex).itemRarity))
                         .arg(inventoryItems.value(itemIndex).stat1).arg(itemXRef->getStatType(inventoryItems.value(itemIndex).statType1))
                         .arg(inventoryItems.value(itemIndex).stat2).arg(itemXRef->getStatType(inventoryItems.value(itemIndex).statType2))
@@ -3418,10 +3395,9 @@ void GameLogic::setInventoryItemToolTip(QVector<QString> listItems)
         }
         else if (inventoryItems.value(itemIndex).itemType == 9)
         {
-            itemInfo = QString("Type: %1\nSell Price: %2G\nWeight: %3\nAmount: %4")
+            itemInfo = QString("Type: %1\nSell Price: %2G\nAmount: %3")
                     .arg(itemXRef->getItemType(inventoryItems.value(itemIndex).itemType))
-                    .arg(inventoryItems.value(itemIndex).sellPrice)
-                    .arg(inventoryItems.value(itemIndex).weight).arg(itemAmount);
+                    .arg(inventoryItems.value(itemIndex).sellPrice).arg(itemAmount);
         }
 
         //item->setToolTip(itemInfo);
@@ -3454,10 +3430,9 @@ void GameLogic::setEquipmentItemToolTip(QVector<QString> listItems)
         {
             if (equippedItems.value(itemIndex).statType1 == 0 && equippedItems.value(itemIndex).statType2 == 0 && equippedItems.value(itemIndex).statType3 == 0)
             {
-                itemInfo = QString("Type: %1\nRarity: %4\n%5\nDamage: %6-%7\n\nSell Price: %2G\nWeight: %3")
+                itemInfo = QString("Type: %1\nRarity: %3\n%4\nDamage: %5-%6\n\nSell Price: %2G")
                         .arg(itemXRef->getItemType(equippedItems.value(itemIndex).itemType))
                         .arg(equippedItems.value(itemIndex).sellPrice)
-                        .arg(equippedItems.value(itemIndex).weight)
                         .arg(itemXRef->getItemRarity(equippedItems.value(itemIndex).itemRarity))
                         .arg(itemXRef->getHoldType(equippedItems.value(itemIndex).holdType))
                         .arg(equippedItems.value(itemIndex).minAtk)
@@ -3465,10 +3440,9 @@ void GameLogic::setEquipmentItemToolTip(QVector<QString> listItems)
             }
             else if (equippedItems.value(itemIndex).statType1 > 0 && equippedItems.value(itemIndex).statType2 == 0 && equippedItems.value(itemIndex).statType3 == 0)
             {
-                itemInfo = QString("Type: %1\nRarity: %4\n%5\nDamage: %6-%7\nItem Stats:\n+%8 %9\n\nSell Price: %2G\nWeight: %3")
+                itemInfo = QString("Type: %1\nRarity: %3\n%4\nDamage: %5-%6\nItem Stats:\n+%7 %8\n\nSell Price: %2G")
                         .arg(itemXRef->getItemType(equippedItems.value(itemIndex).itemType))
                         .arg(equippedItems.value(itemIndex).sellPrice)
-                        .arg(equippedItems.value(itemIndex).weight)
                         .arg(itemXRef->getItemRarity(equippedItems.value(itemIndex).itemRarity))
                         .arg(itemXRef->getHoldType(equippedItems.value(itemIndex).holdType))
                         .arg(equippedItems.value(itemIndex).minAtk)
@@ -3479,10 +3453,9 @@ void GameLogic::setEquipmentItemToolTip(QVector<QString> listItems)
             {
                 if (equippedItems.value(itemIndex).statType1 == equippedItems.value(itemIndex).statType2)
                 {
-                    itemInfo = QString("Type: %1\nRarity: %4\n%5\nDamage: %6-%7\nItem Stats:\n+%8 %9\n\nSell Price: %2G\nWeight: %3")
+                    itemInfo = QString("Type: %1\nRarity: %3\n%4\nDamage: %5-%6\nItem Stats:\n+%7 %8\n\nSell Price: %2G")
                             .arg(itemXRef->getItemType(equippedItems.value(itemIndex).itemType))
                             .arg(equippedItems.value(itemIndex).sellPrice)
-                            .arg(equippedItems.value(itemIndex).weight)
                             .arg(itemXRef->getItemRarity(equippedItems.value(itemIndex).itemRarity))
                             .arg(itemXRef->getHoldType(equippedItems.value(itemIndex).holdType))
                             .arg(equippedItems.value(itemIndex).minAtk)
@@ -3491,10 +3464,9 @@ void GameLogic::setEquipmentItemToolTip(QVector<QString> listItems)
                 }
                 else
                 {
-                    itemInfo = QString("Type: %1\nRarity: %4\n%5\nDamage: %6-%7\nItem Stats:\n+%8 %9\n+%10 %11\n\nSell Price: %2G\nWeight: %3")
+                    itemInfo = QString("Type: %1\nRarity: %3\n%4\nDamage: %5-%6\nItem Stats:\n+%7 %8\n+%9 %10\n\nSell Price: %2G")
                             .arg(itemXRef->getItemType(equippedItems.value(itemIndex).itemType))
                             .arg(equippedItems.value(itemIndex).sellPrice)
-                            .arg(equippedItems.value(itemIndex).weight)
                             .arg(itemXRef->getItemRarity(equippedItems.value(itemIndex).itemRarity))
                             .arg(itemXRef->getHoldType(equippedItems.value(itemIndex).holdType))
                             .arg(equippedItems.value(itemIndex).minAtk)
@@ -3505,10 +3477,9 @@ void GameLogic::setEquipmentItemToolTip(QVector<QString> listItems)
             }
             else if (equippedItems.value(itemIndex).statType1 > 0 && equippedItems.value(itemIndex).statType2 > 0 && equippedItems.value(itemIndex).statType3 > 0)
             {
-                itemInfo = QString("Type: %1\nRarity: %4\n%5\nDamage: %6-%7\nItem Stats:\n+%8 %9\n+%10 %11\n+%12 %13\n\nSell Price: %2G\nWeight: %3")
+                itemInfo = QString("Type: %1\nRarity: %3\n%4\nDamage: %5-%6\nItem Stats:\n+%7 %8\n+%9 %10\n+%11 %12\n\nSell Price: %2G")
                         .arg(itemXRef->getItemType(equippedItems.value(itemIndex).itemType))
                         .arg(equippedItems.value(itemIndex).sellPrice)
-                        .arg(equippedItems.value(itemIndex).weight)
                         .arg(itemXRef->getItemRarity(equippedItems.value(itemIndex).itemRarity))
                         .arg(itemXRef->getHoldType(equippedItems.value(itemIndex).holdType))
                         .arg(equippedItems.value(itemIndex).minAtk)
@@ -3523,20 +3494,18 @@ void GameLogic::setEquipmentItemToolTip(QVector<QString> listItems)
                 {
                     if (equippedItems.value(itemIndex).statType1 == 0 && equippedItems.value(itemIndex).statType2 == 0 && equippedItems.value(itemIndex).statType3 == 0)
                     {
-                        itemInfo = QString("Type: %1\nRarity: %4\n%5\n+%6 Dodge\n\nSell Price: %2G\nWeight: %3")
+                        itemInfo = QString("Type: %1\nRarity: %3\n%4\n+%5 Dodge\n\nSell Price: %2G")
                                 .arg(itemXRef->getItemType(equippedItems.value(itemIndex).itemType))
                                 .arg(equippedItems.value(itemIndex).sellPrice)
-                                .arg(equippedItems.value(itemIndex).weight)
                                 .arg(itemXRef->getItemRarity(equippedItems.value(itemIndex).itemRarity))
                                 .arg(itemXRef->getArmourType(equippedItems.value(itemIndex).armourType))
                                 .arg(equippedItems.value(itemIndex).armourRating);
                     }
                     else if (equippedItems.value(itemIndex).statType1 > 0 && equippedItems.value(itemIndex).statType2 == 0 && equippedItems.value(itemIndex).statType3 == 0)
                     {
-                        itemInfo = QString("Type: %1\nRarity: %4\n%5\n+%6 Dodge\nItem Stats:\n+%7 %8\n\nSell Price: %2G\nWeight: %3")
+                        itemInfo = QString("Type: %1\nRarity: %3\n%4\n+%5 Dodge\nItem Stats:\n+%6 %7\n\nSell Price: %2G")
                                 .arg(itemXRef->getItemType(equippedItems.value(itemIndex).itemType))
                                 .arg(equippedItems.value(itemIndex).sellPrice)
-                                .arg(equippedItems.value(itemIndex).weight)
                                 .arg(itemXRef->getItemRarity(equippedItems.value(itemIndex).itemRarity))
                                 .arg(itemXRef->getArmourType(equippedItems.value(itemIndex).armourType))
                                 .arg(equippedItems.value(itemIndex).armourRating)
@@ -3546,10 +3515,9 @@ void GameLogic::setEquipmentItemToolTip(QVector<QString> listItems)
                     {
                         if (equippedItems.value(itemIndex).statType1 == equippedItems.value(itemIndex).statType2)
                         {
-                            itemInfo = QString("Type: %1\nRarity: %4\n%5\n+%6 Dodge\nItem Stats:\n+%7 %8\n\nSell Price: %2G\nWeight: %3")
+                            itemInfo = QString("Type: %1\nRarity: %3\n%4\n+%5 Dodge\nItem Stats:\n+%6 %7\n\nSell Price: %2G")
                                     .arg(itemXRef->getItemType(equippedItems.value(itemIndex).itemType))
                                     .arg(equippedItems.value(itemIndex).sellPrice)
-                                    .arg(equippedItems.value(itemIndex).weight)
                                     .arg(itemXRef->getItemRarity(equippedItems.value(itemIndex).itemRarity))
                                     .arg(itemXRef->getArmourType(equippedItems.value(itemIndex).armourType))
                                     .arg(equippedItems.value(itemIndex).armourRating)
@@ -3557,10 +3525,9 @@ void GameLogic::setEquipmentItemToolTip(QVector<QString> listItems)
                         }
                         else
                         {
-                            itemInfo = QString("Type: %1\nRarity: %4\n%5\n+%6 Dodge\nItem Stats:\n+%7 %8\n+%9 %10\n\nSell Price: %2G\nWeight: %3")
+                            itemInfo = QString("Type: %1\nRarity: %3\n%4\n+%5 Dodge\nItem Stats:\n+%6 %7\n+%8 %9\n\nSell Price: %2G")
                                     .arg(itemXRef->getItemType(equippedItems.value(itemIndex).itemType))
                                     .arg(equippedItems.value(itemIndex).sellPrice)
-                                    .arg(equippedItems.value(itemIndex).weight)
                                     .arg(itemXRef->getItemRarity(equippedItems.value(itemIndex).itemRarity))
                                     .arg(itemXRef->getArmourType(equippedItems.value(itemIndex).armourType))
                                     .arg(equippedItems.value(itemIndex).armourRating)
@@ -3570,10 +3537,9 @@ void GameLogic::setEquipmentItemToolTip(QVector<QString> listItems)
                     }
                     else if (equippedItems.value(itemIndex).statType1 > 0 && equippedItems.value(itemIndex).statType2 > 0 && equippedItems.value(itemIndex).statType3 > 0)
                     {
-                        itemInfo = QString("Type: %1\nRarity: %4\n%5\n+%6 Dodge\nItem Stats:\n+%7 %8\n+%9 %10\n+%11 %12\n\nSell Price: %2G\nWeight: %3")
+                        itemInfo = QString("Type: %1\nRarity: %3\n%4\n+%5 Dodge\nItem Stats:\n+%6 %7\n+%8 %9\n+%10 %11\n\nSell Price: %2G")
                                 .arg(itemXRef->getItemType(equippedItems.value(itemIndex).itemType))
                                 .arg(equippedItems.value(itemIndex).sellPrice)
-                                .arg(equippedItems.value(itemIndex).weight)
                                 .arg(itemXRef->getItemRarity(equippedItems.value(itemIndex).itemRarity))
                                 .arg(itemXRef->getArmourType(equippedItems.value(itemIndex).armourType))
                                 .arg(equippedItems.value(itemIndex).armourRating)
@@ -3586,19 +3552,17 @@ void GameLogic::setEquipmentItemToolTip(QVector<QString> listItems)
                 {
                     if (equippedItems.value(itemIndex).statType1 == 0 && equippedItems.value(itemIndex).statType2 == 0 && equippedItems.value(itemIndex).statType3 == 0)
                     {
-                        itemInfo = QString("Type: %1\nRarity: %4\nItem Stats:\n+%5 Block\n\nSell Price: %2G\nWeight: %3")
+                        itemInfo = QString("Type: %1\nRarity: %3\nItem Stats:\n+%4 Block\n\nSell Price: %2G")
                                 .arg(itemXRef->getItemType(equippedItems.value(itemIndex).itemType))
                                 .arg(equippedItems.value(itemIndex).sellPrice)
-                                .arg(equippedItems.value(itemIndex).weight)
                                 .arg(itemXRef->getItemRarity(equippedItems.value(itemIndex).itemRarity))
                                 .arg(equippedItems.value(itemIndex).block);
                     }
                     else if (equippedItems.value(itemIndex).statType1 > 0 && equippedItems.value(itemIndex).statType2 == 0 && equippedItems.value(itemIndex).statType3 == 0)
                     {
-                        itemInfo = QString("Type: %1\nRarity: %4\nItem Stats:\n+%5 Block\n+%6 %7\n\nSell Price: %2G\nWeight: %3")
+                        itemInfo = QString("Type: %1\nRarity: %3\nItem Stats:\n+%4 Block\n+%5 %6\n\nSell Price: %2G")
                                 .arg(itemXRef->getItemType(equippedItems.value(itemIndex).itemType))
                                 .arg(equippedItems.value(itemIndex).sellPrice)
-                                .arg(equippedItems.value(itemIndex).weight)
                                 .arg(itemXRef->getItemRarity(equippedItems.value(itemIndex).itemRarity))
                                 .arg(equippedItems.value(itemIndex).block)
                                 .arg(equippedItems.value(itemIndex).stat1).arg(itemXRef->getStatType(equippedItems.value(itemIndex).statType1));
@@ -3607,20 +3571,18 @@ void GameLogic::setEquipmentItemToolTip(QVector<QString> listItems)
                     {
                         if (equippedItems.value(itemIndex).statType1 == equippedItems.value(itemIndex).statType2)
                         {
-                            itemInfo = QString("Type: %1\nRarity: %4\nItem Stats:\n+%5 Block\n+%6 %7\n\nSell Price: %2G\nWeight: %3")
+                            itemInfo = QString("Type: %1\nRarity: %3\nItem Stats:\n+%4 Block\n+%5 %6\n\nSell Price: %2G")
                                     .arg(itemXRef->getItemType(equippedItems.value(itemIndex).itemType))
                                     .arg(equippedItems.value(itemIndex).sellPrice)
-                                    .arg(equippedItems.value(itemIndex).weight)
                                     .arg(itemXRef->getItemRarity(equippedItems.value(itemIndex).itemRarity))
                                     .arg(equippedItems.value(itemIndex).block)
                                     .arg(equippedItems.value(itemIndex).stat1 + equippedItems.value(itemIndex).stat2).arg(itemXRef->getStatType(equippedItems.value(itemIndex).statType1));
                         }
                         else
                         {
-                            itemInfo = QString("Type: %1\nRarity: %4\nItem Stats:\n+%5 Block\n+%6 %7\n+%8 %9\n\nSell Price: %2G\nWeight: %3")
+                            itemInfo = QString("Type: %1\nRarity: %3\nItem Stats:\n+%4 Block\n+%5 %6\n+%7 %8\n\nSell Price: %2G")
                                     .arg(itemXRef->getItemType(equippedItems.value(itemIndex).itemType))
                                     .arg(equippedItems.value(itemIndex).sellPrice)
-                                    .arg(equippedItems.value(itemIndex).weight)
                                     .arg(itemXRef->getItemRarity(equippedItems.value(itemIndex).itemRarity))
                                     .arg(equippedItems.value(itemIndex).block)
                                     .arg(equippedItems.value(itemIndex).stat1).arg(itemXRef->getStatType(equippedItems.value(itemIndex).statType1))
@@ -3630,10 +3592,9 @@ void GameLogic::setEquipmentItemToolTip(QVector<QString> listItems)
                     }
                     else if (equippedItems.value(itemIndex).statType1 > 0 && equippedItems.value(itemIndex).statType2 > 0 && equippedItems.value(itemIndex).statType3 > 0)
                     {
-                        itemInfo = QString("Type: %1\nRarity: %4\nItem Stats:\n+%5 Block\n+%6 %7\n+%8 %9\n+%10 %11\n\nSell Price: %2G\nWeight: %3")
+                        itemInfo = QString("Type: %1\nRarity: %3\nItem Stats:\n+%4 Block\n+%5 %6\n+%7 %8\n+%9 %10\n\nSell Price: %2G")
                                 .arg(itemXRef->getItemType(equippedItems.value(itemIndex).itemType))
                                 .arg(equippedItems.value(itemIndex).sellPrice)
-                                .arg(equippedItems.value(itemIndex).weight)
                                 .arg(itemXRef->getItemRarity(equippedItems.value(itemIndex).itemRarity))
                                 .arg(equippedItems.value(itemIndex).block)
                                 .arg(equippedItems.value(itemIndex).stat1).arg(itemXRef->getStatType(equippedItems.value(itemIndex).statType1))
@@ -3645,18 +3606,16 @@ void GameLogic::setEquipmentItemToolTip(QVector<QString> listItems)
                 {
                     if (equippedItems.value(itemIndex).statType1 == 0 && equippedItems.value(itemIndex).statType2 == 0 && equippedItems.value(itemIndex).statType3 == 0)
                     {
-                        itemInfo = QString("Type: %1\nRarity: %4\n\nSell Price: %2G\nWeight: %3")
+                        itemInfo = QString("Type: %1\nRarity: %3\n\nSell Price: %2G")
                                 .arg(itemXRef->getItemType(equippedItems.value(itemIndex).itemType))
                                 .arg(equippedItems.value(itemIndex).sellPrice)
-                                .arg(equippedItems.value(itemIndex).weight)
                                 .arg(itemXRef->getItemRarity(equippedItems.value(itemIndex).itemRarity));
                     }
                     else if (equippedItems.value(itemIndex).statType1 > 0 && equippedItems.value(itemIndex).statType2 == 0 && equippedItems.value(itemIndex).statType3 == 0)
                     {
-                        itemInfo = QString("Type: %1\nRarity: %4\nItem Stats:\n+%5 %6\n\nSell Price: %2G\nWeight: %3")
+                        itemInfo = QString("Type: %1\nRarity: %3\nItem Stats:\n+%4 %5\n\nSell Price: %2G")
                                 .arg(itemXRef->getItemType(equippedItems.value(itemIndex).itemType))
                                 .arg(equippedItems.value(itemIndex).sellPrice)
-                                .arg(equippedItems.value(itemIndex).weight)
                                 .arg(itemXRef->getItemRarity(equippedItems.value(itemIndex).itemRarity))
                                 .arg(equippedItems.value(itemIndex).stat1).arg(itemXRef->getStatType(equippedItems.value(itemIndex).statType1));
                     }
@@ -3664,19 +3623,17 @@ void GameLogic::setEquipmentItemToolTip(QVector<QString> listItems)
                     {
                         if (equippedItems.value(itemIndex).statType1 == equippedItems.value(itemIndex).statType2)
                         {
-                            itemInfo = QString("Type: %1\nRarity: %4\nItem Stats:\n+%5 %6\n\nSell Price: %2G\nWeight: %3")
+                            itemInfo = QString("Type: %1\nRarity: %3\nItem Stats:\n+%4 %5\n\nSell Price: %2G")
                                     .arg(itemXRef->getItemType(equippedItems.value(itemIndex).itemType))
                                     .arg(equippedItems.value(itemIndex).sellPrice)
-                                    .arg(equippedItems.value(itemIndex).weight)
                                     .arg(itemXRef->getItemRarity(equippedItems.value(itemIndex).itemRarity))
                                     .arg(equippedItems.value(itemIndex).stat1 + equippedItems.value(itemIndex).stat2).arg(itemXRef->getStatType(equippedItems.value(itemIndex).statType1));
                         }
                         else
                         {
-                            itemInfo = QString("Type: %1\nRarity: %4\nItem Stats:\n+%5 %6\n+%7 %8\n\nSell Price: %2G\nWeight: %3")
+                            itemInfo = QString("Type: %1\nRarity: %3\nItem Stats:\n+%4 %5\n+%6 %7\n\nSell Price: %2G")
                                     .arg(itemXRef->getItemType(equippedItems.value(itemIndex).itemType))
                                     .arg(equippedItems.value(itemIndex).sellPrice)
-                                    .arg(equippedItems.value(itemIndex).weight)
                                     .arg(itemXRef->getItemRarity(equippedItems.value(itemIndex).itemRarity))
                                     .arg(equippedItems.value(itemIndex).stat1).arg(itemXRef->getStatType(equippedItems.value(itemIndex).statType1))
                                     .arg(equippedItems.value(itemIndex).stat2).arg(itemXRef->getStatType(equippedItems.value(itemIndex).statType2));
@@ -3684,10 +3641,9 @@ void GameLogic::setEquipmentItemToolTip(QVector<QString> listItems)
                     }
                     else if (equippedItems.value(itemIndex).statType1 > 0 && equippedItems.value(itemIndex).statType2 > 0 && equippedItems.value(itemIndex).statType3 > 0)
                     {
-                        itemInfo = QString("Type: %1\nRarity: %4\nItem Stats:\n+%5 %6\n+%7 %8\n+%9 %10\n\nSell Price: %2G\nWeight: %3")
+                        itemInfo = QString("Type: %1\nRarity: %3\nItem Stats:\n+%4 %5\n+%6 %7\n+%8 %9\n\nSell Price: %2G")
                                 .arg(itemXRef->getItemType(equippedItems.value(itemIndex).itemType))
                                 .arg(equippedItems.value(itemIndex).sellPrice)
-                                .arg(equippedItems.value(itemIndex).weight)
                                 .arg(itemXRef->getItemRarity(equippedItems.value(itemIndex).itemRarity))
                                 .arg(equippedItems.value(itemIndex).stat1).arg(itemXRef->getStatType(equippedItems.value(itemIndex).statType1))
                                 .arg(equippedItems.value(itemIndex).stat2).arg(itemXRef->getStatType(equippedItems.value(itemIndex).statType2))
@@ -3859,7 +3815,6 @@ void GameLogic::on_btnBuyBedroll_clicked()
             item.isEquippable = false;
             item.sellPrice = 50;
             item.isUsable = false;
-            item.weight = 0;
             item.minAtk = 0;
             item.maxAtk = 0;
             item.block = 0;
@@ -3917,7 +3872,6 @@ void GameLogic::on_btnBuyFirestarterKit_clicked()
             item.isEquippable = false;
             item.sellPrice = 35;
             item.isUsable = false;
-            item.weight = 0;
             item.minAtk = 0;
             item.maxAtk = 0;
             item.block = 0;

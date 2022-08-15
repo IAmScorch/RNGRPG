@@ -25,7 +25,6 @@
       bool isEquippable;
       int sellPrice;
       bool isUsable;
-      int weight;
       int minAtk;
       int maxAtk;
       int block;
