@@ -91,8 +91,6 @@ GameLogic::GameLogic(QWidget *parent) :
     ui->lblCharTabBG->setPixmap(QPixmap("Img\\tabCharacterBG.png"));
     ui->lblActionTabBG->setPixmap(QPixmap("Img\\tabActionBG.png"));
     ui->lblInvTabBG->setPixmap(QPixmap("Img\\tabCharacterBG.png"));
-    ui->btnInventory->setEnabled(false);
-    ui->btnInventory->setVisible(false);
 
     ui->btnNewGame->setStyleSheet("background-color: rgb(225, 225, 225, 200)");
     ui->btnLoad->setStyleSheet("background-color: rgb(225, 225, 225, 200)");
@@ -3033,60 +3031,6 @@ void GameLogic::on_tabGame_tabBarClicked(int index)
     }
 }
 
-void GameLogic::on_btnViewInventory_clicked()
-{
-    QString inventoryMessage;
-    QString inventoryMessage2;
-    int itemAmount;
-    QVector<Item> inventoryItems;
-    QVector<QString> itemNames;
-    QVector<int> itemAmounts;
-
-    inventoryItems = player_->getInventory();
-    inventoryMessage = QString("Gold: %1\nItems:\n").arg(player_->getGold());
-    inventoryMessage2 = QString("Gold: %1\nItems:\n").arg(player_->getGold());
-
-    for (int x = 0; x < inventoryItems.length(); x++)
-    {
-        itemNames.push_back(inventoryItems.value(x).name);
-    }
-
-    std::sort(itemNames.begin(), itemNames.end());
-    itemNames.erase(std::unique(itemNames.begin(), itemNames.end()), itemNames.end());
-
-    for (int z = 0; z < itemNames.length(); z++)
-    {
-        itemAmount = 0;
-        for (int a = 0; a < inventoryItems.length(); a++)
-        {
-            if (itemNames.value(z) == inventoryItems.value(a).name)
-            {
-                itemAmount++;
-            }
-        }
-        itemAmounts.push_back(itemAmount);
-    }
-
-    for (int i = 0; i < inventoryItems.length(); i++)
-    {
-        inventoryMessage += QString("%1 x%2\n").arg(inventoryItems.value(i).name).arg(inventoryItems.value(i).amount);
-    }
-
-    for (int y = 0; y < itemNames.length(); y++)
-    {
-        inventoryMessage2 += QString("%1 x%2\n").arg(itemNames.value(y)).arg(itemAmounts.value(y));
-    }
-
-    QMessageBox msgBox;
-//    msgBox.setWindowTitle(QString("%1's Inventory").arg(player_->getName()));
-//    msgBox.setText(QString(inventoryMessage));
-//    msgBox.exec();
-
-    msgBox.setWindowTitle(QString("%1's Inventory").arg(player_->getName()));
-    msgBox.setText(QString(inventoryMessage2));
-    msgBox.exec();
-}
-
 void GameLogic::setPlayerInventory()
 {
     ui->lstInventory->clear();
@@ -3754,14 +3698,6 @@ void GameLogic::setEquipmentItemToolTip(QVector<QString> listItems)
         //item->setToolTip(itemInfo);
         ui->lstEquipment->item(i)->setToolTip(itemInfo);
     }
-}
-
-void GameLogic::on_btnInventory_clicked()
-{
-    isBagOpen_ = true;
-    bag_ = new InventoryBag(this);
-    bag_->setWindowFlags(Qt::Window | Qt::WindowTitleHint);
-    bag_->show();
 }
 
 void GameLogic::on_lstInventory_itemClicked(QListWidgetItem *item)

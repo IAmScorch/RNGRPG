@@ -1228,19 +1228,6 @@
        <string>+</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="btnViewInventory">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>140</y>
-        <width>91</width>
-        <height>31</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>View Inventory</string>
-      </property>
-     </widget>
      <widget class="QLabel" name="lblCBlock">
       <property name="geometry">
        <rect>
@@ -1285,7 +1272,6 @@
      <zorder>btnIncreaseHitChance</zorder>
      <zorder>lblCStamina</zorder>
      <zorder>btnIncreaseStamina</zorder>
-     <zorder>btnViewInventory</zorder>
      <zorder>lblCBlock</zorder>
     </widget>
     <widget class="QWidget" name="tabQuestScreen">
@@ -1673,38 +1659,10 @@ text-align: left;</string>
      <string/>
     </property>
    </widget>
-   <widget class="QPushButton" name="btnInventory">
-    <property name="geometry">
-     <rect>
-      <x>400</x>
-      <y>75</y>
-      <width>21</width>
-      <height>141</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>I
-n
-v
-e
-n
-t
-o
-r
-y</string>
-    </property>
-    <property name="autoRepeat">
-     <bool>false</bool>
-    </property>
-    <property name="autoRepeatDelay">
-     <number>300</number>
-    </property>
-   </widget>
    <zorder>lblXpBarBG</zorder>
    <zorder>tabGame</zorder>
    <zorder>lblXpBar</zorder>
    <zorder>lblXpPercent</zorder>
-   <zorder>btnInventory</zorder>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">

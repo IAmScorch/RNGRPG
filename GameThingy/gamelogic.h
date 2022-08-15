@@ -86,8 +86,6 @@ private slots:
 
     void on_btnRestBS_clicked();
 
-    void on_btnViewInventory_clicked();
-
     void setPlayerInventory();
 
     void setPlayerEquipment();
@@ -95,8 +93,6 @@ private slots:
     void setInventoryItemToolTip(QVector<QString> listItems);
 
     void setEquipmentItemToolTip(QVector<QString> listItems);
-
-    void on_btnInventory_clicked();
 
     void on_lstInventory_itemClicked(QListWidgetItem *item);
 
