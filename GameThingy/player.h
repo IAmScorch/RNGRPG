@@ -29,32 +29,26 @@ private:
     int agility_;
     int luck_;
     int intelligence_;
-    int hit_;
+    int precision_;
     int stamina_;
     int maxStamina_;
     int block_;
 
-    int strengthCount_;
-    int agilityCount_;
-    int luckCount_;
-    int intelligenceCount_;
-    int hitCount_;
-
     int agilityBonus_;
     int luckBonus_;
     int intelligenceBonus_;
-    int hitBonus_;
+    int precisionBonus_;
 
     int agilityDefault_;
     int luckDefault_;
 
     int questsCompleted_;
 
+    bool isShieldEquipped_;
+
     bool isSpecialAbilityLearned_;
     bool isSpecialReady_;
     bool isAlive_;
-    bool wasHealed_;
-    bool rationConsumed_;
     QString name_;
     QString message_;
     QVector<Item> inventory_;
@@ -74,10 +68,8 @@ public:
     int doHitRoll();
     void doHit(int dmg, int enemyHitRoll, QString enemyName, bool isEnemyAlive);
     void checkXP();
-    void usePotion(int healAmount);
-    void buyPotion();
-    void useRation(int stamAmount);
-    void buyRation();
+    void usePotion(int healAmount, int itemIndex);
+    void useRation(int stamAmount, int itemIndex);
     void save();
     void load(QString playerName);
     void addHealthUpgrade(int health);
@@ -102,14 +94,15 @@ public:
     void addIntelligence(int intelligence);
     int getIntelligence();
 
-    void addHit(int hit);
-    void removeHit(int hit);
-    int getHit();
+    void addPrecision(int precision);
+    void removePrecision(int precision_);
+    int getPrecision();
 
     void setStamina(int stamina);
     void removeStamina(int action);
     void addStamina(int stamina);
     void removeStatStamina(int stamina);
+    void addStatStamina(int stamina);
     int getStamina();
 
     int getMaxStamina();
@@ -118,6 +111,9 @@ public:
     int getBlock();
     void addBlock(int block);
     void removeBlock(int block);
+
+    void equipArmour(int armourRating);
+    void unequipArmour(int armourRating);
 
     int getHealth();
     void setHealth(int health);
@@ -193,11 +189,11 @@ public:
     bool IsSpecialReady();
     void setIsSpecialReady(bool isSpecialReady);
 
-    bool wasHealed();
-    bool rationconsumed();
-
     int getSpecialAbilityCharged();
     void setSpecialAbilityCharged(int specialAbilityCharged);
+
+    void equippedShield();
+    void unequippedShield();
 };
 
 #endif // PLAYER_H

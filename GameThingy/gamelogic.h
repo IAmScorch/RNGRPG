@@ -11,7 +11,6 @@
 #include "quests.h"
 #include "inventorybag.h"
 #include "itemcrossreference.h"
-#include "ui_bag.h"
 
 namespace Ui {
 class GameLogic;
@@ -37,8 +36,6 @@ private slots:
     void on_btnSave_clicked();
 
     void on_btnLoad_clicked();
-
-    void on_btnUsePotion_clicked();
 
     void on_btnBuyPotion_clicked();
 
@@ -87,11 +84,7 @@ private slots:
 
     void on_btnBuyRation_clicked();
 
-    void on_btnUseRation_clicked();
-
     void on_btnRestBS_clicked();
-
-    void on_btnViewInventory_clicked();
 
     void setPlayerInventory();
 
@@ -100,8 +93,6 @@ private slots:
     void setInventoryItemToolTip(QVector<QString> listItems);
 
     void setEquipmentItemToolTip(QVector<QString> listItems);
-
-    void on_btnInventory_clicked();
 
     void on_lstInventory_itemClicked(QListWidgetItem *item);
 

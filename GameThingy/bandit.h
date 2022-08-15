@@ -24,7 +24,7 @@ private:
     bool isHit_;
     QString message_;
 
-    QString itemStatNames[9] = {"Vitality","Strength","Stamina","Agility","Luck","Precision","Dodge","Block","Hit"};
+    QString itemStatNames[7] = {"Vitality","Strength","Stamina","Agility","Luck","Precision","Block"};
     QString weaponTypes[3] = {"Dagger","Short Sword","Long Sword"};
     QString armourTypes[4] = {"Cloth","Leather","Mail","Plate"};
     QString weaponPrefixes[20] = {"Sharp", "Sharpened", "Pointy", "Radient", "Rigid", "Immaculate", "Gouging", "Dangerous", "Vibrant", "Fancy",
@@ -34,7 +34,7 @@ private:
     QString ringPrefixes[3] = {"Copper", "Silver", "Gold"};
     QString trinketPrefixes[3] = {"Small", "Medium", "Large"};
 
-    QString banditItemDrops_ [17][16] = {
+    QString banditItemDrops_ [19][16] = {
         {"Tattered Shirt",      "0","9","0","0","0","0","0","5","0","1","0","0","0","0","200"},
         {"Weak potion",         "0","1","0","0","1","2","0","2","1","1","0","0","0","0","100"},
         {"Weak Dagger",         "1","2","0","0","0","0","1","10","0","2","1","3","0","2","40"},
@@ -51,12 +51,14 @@ private:
         {"Sharp Long Sword",    "1","2","0","0","0","0","1","27","0","6","3","9","0","3","10"},
         {"Steel Shield",        "1","4","0","0","0","0","1","15","0","6","0","0","7","2","10"},
         {"Uncommon Item",       "2","8","0","0","0","0","1","0","0","0","0","0","0","0","5"},
-        {"Rare Item",           "3","8","0","0","0","0","1","0","0","0","0","0","0","0","1"}
+        {"Rare Item",           "3","8","0","0","0","0","1","0","0","0","0","0","0","0","3"},
+        {"Epic Item",           "4","8","0","0","0","0","1","0","0","0","0","0","0","0","2"},
+        {"Legendary Item",      "5","8","0","0","0","0","1","0","0","0","0","0","0","0","1"}
     };
 
-    QString banditItemDropsChance_ [2][9] = {
-        {"200","100","40","35","20","15","10","5","1"},
-        {"1", "1", "4", "1", "3", "1", "4", "1","1"}
+    QString banditItemDropsChance_ [2][11] = {
+        {"200","100","40","35","20","15","10","5","3","2","1"},
+        {"1", "1", "4", "1", "3", "1", "4", "1","1","1","1"}
     };
 
     QString banditInitiateItemDrops_ [1][16] = {

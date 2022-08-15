@@ -14,7 +14,7 @@
 
 
 Player::Player(int health, int maxHealth, int maxAttackPower, int minAttackPower,
-               int vitality, int strength, int agility, int luck, int intelligence, int hit, int stamina, int maxStamina,
+               int vitality, int strength, int agility, int luck, int intelligence, int precision, int stamina, int maxStamina,
                int agilityDefault, int luckDefault)
     : health_(health),
       maxHealth_(maxHealth),
@@ -25,7 +25,7 @@ Player::Player(int health, int maxHealth, int maxAttackPower, int minAttackPower
       agility_(agility),
       luck_(luck),
       intelligence_(intelligence),
-      hit_(hit),
+      precision_(precision),
       stamina_(stamina),
       maxStamina_(maxStamina),
       agilityDefault_(agilityDefault),
@@ -42,20 +42,13 @@ Player::Player(int health, int maxHealth, int maxAttackPower, int minAttackPower
     specialAbilityCharge_ = 0;
     specialAbilityCharged_ = 0;
     specialAbilityMaxCharges_ = 0;
-    strengthCount_ = 0;
-    agilityCount_ = 0;
-    luckCount_ = 0;
-    intelligenceCount_ = 0;
-    hitCount_ = 0;
     agilityBonus_ = 0;
     luckBonus_ = 0;
     intelligenceBonus_ = 0;
-    hitBonus_ = 0;
+    precisionBonus_ = 0;
     block_ = 0;
     isSpecialAbilityLearned_ = false;
     isSpecialReady_ = false;
-    wasHealed_ = false;
-    rationConsumed_ = false;
     questsCompleted_ = 0;
     location_ = 0;
     qsrand(QTime::currentTime().msec());
@@ -112,7 +105,7 @@ int Player::doSpecialAbility(QString enemy)
 int Player::doHitRoll()
 {
     int hitRoll = rand()% ((20 + 1) - 1) + 1;
-    return hitRoll + hitBonus_;
+    return hitRoll + precisionBonus_;
 }
 
 void Player::doHit(int dmg, int enemyHitRoll, QString enemyName, bool isEnemyAlive)
@@ -130,18 +123,24 @@ void Player::doHit(int dmg, int enemyHitRoll, QString enemyName, bool isEnemyAli
     {
         if (enemyHitRoll >= dodgeChance)
         {
-            health_ = health_ - dmg;
-            if (health_ <= 0)
+            if (enemyHitRoll >= block_)
             {
-                isAlive_ = false;
-                message_ = name_ + " takes " + QString("%1").arg(dmg) + " damage.\nAww you dead.\n\n";
-                QMessageBox msgBox;
-                msgBox.setWindowTitle("You Dead");
-                msgBox.setText("Aww you dead. Start a new game or load a previous one.");
-                msgBox.exec();
+                health_ = health_ - dmg;
+                if (health_ <= 0)
+                {
+                    isAlive_ = false;
+                    message_ = name_ + " takes " + QString("%1").arg(dmg) + " damage.\nAww you dead.\n\n";
+                    QMessageBox msgBox;
+                    msgBox.setWindowTitle("You Dead");
+                    msgBox.setText("Aww you dead. Start a new game or load a previous one.");
+                    msgBox.exec();
+                }
+                else
+                    message_ = name_ + " takes " + QString("%1").arg(dmg) + " damage.\n\n";
             }
             else
-                message_ = name_ + " takes " + QString("%1").arg(dmg) + " damage.\n\n";
+                message_ = name_ + " blocks " + enemyName + "'s attack.\n\n";
+
         }
         else
             message_ = name_ + " dodges " + enemyName + "'s attack.\n\n";
@@ -242,134 +241,49 @@ void Player::doLevelUp()
     }
 }
 
-void Player::usePotion(int healAmount)
+void Player::usePotion(int healAmount, int itemIndex)
 {
-    //if (potion_ >= 1)
-    //{
-        if (health_ == maxHealth_)
-        {
-            QMessageBox msgBox;
-            msgBox.setWindowTitle("Use Potion");
-            msgBox.setText("Your health is full.");
-            msgBox.exec();
-            wasHealed_ = false;
-        }
-        else
-        {
-            health_ += healAmount;
-            //potion_ -= 1;
-            if (health_ > maxHealth_)
-                health_ = maxHealth_;
-            QSound::play("Sounds\\drinkPotion.wav");
-            QMessageBox msgBox;
-            msgBox.setWindowTitle("Use Potion");
-            msgBox.setText("      Potion used.            ");
-            msgBox.exec();
-            wasHealed_ = true;
-        }
-   // }
-   // else
-//    {
-//        QMessageBox msgBox;
-//        msgBox.setWindowTitle("Use Potion");
-//        msgBox.setText("You do not have a potion.");
-//        msgBox.exec();
-//    }
-}
-
-void Player::buyPotion()
-{
-    if (gold_ >= 20)
+    if (health_ == maxHealth_)
     {
-        if (potion_ == 10)
-        {
-            QMessageBox msgBox;
-            msgBox.setWindowTitle("Buy Potion");
-            msgBox.setText("You cannot carry any more potions.");
-            msgBox.exec();
-        }
-        else
-        {
-            QSound::play("Sounds\\potionDrop.wav");
-            gold_ -= 20;
-            potion_ += 1;
-            QMessageBox msgBox;
-            msgBox.setWindowTitle("Buy Potion");
-            msgBox.setText("You bought a potion.");
-            msgBox.exec();
-        }
+        QMessageBox msgBox;
+        msgBox.setWindowTitle("Drink Potion");
+        msgBox.setText("Your health is full.");
+        msgBox.exec();
     }
     else
     {
+        health_ += healAmount;
+        removeItemFromInventory(itemIndex);
+        //potion_ -= 1;
+        if (health_ > maxHealth_)
+            health_ = maxHealth_;
+        QSound::play("Sounds\\drinkPotion.wav");
         QMessageBox msgBox;
-        msgBox.setWindowTitle("Buy Potion");
-        msgBox.setText("You do not have enough gold.");
+        msgBox.setWindowTitle("Drink Potion");
+        msgBox.setText("      Potion used.            ");
         msgBox.exec();
     }
 }
 
-void Player::useRation(int stamAmount)
+void Player::useRation(int stamAmount, int itemIndex)
 {
-//    if (ration_ >= 1)
-//    {
-        if (stamina_ == maxStamina_)
-        {
-            QMessageBox msgBox;
-            msgBox.setWindowTitle("Use Ration");
-            msgBox.setText("Your stamina is full.");
-            msgBox.exec();
-            rationConsumed_ = false;
-        }
-        else
-        {
-            stamina_ += stamAmount;
-            //ration_ -= 1;
-            if (stamina_ > maxStamina_)
-                stamina_ = maxStamina_;
-            QSound::play("Sounds\\eatRation.wav");
-            QMessageBox msgBox;
-            msgBox.setWindowTitle("Use Ration");
-            msgBox.setText("      Ration used.            ");
-            msgBox.exec();
-            rationConsumed_ = true;
-        }
-//    }
-//    else
-//    {
-//        QMessageBox msgBox;
-//        msgBox.setWindowTitle("Use Ration");
-//        msgBox.setText("You do not have a ration.");
-//        msgBox.exec();
-//    }
-}
-
-void Player::buyRation()
-{
-    if (gold_ >= 30)
+    if (stamina_ == maxStamina_)
     {
-        if (ration_ == 10)
-        {
-            QMessageBox msgBox;
-            msgBox.setWindowTitle("Buy Ration");
-            msgBox.setText("You cannot carry any more rations.");
-            msgBox.exec();
-        }
-        else
-        {
-            QSound::play("Sounds\\rationDrop.wav");
-            gold_ -= 30;
-            ration_ += 1;
-            QMessageBox msgBox;
-            msgBox.setWindowTitle("Buy Ration");
-            msgBox.setText("You bought a ration.");
-            msgBox.exec();
-        }
+        QMessageBox msgBox;
+        msgBox.setWindowTitle("Eat Ration");
+        msgBox.setText("Your stamina is full.");
+        msgBox.exec();
     }
     else
     {
+        stamina_ += stamAmount;
+        removeItemFromInventory(itemIndex);
+        if (stamina_ > maxStamina_)
+            stamina_ = maxStamina_;
+        QSound::play("Sounds\\eatRation.wav");
         QMessageBox msgBox;
-        msgBox.setWindowTitle("Buy Ration");
-        msgBox.setText("You do not have enough gold.");
+        msgBox.setWindowTitle("Eat Ration");
+        msgBox.setText("      Ration Eaten.            ");
         msgBox.exec();
     }
 }
@@ -407,13 +321,9 @@ void Player::save()
     saveFile << luckDefault_ << "\n";
     saveFile << intelligence_ << "\n";
     saveFile << intelligenceBonus_ << "\n";
-    saveFile << agilityCount_ << "\n";
-    saveFile << luckCount_ << "\n";
-    saveFile << intelligenceCount_ << "\n";
     saveFile << questsCompleted_ << "\n";
-    saveFile << hit_ << "\n";
-    saveFile << hitCount_ << "\n";
-    saveFile << hitBonus_ << "\n";
+    saveFile << precision_ << "\n";
+    saveFile << precisionBonus_ << "\n";
     saveFile << stamina_ << "\n";
     saveFile << maxStamina_ << "\n";
     saveFile << ration_ << "\n";
@@ -457,13 +367,9 @@ void Player::load(QString playerName)
         luckDefault_ = saveFile.readLine().toInt();
         intelligence_ = saveFile.readLine().toInt();
         intelligenceBonus_ = saveFile.readLine().toInt();
-        agilityCount_ = saveFile.readLine().toInt();
-        luckCount_ = saveFile.readLine().toInt();
-        intelligenceCount_ = saveFile.readLine().toInt();
         questsCompleted_ = saveFile.readLine().toInt();
-        hit_ = saveFile.readLine().toInt();
-        hitCount_ = saveFile.readLine().toInt();
-        hitBonus_ = saveFile.readLine().toInt();
+        precision_ = saveFile.readLine().toInt();
+        precisionBonus_ = saveFile.readLine().toInt();
         stamina_ = saveFile.readLine().toInt();
         maxStamina_ = saveFile.readLine().toInt();
         ration_ = saveFile.readLine().toInt();
@@ -493,26 +399,22 @@ int Player::getVitality()
 void Player::addStrength(int strength)
 {
     strength_ += strength;
-    strengthCount_ += strength;
     maxAttackPower_ += strength;
 
-    if (strengthCount_ == 5)
+    if (strength_ % 5 == 0)
     {
         minAttackPower_ += 5;
-        strengthCount_ = 0;
     }
 }
 
 void Player::removeStrength(int strength)
 {
     strength_ -= strength;
-    strengthCount_ -= strength;
     maxAttackPower_ -= strength;
 
-    if (strength_ == 4 || strength_ == 9 || strength_ == 14 || strength_ == 19)
+    if (strength_ % 5-4 == 0 )
     {
         minAttackPower_ -= 5;
-        strengthCount_ = 4;
     }
 }
 
@@ -524,24 +426,20 @@ int Player::getStrength()
 void Player::addAgility(int agility)
 {
     agility_ += agility;
-    agilityCount_ += agility;
 
-    if (agilityCount_ == 5)
+    if (agility_ % 5 == 0)
     {
         agilityBonus_ += 1;
-        agilityCount_ = 0;
     }
 }
 
 void Player::removeAgility(int agility)
 {
     agility_ -= agility;
-    agilityCount_ -= agility;
 
-    if (agility_ == 4 || agility_ == 9 || agility_ == 14 || agility_ == 19)
+    if (agility_ % 5-4 == 0)
     {
         agilityBonus_ -= 1;
-        agilityCount_ = 4;
     }
 }
 
@@ -553,24 +451,20 @@ int Player::getAgility()
 void Player::addLuck(int luck)
 {
     luck_ += luck;
-    luckCount_ += luck;
 
-    if (luckCount_ == 5)
+    if (luck_ % 5 == 0)
     {
         luckBonus_ += 1;
-        luckCount_ = 0;
     }
 }
 
 void Player::removeLuck(int luck)
 {
     luck_ -= luck;
-    luckCount_ -= luck;
 
-    if (luckCount_ == 4 || luckCount_ == 9 || luckCount_ == 14 || luckCount_ == 19)
+    if (luck_ % 5-4 == 0)
     {
         luckBonus_ -= 1;
-        luckCount_ = 4;
     }
 }
 
@@ -582,12 +476,10 @@ int Player::getLuck()
 void Player::addIntelligence(int intelligence)
 {
     intelligence_ += intelligence;
-    intelligenceCount_ += intelligence;
 
-    if (intelligenceCount_ == 5)
+    if (intelligence_ % 5 == 0)
     {
         intelligenceBonus_ += 1;
-        intelligenceCount_ = 0;
     }
 }
 
@@ -596,33 +488,29 @@ int Player::getIntelligence()
     return intelligence_;
 }
 
-void Player::addHit(int hit)
+void Player::addPrecision(int precision)
 {
-    hit_ += hit;
-    hitCount_ += hit;
+    precision_ += precision;
 
-    if (hitCount_ == 5)
+    if (precision_ % 5 == 0)
     {
-        hitBonus_ += 1;
-        hitCount_ = 0;
+        precisionBonus_ += 1;
     }
 }
 
-void Player::removeHit(int hit)
+void Player::removePrecision(int precision)
 {
-    hit_ -= hit;
-    hitCount_ -= hit;
+    precision_ -= precision;
 
-    if (hitCount_ == 4 || hitCount_ == 9 || hitCount_ == 14 || hitCount_ == 19)
+    if (precision_ % 5-4 == 0)
     {
-        hitBonus_ -= 1;
-        hitCount_ = 4;
+        precisionBonus_ -= 1;
     }
 }
 
-int Player::getHit()
+int Player::getPrecision()
 {
-    return hit_;
+    return precision_;
 }
 
 void Player::setStamina(int stamina)
@@ -640,10 +528,15 @@ void Player::addStamina(int stamina)
 
 void Player::removeStatStamina(int stamina)
 {
-    stamina_ -= stamina;
+    maxStamina_ -= stamina;
 
     if (stamina_ > maxStamina_)
         stamina_ = maxStamina_;
+}
+
+void Player::addStatStamina(int stamina)
+{
+    maxStamina_ += stamina;
 }
 
 void Player::removeStamina(int action)
@@ -686,6 +579,16 @@ void Player::addBlock(int block)
 void Player::removeBlock(int block)
 {
     block_ -= block;
+}
+
+void Player::equipArmour(int armourRating)
+{
+    agilityDefault_ += armourRating;
+}
+
+void Player::unequipArmour(int armourRating)
+{
+    agilityDefault_ -= armourRating;
 }
 
 bool Player::isAlive()
@@ -889,6 +792,11 @@ void Player::addEquipment(Item item)
         addBlock(item.block);
     }
 
+    if (item.itemType == 3)
+    {
+        equipArmour(item.armourRating);
+    }
+
     switch (item.statType1)
     {
         case 1: //Vitality
@@ -898,7 +806,7 @@ void Player::addEquipment(Item item)
             addStrength(item.stat1);
             break;
         case 3: //Stamina
-            addStamina(item.stat1);
+            addStatStamina(item.stat1);
             break;
         case 4: //Agility
             addAgility(item.stat1);
@@ -907,16 +815,10 @@ void Player::addEquipment(Item item)
             addLuck(item.stat1);
             break;
         case 6: //Precision
-            addHit(item.stat1);
+            addPrecision(item.stat1);
             break;
-        case 7: //Dodge
-            addAgility(item.stat1);
-            break;
-        case 8: //Block
+        case 7: //Block
             //do nothing
-            break;
-        case 9: //Hit
-            addHit(item.stat1);
             break;
     }
 
@@ -929,7 +831,7 @@ void Player::addEquipment(Item item)
             addStrength(item.stat2);
             break;
         case 3: //Stamina
-            addStamina(item.stat2);
+            addStatStamina(item.stat2);
             break;
         case 4: //Agility
             addAgility(item.stat2);
@@ -938,16 +840,10 @@ void Player::addEquipment(Item item)
             addLuck(item.stat2);
             break;
         case 6: //Precision
-            addHit(item.stat2);
+            addPrecision(item.stat2);
             break;
-        case 7: //Dodge
-            addAgility(item.stat2);
-            break;
-        case 8: //Block
+        case 7: //Block
             //do nothing
-            break;
-        case 9: //Hit
-            addHit(item.stat2);
             break;
     }
 
@@ -960,7 +856,7 @@ void Player::addEquipment(Item item)
             addStrength(item.stat3);
             break;
         case 3: //Stamina
-            addStamina(item.stat3);
+            addStatStamina(item.stat3);
             break;
         case 4: //Agility
             addAgility(item.stat3);
@@ -969,16 +865,10 @@ void Player::addEquipment(Item item)
             addLuck(item.stat3);
             break;
         case 6: //Precision
-            addHit(item.stat3);
+            addPrecision(item.stat3);
             break;
-        case 7: //Dodge
-            addAgility(item.stat3);
-            break;
-        case 8: //Block
+        case 7: //Block
             //do nothing
-            break;
-        case 9: //Hit
-            addHit(item.stat3);
             break;
     }
 }
@@ -999,6 +889,11 @@ void Player::removeEquipment(int index)
         removeBlock(item.block);
     }
 
+    if (item.itemType == 3)
+    {
+        unequipArmour(item.armourRating);
+    }
+
     switch (item.statType1)
     {
         case 1: //Vitality
@@ -1008,7 +903,7 @@ void Player::removeEquipment(int index)
             removeStrength(item.stat1);
             break;
         case 3: //Stamina
-            removeStamina(item.stat1);
+            removeStatStamina(item.stat1);
             break;
         case 4: //Agility
             removeAgility(item.stat1);
@@ -1017,16 +912,10 @@ void Player::removeEquipment(int index)
             removeLuck(item.stat1);
             break;
         case 6: //Precision
-            removeHit(item.stat1);
+            removePrecision(item.stat1);
             break;
-        case 7: //Dodge
-            removeAgility(item.stat1);
-            break;
-        case 8: //Block
+        case 7: //Block
             //do nothing
-            break;
-        case 9: //Hit
-            removeHit(item.stat1);
             break;
     }
 
@@ -1039,7 +928,7 @@ void Player::removeEquipment(int index)
             removeStrength(item.stat2);
             break;
         case 3: //Stamina
-            removeStamina(item.stat2);
+            removeStatStamina(item.stat2);
             break;
         case 4: //Agility
             removeAgility(item.stat2);
@@ -1048,16 +937,10 @@ void Player::removeEquipment(int index)
             removeLuck(item.stat2);
             break;
         case 6: //Precision
-            removeHit(item.stat2);
+            removePrecision(item.stat2);
             break;
-        case 7: //Dodge
-            removeAgility(item.stat2);
-            break;
-        case 8: //Block
+        case 7: //Block
             //do nothing
-            break;
-        case 9: //Hit
-            removeHit(item.stat2);
             break;
     }
 
@@ -1070,7 +953,7 @@ void Player::removeEquipment(int index)
             removeStrength(item.stat3);
             break;
         case 3: //Stamina
-            removeStamina(item.stat3);
+            removeStatStamina(item.stat3);
             break;
         case 4: //Agility
             removeAgility(item.stat3);
@@ -1079,16 +962,10 @@ void Player::removeEquipment(int index)
             removeLuck(item.stat3);
             break;
         case 6: //Precision
-            removeHit(item.stat3);
+            removePrecision(item.stat3);
             break;
-        case 7: //Dodge
-            removeAgility(item.stat3);
-            break;
-        case 8: //Block
+        case 7: //Block
             //do nothing
-            break;
-        case 9: //Hit
-            removeHit(item.stat3);
             break;
     }
 }
@@ -1163,6 +1040,16 @@ void Player::setSpecialAbilityCharged(int specialAbilityCharged)
     specialAbilityCharged_ = specialAbilityCharged;
 }
 
+void Player::equippedShield()
+{
+    isShieldEquipped_ = true;
+}
+
+void Player::unequippedShield()
+{
+    isShieldEquipped_ = false;
+}
+
 bool Player::isSpecialAbilityLeanred()
 {
     return isSpecialAbilityLearned_;
@@ -1185,16 +1072,6 @@ bool Player::IsSpecialReady()
 void Player::setIsSpecialReady(bool isSpecialReady)
 {
     isSpecialReady_ = isSpecialReady;
-}
-
-bool Player::wasHealed()
-{
-    return wasHealed_;
-}
-
-bool Player::rationconsumed()
-{
-    return rationConsumed_;
 }
 
 int Player::getQuestsCompleted()
