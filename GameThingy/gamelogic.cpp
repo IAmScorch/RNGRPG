@@ -62,7 +62,7 @@ GameLogic::GameLogic(QWidget *parent) :
     qsHandInSC_->setEnabled(false);
 
     ui->setupUi(this);
-    ui->tabActionScreen->setEnabled(false);
+    ui->tabStoreScreen->setEnabled(false);
     ui->tabCInfoScreen->setEnabled(false);
     ui->tabQuestScreen->setEnabled(false);
     ui->txtBattleInfo->setEnabled(false);
@@ -121,7 +121,7 @@ void GameLogic::on_btnQuit_clicked()
 void GameLogic::on_btnNewGame_clicked()
 {
     ui->btnSave->setEnabled(true);
-    ui->tabActionScreen->setEnabled(true);
+    ui->tabStoreScreen->setEnabled(true);
     ui->tabCInfoScreen->setEnabled(true);
     ui->tabQuestScreen->setEnabled(true);
     ui->btnBattle->setEnabled(false);
@@ -263,7 +263,7 @@ void GameLogic::on_btnAttack_clicked()
             player_->checkXP();
             player_->resetSpecialAbility();
             checkSkillPoints();
-            ui->tabActionScreen->setEnabled(true);
+            ui->tabStoreScreen->setEnabled(true);
             ui->tabCInfoScreen->setEnabled(true);
             ui->tabMenuScreen->setEnabled(true);
             ui->tabQuestScreen->setEnabled(true);
@@ -280,7 +280,7 @@ void GameLogic::on_btnAttack_clicked()
 
     if (!player_->isAlive())
     {
-        ui->tabActionScreen->setEnabled(false);
+        ui->tabStoreScreen->setEnabled(false);
         ui->tabCInfoScreen->setEnabled(false);
         ui->tabMenuScreen->setEnabled(true);
         ui->txtBattleInfo->setEnabled(false);
@@ -359,7 +359,7 @@ void GameLogic::on_btnSpecialAbility_clicked()
         player_->removeStamina(1);
         player_->checkXP();
         checkSkillPoints();
-        ui->tabActionScreen->setEnabled(true);
+        ui->tabStoreScreen->setEnabled(true);
         ui->tabCInfoScreen->setEnabled(true);
         ui->tabMenuScreen->setEnabled(true);
         ui->tabQuestScreen->setEnabled(true);
@@ -375,7 +375,7 @@ void GameLogic::on_btnSpecialAbility_clicked()
 
     if (!player_->isAlive())
     {
-        ui->tabActionScreen->setEnabled(false);
+        ui->tabStoreScreen->setEnabled(false);
         ui->tabCInfoScreen->setEnabled(false);
         ui->tabMenuScreen->setEnabled(true);
         ui->txtBattleInfo->setEnabled(false);
@@ -419,7 +419,7 @@ void GameLogic::on_btnBattle_clicked()
     ui->btnTravel->setEnabled(false);
 
     ui->tabMenuScreen->setEnabled(false);
-    ui->tabActionScreen->setEnabled(false);
+    ui->tabStoreScreen->setEnabled(false);
     ui->tabCInfoScreen->setEnabled(false);
     ui->tabQuestScreen->setEnabled(false);
     checkLevel();
@@ -440,7 +440,7 @@ void GameLogic::on_btnBattle_clicked()
     {
         ui->txtBattleInfo->setText(QString("You saved an %1").arg(bandit_->getName()));
         quest_->setAmountComplete(1);
-        ui->tabActionScreen->setEnabled(true);
+        ui->tabStoreScreen->setEnabled(true);
         ui->tabCInfoScreen->setEnabled(true);
         ui->tabMenuScreen->setEnabled(true);
         ui->tabQuestScreen->setEnabled(true);
@@ -457,7 +457,7 @@ void GameLogic::on_btnBattle_clicked()
     else if (bandit_->getEnemyType() == 998)
     {
         ui->txtBattleInfo->setText(" ");
-        ui->tabActionScreen->setEnabled(true);
+        ui->tabStoreScreen->setEnabled(true);
         ui->tabCInfoScreen->setEnabled(true);
         ui->tabMenuScreen->setEnabled(true);
         ui->tabQuestScreen->setEnabled(true);
@@ -476,7 +476,7 @@ void GameLogic::on_btnBattle_clicked()
     else if (bandit_->getEnemyType() == 999)
     {
         ui->txtBattleInfo->setText(" ");
-        ui->tabActionScreen->setEnabled(true);
+        ui->tabStoreScreen->setEnabled(true);
         ui->tabCInfoScreen->setEnabled(true);
         ui->tabMenuScreen->setEnabled(true);
         ui->tabQuestScreen->setEnabled(true);
@@ -1094,7 +1094,7 @@ void GameLogic::on_btnLoad_clicked()
             player_->load(playerName);
             quest_->load(player_->getName());
             ui->btnSave->setEnabled(true);
-            ui->tabActionScreen->setEnabled(true);
+            ui->tabStoreScreen->setEnabled(true);
             ui->tabCInfoScreen->setEnabled(true);
             ui->tabQuestScreen->setEnabled(true);
             ui->btnBattle->setEnabled(true);

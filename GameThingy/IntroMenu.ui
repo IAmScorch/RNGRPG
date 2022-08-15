@@ -142,9 +142,12 @@
      <zorder>btnSave</zorder>
      <zorder>btnLoad</zorder>
     </widget>
-    <widget class="QWidget" name="tabActionScreen">
+    <widget class="QWidget" name="tabStoreScreen">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
      <attribute name="title">
-      <string>Action</string>
+      <string>Store</string>
      </attribute>
      <widget class="QPushButton" name="btnBuyPotion">
       <property name="geometry">
