@@ -100,7 +100,7 @@ GameLogic::GameLogic(QWidget *parent) :
     banditBoss_ = new Bandit("", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
     warrior_ = new Warrior("", 0, 0, 0, 0, 0);
     warriorBoss_ = new Warrior("", 0, 0, 0, 0, 0);
-    player_ = new Player(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+    player_ = new Player(0, 0, 0, 0, 0, 0);
     quest_ = new quests(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "");
     itemXRef = new itemCrossReference();
     isBagOpen_ = false;
@@ -922,8 +922,8 @@ void GameLogic::checkLevel()
 
 void GameLogic::createCharacter()
 {
-    //health, maxHealth, maxAttackPower, minAttackPower, vitality, strength, agility, luck, intelligence, hit, stamina, maxStamina, agilityDefault, luckDefault
-    player_ = new Player(20, 20, 5, 1, 10, 5, 0, 0, 0, 0, 10, 10, 6, 20);
+    //defaultHealth, intelligence, defaultStamina, agilityDefault, luckDefault, classType
+    player_ = new Player(20, 0, 10, 6, 20, 3);
     bool ok;
     name_ = QInputDialog::getText(this, tr("New Game"), tr("<p>Greetings traveler, welcome to <b>Windlehelm</b>.<br>"
                                                            "I am <b>Bormeir</b>, head of the <b>Windlehelm City Guard</b>.<br>"
@@ -933,6 +933,10 @@ void GameLogic::createCharacter()
     if(ok)
     {
         player_->setName(name_);
+        player_->addStarterEquipment();
+        player_->setStrength();
+        setPlayerInfo();
+        setPlayerEquipment();
         QMessageBox msgBox;
         msgBox.setWindowTitle("Bormeir");
         msgBox.setText(QString("Good to meet you %1.\n"
@@ -1132,6 +1136,8 @@ void GameLogic::on_btnLoad_clicked()
             }
 
             setPlayerInfo();
+            setPlayerInventory();
+            setPlayerEquipment();
             checkSkillPoints();
             checkLocation();
             ui->lblGoldAmount->setText(QString("Gold: %1").arg(player_->getGold()));
@@ -1286,12 +1292,12 @@ void GameLogic::setPlayerInfo()
     ui->lblGoldAmount->setText(QString("Gold: %1").arg(player_->getGold()));
     ui->lblGoldInv->setText(QString("Gold: %1").arg(player_->getGold()));
     ui->lblPLevel->setText(QString("%1").arg(player_->getLevel()));
-    ui->lblCStrength->setText(QString("Strength: %1").arg(player_->getStrength()));
-    ui->lblCStamina->setText(QString("Stamina: %1").arg(player_->getMaxStamina()));
-    ui->lblCAgility->setText(QString("Agility: %1").arg(player_->getAgility()));
-    ui->lblCLuck->setText(QString("Luck: %1").arg(player_->getLuck()));
-    ui->lblCVitality->setText(QString("Vitality: %1").arg(player_->getVitality()));
-    ui->lblCHit->setText(QString("Hit: %1").arg(player_->getPrecision()));
+    ui->lblCStrength->setText(QString("Strength: %1").arg(player_->getTotalStrengthPoints()));
+    ui->lblCStamina->setText(QString("Stamina: %1").arg(player_->getTotalStaminaPoints()));
+    ui->lblCAgility->setText(QString("Agility: %1").arg(player_->getTotalAgilityPoints()));
+    ui->lblCLuck->setText(QString("Luck: %1").arg(player_->getTotalLuckPoints()));
+    ui->lblCVitality->setText(QString("Vitality: %1").arg(player_->getTotalVitalityPoints()));
+    ui->lblCHit->setText(QString("Hit: %1").arg(player_->getTotalPrecisionPoints()));
     ui->lblCBlock->setText(QString("Block: %1").arg(player_->getBlock()));
     double xpPercent = (double(player_->getXP()) / double(player_->getXPTillLevel())) * 100;
     double xpPercent2 = (double(player_->getXP()) / double(player_->getXPTillLevel())) * 400;
@@ -1813,46 +1819,40 @@ void GameLogic::checkSkillPoints()
         ui->btnIncreaseStamina->setEnabled(false);
     }
 
-    if (player_->getVitality() == 20)
+    if (player_->getStatVitality() == 20)
     {
         ui->btnIncreaseHP->setEnabled(false);
         ui->btnIncreaseHP->setVisible(false);
     }
 
-    if (player_->getStrength() == 20)
+    if (player_->getStatStrength() == 20)
     {
         ui->btnIncreaseAttack->setEnabled(false);
         ui->btnIncreaseAttack->setVisible(false);
     }
 
-    if (player_->getStamina() == 20)
+    if (player_->getStatStamina() == 20)
     {
         ui->btnIncreaseStamina->setEnabled(false);
         ui->btnIncreaseStamina->setVisible(false);
     }
 
-    if (player_->getAgility() == 20)
+    if (player_->getStatAgility() == 20)
     {
         ui->btnIncreaseAgility->setEnabled(false);
         ui->btnIncreaseAgility->setVisible(false);
     }
 
-    if (player_->getLuck() == 20)
+    if (player_->getStatLuck() == 20)
     {
         ui->btnIncreaseCritChance->setEnabled(false);
         ui->btnIncreaseCritChance->setVisible(false);
     }
 
-    if (player_->getPrecision() == 20)
+    if (player_->getStatPrecision() == 20)
     {
         ui->btnIncreaseHitChance->setEnabled(false);
         ui->btnIncreaseHitChance->setVisible(false);
-    }
-
-    if (player_->getMaxStamina() == 20)
-    {
-        ui->btnIncreaseStamina->setEnabled(false);
-        ui->btnIncreaseStamina->setVisible(false);
     }
 }
 
@@ -2289,11 +2289,10 @@ void GameLogic::openQuestTab()
 
 void GameLogic::on_btnIncreaseHP_clicked()
 {
-    //player_->setMaxHealth(2);
-    player_->addVitality(1);
+    player_->addStatVitality(1);
     player_->setHealth(player_->getMaxHealth());
     ui->lblCHealth->setText(QString("Health: %1/%2").arg(player_->getHealth()).arg(player_->getMaxHealth()));
-    ui->lblCVitality->setText(QString("Vitality: %1").arg(player_->getVitality()));
+    ui->lblCVitality->setText(QString("Vitality: %1").arg(player_->getTotalVitalityPoints()));
     player_->setSkillPoints(1);
     ui->lblCSkillPoints->setText(QString("Skill Points: %1").arg(player_->getSkillPoints()));
     checkSkillPoints();
@@ -2302,11 +2301,9 @@ void GameLogic::on_btnIncreaseHP_clicked()
 
 void GameLogic::on_btnIncreaseAttack_clicked()
 {
-    //player_->setMaxAttackPower(1);
-    //player_->setMinAttackPower(10);
-    player_->addStrength(1);
+    player_->addStatStrength(1);
     ui->lblCAttack->setText(QString("Attack: %1-%2").arg(player_->getMinAttackPower()).arg(player_->getMaxAttackPower()));
-    ui->lblCStrength->setText(QString("Strength: %1").arg(player_->getStrength()));
+    ui->lblCStrength->setText(QString("Strength: %1").arg(player_->getTotalStrengthPoints()));
     player_->setSkillPoints(1);
     ui->lblCSkillPoints->setText(QString("Skill Points: %1").arg(player_->getSkillPoints()));
     checkSkillPoints();
@@ -2314,8 +2311,8 @@ void GameLogic::on_btnIncreaseAttack_clicked()
 
 void GameLogic::on_btnIncreaseStamina_clicked()
 {
-    player_->addMaxStamina(1);
-    ui->lblCStamina->setText(QString("Stamina: %1").arg(player_->getMaxStamina()));
+    player_->addStatStamina(1);
+    ui->lblCStamina->setText(QString("Stamina: %1").arg(player_->getTotalStaminaPoints()));
     player_->setSkillPoints(1);
     ui->lblCSkillPoints->setText(QString("Skill Points: %1").arg(player_->getSkillPoints()));
     checkSkillPoints();
@@ -2324,8 +2321,8 @@ void GameLogic::on_btnIncreaseStamina_clicked()
 
 void GameLogic::on_btnIncreaseAgility_clicked()
 {
-    player_->addAgility(1);
-    ui->lblCAgility->setText(QString("Agility: %1").arg(player_->getAgility()));
+    player_->addStatAgility(1);
+    ui->lblCAgility->setText(QString("Agility: %1").arg(player_->getTotalAgilityPoints()));
     player_->setSkillPoints(1);
     ui->lblCSkillPoints->setText(QString("Skill Points: %1").arg(player_->getSkillPoints()));
     checkSkillPoints();
@@ -2333,8 +2330,8 @@ void GameLogic::on_btnIncreaseAgility_clicked()
 
 void GameLogic::on_btnIncreaseCritChance_clicked()
 {
-    player_->addLuck(1);
-    ui->lblCLuck->setText(QString("Luck: %1").arg(player_->getLuck()));
+    player_->addStatLuck(1);
+    ui->lblCLuck->setText(QString("Luck: %1").arg(player_->getTotalLuckPoints()));
     player_->setSkillPoints(1);
     ui->lblCSkillPoints->setText(QString("Skill Points: %1").arg(player_->getSkillPoints()));
     checkSkillPoints();
@@ -2342,8 +2339,8 @@ void GameLogic::on_btnIncreaseCritChance_clicked()
 
 void GameLogic::on_btnIncreaseHitChance_clicked()
 {
-    player_->addPrecision(1);
-    ui->lblCHit->setText(QString("Hit: %1").arg(player_->getPrecision()));
+    player_->addStatPrecision(1);
+    ui->lblCHit->setText(QString("Hit: %1").arg(player_->getTotalPrecisionPoints()));
     player_->setSkillPoints(1);
     ui->lblCSkillPoints->setText(QString("Skill Points: %1").arg(player_->getSkillPoints()));
     checkSkillPoints();

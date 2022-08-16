@@ -9,9 +9,12 @@ class Player
 {
 private:
     int health_;
+    int defaultHealth_;
     int maxHealth_;
     int maxAttackPower_;
+    int maxWeaponAP_;
     int minAttackPower_;
+    int minWeaponAP_;
     int attackDmg_;
     int XP_;
     int XPTillLevel_;
@@ -23,28 +26,46 @@ private:
     int specialAbilityMaxCharges_;
     int specialAbilityCharged_;
     int specialAbilityCharge_;
+    int classType_;
 
     int vitality_;
+    int statVitality_;
+    int equippedVitality_;
+
     int strength_;
+    int statStrength_;
+    int equippedStrength_;
+
     int agility_;
-    int luck_;
-    int intelligence_;
-    int precision_;
-    int stamina_;
-    int maxStamina_;
-    int block_;
-
-    int agilityBonus_;
-    int luckBonus_;
-    int intelligenceBonus_;
-    int precisionBonus_;
-
     int agilityDefault_;
+    int statAgility_;
+    int equippedAgility_;
+
+    int luck_;
     int luckDefault_;
+    int statLuck_;
+    int equippedLuck_;
+
+    int intelligence_;
+    int statIntelligence_;
+    int equippedIntelligence_;
+    int intelligenceBonus_;
+
+    int precision_;
+    int statPrecision_;
+    int equippedPrecision_;
+
+    int stamina_;
+    int defaultStamina_;
+    int statStamina_;
+    int equippedStamina_;
+    int maxStamina_;
+
+    int block_;
+    bool isShieldEquipped_;
 
     int questsCompleted_;
 
-    bool isShieldEquipped_;
 
     bool isSpecialAbilityLearned_;
     bool isSpecialReady_;
@@ -58,9 +79,8 @@ private:
 
     void doLevelUp();
 public:
-    Player(int health, int maxHealth, int maxAttackPower, int minAttackPower,
-           int vitality, int strength, int agility, int luck, int intelligence, int hit, int stamina, int maxStamina,
-           int agilityDefault, int luckDefault);
+    Player(int defaultHealth, int intelligence, int defaultStamina,
+           int agilityDefault, int luckDefault, int classType);
     ~Player(void);
 
     int doAttack(QString enemy);
@@ -71,42 +91,71 @@ public:
     void usePotion(int healAmount, int itemIndex);
     void useRation(int stamAmount, int itemIndex);
     void save();
+    void saveInventory();
+    void saveEquipment();
     void load(QString playerName);
+    void loadInventory(QString playerName);
+    void loadEquipment(QString playerName);
     void addHealthUpgrade(int health);
     void resetSpecialAbility();
 
-    void addVitality(int vitality);
+    int getClassType();
+
+    void addStatVitality(int vitality);
+    void addEquippedVitality(int vitality);
     void removeVitality(int vitality);
+    void setMaxHealth();
     int getVitality();
+    int getStatVitality();
 
-    void addStrength(int strength);
+    void addStatStrength(int strength);
+    void addEquippedStrength(int strength);
     void removeStrength(int strength);
+    void setStrength();
     int getStrength();
+    int getStatStrength();
 
-    void addAgility(int agility);
+    void addStatAgility(int agility);
+    void addEquippedAgility(int agility);
     void removeAgility(int agility);
+    void setAgility();
     int getAgility();
+    int getStatAgility();
 
-    void addLuck(int luck);
+    void addStatLuck(int luck);
+    void addEquippedLuck(int luck);
     void removeLuck(int luck);
+    void setLuck();
     int getLuck();
+    int getStatLuck();
 
     void addIntelligence(int intelligence);
     int getIntelligence();
 
-    void addPrecision(int precision);
+    void addStatPrecision(int precision);
+    void addEquippedPrecision(int precision);
     void removePrecision(int precision_);
+    void setPrecision();
     int getPrecision();
+    int getStatPrecision();
 
     void setStamina(int stamina);
+    void setMaxStamina();
     void removeStamina(int action);
     void addStamina(int stamina);
     void removeStatStamina(int stamina);
     void addStatStamina(int stamina);
+    void addEquippedStamina(int stamina);
     int getStamina();
-
     int getMaxStamina();
-    void addMaxStamina(int maxStamina);
+    int getStatStamina();
+
+    int getTotalAgilityPoints();
+    int getTotalVitalityPoints();
+    int getTotalStrengthPoints();
+    int getTotalPrecisionPoints();
+    int getTotalLuckPoints();
+    int getTotalStaminaPoints();
 
     int getBlock();
     void addBlock(int block);
@@ -122,11 +171,10 @@ public:
     int getMaxHealth();
     void setMaxHealth(int maxHealth);
 
+    void calculateMaxAttackPower();
+    void calculateMinAttackPower();
     int getMaxAttackPower();
-    void setMaxAttackPower(int maxAttackPower);
-
     int getMinAttackPower();
-    void setMinAttackPower(int minAttackPower);
 
     int getLevel();
     void setLevel(int level);
@@ -162,6 +210,7 @@ public:
     QVector<Item> getEquiped();
     void addEquipment(Item item);
     void removeEquipment(int index);
+    void addStarterEquipment();
 
     int getLocation();
     void setLocation(int location);
