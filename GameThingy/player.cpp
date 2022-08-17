@@ -1126,7 +1126,7 @@ void Player::addEquipment(Item item)
                 message_ = "You already have a weapon equipped\n in your main hand slot";
                 displayMessage("Equipping", message_);
             }
-            else
+            else if (mainHandSlot_ == 0)
             {
                 itemEquipped_ = true;
                 mainHandSlot_ = 1;
@@ -1150,8 +1150,8 @@ void Player::addEquipment(Item item)
             {
                 itemEquipped_ = true;
                 offHandSlot_ = 1;
-                minWeaponAP_ = item.minAtk;
-                maxWeaponAP_ = item.maxAtk;
+                minWeaponAP_ += item.minAtk;
+                maxWeaponAP_ += item.maxAtk;
                 equipment_.push_back(item);
             }
             else if (mainHandSlot_ != 0 and offHandSlot_ != 0)
@@ -1492,7 +1492,54 @@ void Player::addStarterEquipment()
     }
     else if (classType_ == 2)
     {
-        //todo
+        starterWeapon.name="Weak Dagger";
+        starterWeapon.itemRarity=1;
+        starterWeapon.itemType=2;
+        starterWeapon.armourRating=0;
+        starterWeapon.armourType=0;
+        starterWeapon.healType=0;
+        starterWeapon.healAmount=0;
+        starterWeapon.isEquippable=true;
+        starterWeapon.sellPrice=10;
+        starterWeapon.isUsable=false;
+        starterWeapon.minAtk=1;
+        starterWeapon.maxAtk=3;
+        starterWeapon.block=0;
+        starterWeapon.holdType=2;
+        starterWeapon.stat1=0;
+        starterWeapon.stat2=0;
+        starterWeapon.stat3=0;
+        starterWeapon.statType1=0;
+        starterWeapon.statType2=0;
+        starterWeapon.statType3=0;
+        starterWeapon.amount=1;
+        starterWeapon.numStats=0;
+        addEquipment(starterWeapon);
+        addEquipment(starterWeapon);
+
+        starterArmour.name="Ruined Leather";
+        starterArmour.itemRarity=1;
+        starterArmour.itemType=3;
+        starterArmour.armourRating=2;
+        starterArmour.armourType=2;
+        starterArmour.healType=0;
+        starterArmour.healAmount=0;
+        starterArmour.isEquippable=true;
+        starterArmour.sellPrice=20;
+        starterArmour.isUsable=false;
+        starterArmour.minAtk=0;
+        starterArmour.maxAtk=0;
+        starterArmour.block=0;
+        starterArmour.holdType=0;
+        starterArmour.stat1=0;
+        starterArmour.stat2=0;
+        starterArmour.stat3=0;
+        starterArmour.statType1=0;
+        starterArmour.statType2=0;
+        starterArmour.statType3=0;
+        starterArmour.amount=1;
+        starterArmour.numStats=0;
+        addEquipment(starterArmour);
     }
     else if (classType_ == 3)
     {
@@ -1546,7 +1593,77 @@ void Player::addStarterEquipment()
     }
     else if (classType_ == 4)
     {
-        //todo
+        starterWeapon.name="Weak Short Sword";
+        starterWeapon.itemRarity=1;
+        starterWeapon.itemType=2;
+        starterWeapon.armourRating=0;
+        starterWeapon.armourType=0;
+        starterWeapon.healType=0;
+        starterWeapon.healAmount=0;
+        starterWeapon.isEquippable=true;
+        starterWeapon.sellPrice=15;
+        starterWeapon.isUsable=false;
+        starterWeapon.minAtk=1;
+        starterWeapon.maxAtk=5;
+        starterWeapon.block=0;
+        starterWeapon.holdType=1;
+        starterWeapon.stat1=0;
+        starterWeapon.stat2=0;
+        starterWeapon.stat3=0;
+        starterWeapon.statType1=0;
+        starterWeapon.statType2=0;
+        starterWeapon.statType3=0;
+        starterWeapon.amount=1;
+        starterWeapon.numStats=0;
+        addEquipment(starterWeapon);
+
+        starterWeapon.name="Weak Wooden Shield";
+        starterWeapon.itemRarity=1;
+        starterWeapon.itemType=4;
+        starterWeapon.armourRating=0;
+        starterWeapon.armourType=0;
+        starterWeapon.healType=0;
+        starterWeapon.healAmount=0;
+        starterWeapon.isEquippable=true;
+        starterWeapon.sellPrice=15;
+        starterWeapon.isUsable=false;
+        starterWeapon.minAtk=0;
+        starterWeapon.maxAtk=0;
+        starterWeapon.block=7;
+        starterWeapon.holdType=0;
+        starterWeapon.stat1=0;
+        starterWeapon.stat2=0;
+        starterWeapon.stat3=0;
+        starterWeapon.statType1=0;
+        starterWeapon.statType2=0;
+        starterWeapon.statType3=0;
+        starterWeapon.amount=1;
+        starterWeapon.numStats=0;
+        addEquipment(starterWeapon);
+
+        starterArmour.name="Ruined Plate";
+        starterArmour.itemRarity=1;
+        starterArmour.itemType=3;
+        starterArmour.armourRating=0;
+        starterArmour.armourType=4;
+        starterArmour.healType=0;
+        starterArmour.healAmount=0;
+        starterArmour.isEquippable=true;
+        starterArmour.sellPrice=30;
+        starterArmour.isUsable=false;
+        starterArmour.minAtk=0;
+        starterArmour.maxAtk=0;
+        starterArmour.block=0;
+        starterArmour.holdType=0;
+        starterArmour.stat1=0;
+        starterArmour.stat2=0;
+        starterArmour.stat3=0;
+        starterArmour.statType1=0;
+        starterArmour.statType2=0;
+        starterArmour.statType3=0;
+        starterArmour.amount=1;
+        starterArmour.numStats=0;
+        addEquipment(starterArmour);
     }
 }
 

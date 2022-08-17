@@ -922,8 +922,36 @@ void GameLogic::checkLevel()
 
 void GameLogic::createCharacter()
 {
-    //defaultHealth, intelligence, defaultStamina, agilityDefault, luckDefault, classType
-    player_ = new Player(20, 0, 10, 6, 20, 3);
+    QString classRogue = "Rogue";
+    QString classWarrior = "Warrior";
+    QString classKnight = "Knight";
+
+
+
+    QMessageBox msgBox;
+    msgBox.setWindowTitle("Choose a class");
+    msgBox.setText("Which class would you like to make?");
+    QPushButton *btnRogue = msgBox.addButton(classRogue, QMessageBox::ActionRole);
+    QPushButton *btnWarrior = msgBox.addButton(classWarrior, QMessageBox::ActionRole);
+    QPushButton *btnKnight = msgBox.addButton(classKnight, QMessageBox::ActionRole);
+    msgBox.exec();
+
+    if (msgBox.clickedButton() == btnRogue)
+    {
+        //defaultHealth, intelligence, defaultStamina, agilityDefault, luckDefault, classType
+        player_ = new Player(16, 0, 10, 7, 20, 2);
+    }
+    else if (msgBox.clickedButton() == btnWarrior)
+    {
+        //defaultHealth, intelligence, defaultStamina, agilityDefault, luckDefault, classType
+        player_ = new Player(20, 0, 10, 6, 20, 3);
+    }
+    else if (msgBox.clickedButton() == btnKnight)
+    {
+        //defaultHealth, intelligence, defaultStamina, agilityDefault, luckDefault, classType
+        player_ = new Player(26, 0, 10, 5, 20, 4);
+    }
+
     bool ok;
     name_ = QInputDialog::getText(this, tr("New Game"), tr("<p>Greetings traveler, welcome to <b>Windlehelm</b>.<br>"
                                                            "I am <b>Bormeir</b>, head of the <b>Windlehelm City Guard</b>.<br>"
