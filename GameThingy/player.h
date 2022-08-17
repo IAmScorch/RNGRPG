@@ -63,6 +63,14 @@ private:
 
     int block_;
     bool isShieldEquipped_;
+    int mainHandSlot_;
+    int offHandSlot_;
+    int armourSlot_;
+    int ringSlotOne_;
+    int ringSlotTwo_;
+    int trinketSlotOne_;
+    int trinketSlotTwo_;
+    bool itemEquipped_;
 
     int questsCompleted_;
 
@@ -243,6 +251,9 @@ public:
 
     void equippedShield();
     void unequippedShield();
+
+    bool itemEquipped();
+    void displayMessage(QString title, QString message);
 };
 
 #endif // PLAYER_H

@@ -1412,7 +1412,9 @@ void GameLogic::equipItem()
     }
 
     player_->addEquipment(inventoryItems.value(itemIndex));
-    player_->removeItemFromInventory(itemIndex);
+
+    if (player_->itemEquipped())
+        player_->removeItemFromInventory(itemIndex);
 
     setPlayerEquipment();
 }

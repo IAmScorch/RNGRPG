@@ -68,6 +68,14 @@ Player::Player(int defaultHealth, int intelligence, int defaultStamina,
     equippedPrecision_ = 0;
     equippedStamina_ = 0;
     equippedStrength_ = 0;
+    isShieldEquipped_ = false;
+    mainHandSlot_ = 0;
+    offHandSlot_ = 0;
+    armourSlot_ = 0;
+    ringSlotOne_ = 0;
+    ringSlotTwo_ = 0;
+    trinketSlotOne_ = 0;
+    trinketSlotTwo_ = 0;
     qsrand(QTime::currentTime().msec());
 }
 
@@ -363,6 +371,14 @@ void Player::save()
     saveFile << location_ << "\n";
     saveFile << block_ << "\n";
     saveFile << classType_ << "\n";
+    saveFile << mainHandSlot_ << "\n";
+    saveFile << offHandSlot_ << "\n";
+    saveFile << armourSlot_ << "\n";
+    saveFile << ringSlotOne_ << "\n";
+    saveFile << ringSlotTwo_ << "\n";
+    saveFile << trinketSlotOne_ << "\n";
+    saveFile << trinketSlotTwo_ << "\n";
+    saveFile << isShieldEquipped_ << "\n";
     file.close();
     saveInventory();
     saveEquipment();
@@ -493,6 +509,14 @@ void Player::load(QString playerName)
         location_ = saveFile.readLine().toInt();
         block_ = saveFile.readLine().toInt();
         classType_ = saveFile.readLine().toInt();
+        mainHandSlot_ = saveFile.readLine().toInt();
+        offHandSlot_ = saveFile.readLine().toInt();
+        armourSlot_ = saveFile.readLine().toInt();
+        ringSlotOne_ = saveFile.readLine().toInt();
+        ringSlotTwo_ = saveFile.readLine().toInt();
+        trinketSlotOne_ = saveFile.readLine().toInt();
+        trinketSlotTwo_ = saveFile.readLine().toInt();
+        isShieldEquipped_ = saveFile.readLine().toInt();
         file.close();
     }
     loadInventory(playerName);
@@ -1091,97 +1115,221 @@ QVector<Item> Player::getEquiped()
 
 void Player::addEquipment(Item item)
 {
-    equipment_.push_back(item);
+    itemEquipped_ = false;
 
     if (item.itemType == 2)
     {
-        minWeaponAP_ = item.minAtk;
-        maxWeaponAP_ = item.maxAtk;
+        if (item.holdType == 1)
+        {
+            if (mainHandSlot_ != 0)
+            {
+                message_ = "You already have a weapon equipped\n in your main hand slot";
+                displayMessage("Equipping", message_);
+            }
+            else
+            {
+                itemEquipped_ = true;
+                mainHandSlot_ = 1;
+                minWeaponAP_ = item.minAtk;
+                maxWeaponAP_ = item.maxAtk;
+                equipment_.push_back(item);
+            }
+        }
+
+        if (item.holdType == 2)
+        {
+            if (mainHandSlot_ == 0)
+            {
+                itemEquipped_ = true;
+                mainHandSlot_ = 2;
+                minWeaponAP_ = item.minAtk;
+                maxWeaponAP_ = item.maxAtk;
+                equipment_.push_back(item);
+            }
+            else if (mainHandSlot_ != 0 && offHandSlot_ == 0)
+            {
+                itemEquipped_ = true;
+                offHandSlot_ = 1;
+                minWeaponAP_ = item.minAtk;
+                maxWeaponAP_ = item.maxAtk;
+                equipment_.push_back(item);
+            }
+            else if (mainHandSlot_ != 0 and offHandSlot_ != 0)
+            {
+                message_ = "Both hand slots are filled";
+                displayMessage("Equipping", message_);
+            }
+        }
+
+        if (item.holdType == 3)
+        {
+            if (mainHandSlot_ == 0 && offHandSlot_ == 0)
+            {
+                itemEquipped_ = true;
+                mainHandSlot_ = 3;
+                offHandSlot_ = 3;
+                minWeaponAP_ = item.minAtk;
+                maxWeaponAP_ = item.maxAtk;
+                equipment_.push_back(item);
+            }
+            else
+            {
+                message_ = "You need both hands for this weapon";
+                displayMessage("Equipping", message_);
+            }
+        }
     }
 
     if (item.itemType == 4)
     {
-        addBlock(item.block);
+        if (offHandSlot_ == 0)
+        {
+            itemEquipped_ = true;
+            offHandSlot_ = 2;
+            addBlock(item.block);
+            equipment_.push_back(item);
+        }
+        else
+        {
+            message_ = "Your off hand slot is filled";
+            displayMessage("Equipping", message_);
+        }
     }
 
     if (item.itemType == 3)
     {
-        equipArmour(item.armourRating);
+        if (armourSlot_ == 0)
+        {
+            itemEquipped_ = true;
+            armourSlot_ = 1;
+            equipment_.push_back(item);
+            equipArmour(item.armourRating);
+        }
+        else
+        {
+            message_ = "Your armour slot is filled";
+            displayMessage("Equipping", message_);
+        }
     }
 
-    switch (item.statType1)
+    if (item.itemType == 6)
     {
-        case 1: //Vitality
-            addEquippedVitality(item.stat1);
-            break;
-        case 2: //Strength
-            addEquippedStrength(item.stat1);
-            break;
-        case 3: //Stamina
-            addEquippedStamina(item.stat1);
-            break;
-        case 4: //Agility
-            addEquippedAgility(item.stat1);
-            break;
-        case 5: //Luck
-            addEquippedLuck(item.stat1);
-            break;
-        case 6: //Precision
-            addEquippedPrecision(item.stat1);
-            break;
-        case 7: //Block
-            //do nothing
-            break;
+        if (ringSlotOne_ == 0 && ringSlotTwo_ == 0)
+        {
+            itemEquipped_ = true;
+            ringSlotOne_ = 1;
+            equipment_.push_back(item);
+        }
+        else if (ringSlotOne_ == 1 && ringSlotTwo_ == 0)
+        {
+            itemEquipped_ = true;
+            ringSlotTwo_ = 1;
+            equipment_.push_back(item);
+        }
+        else
+        {
+            message_ = "Both ring slots are filled";
+            displayMessage("Equipping", message_);
+        }
     }
 
-    switch (item.statType2)
+    if (item.itemType == 7)
     {
-        case 1: //Vitality
-            addEquippedVitality(item.stat2);
-            break;
-        case 2: //Strength
-            addEquippedStrength(item.stat2);
-            break;
-        case 3: //Stamina
-            addEquippedStamina(item.stat2);
-            break;
-        case 4: //Agility
-            addEquippedAgility(item.stat2);
-            break;
-        case 5: //Luck
-            addEquippedLuck(item.stat2);
-            break;
-        case 6: //Precision
-            addEquippedPrecision(item.stat2);
-            break;
-        case 7: //Block
-            //do nothing
-            break;
+        if (trinketSlotOne_ == 0 && trinketSlotTwo_ == 0)
+        {
+            itemEquipped_ = true;
+            trinketSlotOne_ = 1;
+            equipment_.push_back(item);
+        }
+        else if (trinketSlotOne_ == 1 && trinketSlotTwo_ == 0)
+        {
+            itemEquipped_ = true;
+            trinketSlotTwo_ = 1;
+            equipment_.push_back(item);
+        }
+        else
+        {
+            message_ = "Both trinket slots are filled";
+            displayMessage("Equipping", message_);
+        }
     }
 
-    switch (item.statType3)
+    if (itemEquipped_)
     {
-        case 1: //Vitality
-            addEquippedVitality(item.stat3);
-            break;
-        case 2: //Strength
-            addEquippedStrength(item.stat3);
-            break;
-        case 3: //Stamina
-            addEquippedStamina(item.stat3);
-            break;
-        case 4: //Agility
-            addEquippedAgility(item.stat3);
-            break;
-        case 5: //Luck
-            addEquippedLuck(item.stat3);
-            break;
-        case 6: //Precision
-            addEquippedPrecision(item.stat3);
-            break;
-        case 7: //Block
-            //do nothing
-            break;
+        switch (item.statType1)
+        {
+            case 1: //Vitality
+                addEquippedVitality(item.stat1);
+                break;
+            case 2: //Strength
+                addEquippedStrength(item.stat1);
+                break;
+            case 3: //Stamina
+                addEquippedStamina(item.stat1);
+                break;
+            case 4: //Agility
+                addEquippedAgility(item.stat1);
+                break;
+            case 5: //Luck
+                addEquippedLuck(item.stat1);
+                break;
+            case 6: //Precision
+                addEquippedPrecision(item.stat1);
+                break;
+            case 7: //Block
+                addBlock(item.stat1);
+                break;
+        }
+
+        switch (item.statType2)
+        {
+            case 1: //Vitality
+                addEquippedVitality(item.stat2);
+                break;
+            case 2: //Strength
+                addEquippedStrength(item.stat2);
+                break;
+            case 3: //Stamina
+                addEquippedStamina(item.stat2);
+                break;
+            case 4: //Agility
+                addEquippedAgility(item.stat2);
+                break;
+            case 5: //Luck
+                addEquippedLuck(item.stat2);
+                break;
+            case 6: //Precision
+                addEquippedPrecision(item.stat2);
+                break;
+            case 7: //Block
+                addBlock(item.stat2);
+                break;
+        }
+
+        switch (item.statType3)
+        {
+            case 1: //Vitality
+                addEquippedVitality(item.stat3);
+                break;
+            case 2: //Strength
+                addEquippedStrength(item.stat3);
+                break;
+            case 3: //Stamina
+                addEquippedStamina(item.stat3);
+                break;
+            case 4: //Agility
+                addEquippedAgility(item.stat3);
+                break;
+            case 5: //Luck
+                addEquippedLuck(item.stat3);
+                break;
+            case 6: //Precision
+                addEquippedPrecision(item.stat3);
+                break;
+            case 7: //Block
+                addBlock(item.stat3);
+                break;
+        }
     }
 }
 
@@ -1194,16 +1342,67 @@ void Player::removeEquipment(int index)
     {
         minAttackPower_ -= item.minAtk;
         maxAttackPower_ -= item.maxAtk;
+
+        if (item.holdType == 3)
+        {
+            mainHandSlot_ = 0;
+            offHandSlot_ = 0;
+        }
+        else if (item.holdType == 1)
+        {
+            mainHandSlot_ = 0;
+        }
+        else if (item.holdType == 2)
+        {
+            if (mainHandSlot_ == 1 && offHandSlot_ == 1)
+            {
+                offHandSlot_ = 0;
+            }
+            else if (mainHandSlot_ == 2 && offHandSlot_ == 1)
+            {
+                offHandSlot_ = 0;
+            }
+            else if (mainHandSlot_ == 2 && offHandSlot_ == 2)
+            {
+                mainHandSlot_ = 0;
+            }
+        }
     }
 
     if (item.itemType == 4)
     {
+        offHandSlot_ = 0;
         removeBlock(item.block);
     }
 
     if (item.itemType == 3)
     {
+        armourSlot_ = 0;
         unequipArmour(item.armourRating);
+    }
+
+    if (item.itemType == 6)
+    {
+        if (ringSlotOne_ == 1 && ringSlotTwo_ == 1)
+        {
+            ringSlotTwo_ = 0;
+        }
+        else if (ringSlotOne_ == 1 && ringSlotTwo_ == 0)
+        {
+            ringSlotOne_ = 0;
+        }
+    }
+
+    if (item.itemType == 7)
+    {
+        if (trinketSlotOne_ == 1 && trinketSlotTwo_ == 1)
+        {
+            trinketSlotTwo_ = 0;
+        }
+        else if (trinketSlotOne_ == 1 && trinketSlotTwo_ == 0)
+        {
+            trinketSlotOne_ = 0;
+        }
     }
 
     switch (item.statType1)
@@ -1227,7 +1426,7 @@ void Player::removeEquipment(int index)
             removePrecision(item.stat1);
             break;
         case 7: //Block
-            //do nothing
+            removeBlock(item.stat1);
             break;
     }
 
@@ -1252,7 +1451,7 @@ void Player::removeEquipment(int index)
             removePrecision(item.stat2);
             break;
         case 7: //Block
-            //do nothing
+            removeBlock(item.stat2);
             break;
     }
 
@@ -1277,7 +1476,7 @@ void Player::removeEquipment(int index)
             removePrecision(item.stat3);
             break;
         case 7: //Block
-            //do nothing
+            removeBlock(item.stat3);
             break;
     }
 }
@@ -1285,6 +1484,7 @@ void Player::removeEquipment(int index)
 void Player::addStarterEquipment()
 {
     Item starterWeapon;
+    Item starterArmour;
 
     if (classType_ == 1)
     {
@@ -1319,6 +1519,30 @@ void Player::addStarterEquipment()
         starterWeapon.amount=1;
         starterWeapon.numStats=0;
         addEquipment(starterWeapon);
+
+        starterArmour.name="Ruined Mail";
+        starterArmour.itemRarity=1;
+        starterArmour.itemType=3;
+        starterArmour.armourRating=1;
+        starterArmour.armourType=3;
+        starterArmour.healType=0;
+        starterArmour.healAmount=0;
+        starterArmour.isEquippable=true;
+        starterArmour.sellPrice=25;
+        starterArmour.isUsable=false;
+        starterArmour.minAtk=0;
+        starterArmour.maxAtk=0;
+        starterArmour.block=0;
+        starterArmour.holdType=0;
+        starterArmour.stat1=0;
+        starterArmour.stat2=0;
+        starterArmour.stat3=0;
+        starterArmour.statType1=0;
+        starterArmour.statType2=0;
+        starterArmour.statType3=0;
+        starterArmour.amount=1;
+        starterArmour.numStats=0;
+        addEquipment(starterArmour);
     }
     else if (classType_ == 4)
     {
@@ -1404,6 +1628,19 @@ void Player::equippedShield()
 void Player::unequippedShield()
 {
     isShieldEquipped_ = false;
+}
+
+bool Player::itemEquipped()
+{
+    return itemEquipped_;
+}
+
+void Player::displayMessage(QString title, QString message)
+{
+    QMessageBox msgBox;
+    msgBox.setWindowTitle(title);
+    msgBox.setText(message);
+    msgBox.exec();
 }
 
 bool Player::isSpecialAbilityLeanred()
