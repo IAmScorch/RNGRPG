@@ -1178,6 +1178,12 @@ void Player::addEquipment(Item item)
                 displayMessage("Equipping", message_);
             }
         }
+
+        if (itemEquipped_)
+        {
+            calculateMinAttackPower();
+            calculateMaxAttackPower();
+        }
     }
 
     if (item.itemType == 4)
@@ -1340,8 +1346,10 @@ void Player::removeEquipment(int index)
 
     if (item.itemType == 2)
     {
-        minAttackPower_ -= item.minAtk;
-        maxAttackPower_ -= item.maxAtk;
+        minWeaponAP_ -= item.minAtk;
+        maxWeaponAP_ -= item.maxAtk;
+        calculateMinAttackPower();
+        calculateMaxAttackPower();
 
         if (item.holdType == 3)
         {
@@ -1363,6 +1371,10 @@ void Player::removeEquipment(int index)
                 offHandSlot_ = 0;
             }
             else if (mainHandSlot_ == 2 && offHandSlot_ == 2)
+            {
+                mainHandSlot_ = 0;
+            }
+            else if (mainHandSlot_ == 2 && offHandSlot_ == 0)
             {
                 mainHandSlot_ = 0;
             }
