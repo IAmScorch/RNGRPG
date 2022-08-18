@@ -77,6 +77,8 @@ Player::Player(int defaultHealth, int intelligence, int defaultStamina,
     trinketSlotOne_ = 0;
     trinketSlotTwo_ = 0;
     classXRef_ = new itemCrossReference();
+    hasBedroll_ = 0;
+    hasFireStarterKit_ = 0;
     qsrand(QTime::currentTime().msec());
 }
 
@@ -1074,9 +1076,9 @@ void Player::addRation(int ration)
         ration_ += ration;
 }
 
-void Player::removeRation()
+void Player::removeRation(int itemIndex)
 {
-    ration_ -= 1;
+    inventory_.remove(itemIndex);
 }
 
 int Player::getGold()
@@ -1855,6 +1857,42 @@ void Player::displayMessage(QString title, QString message)
     msgBox.setWindowTitle(title);
     msgBox.setText(message);
     msgBox.exec();
+}
+
+bool Player::hasBedroll()
+{
+    return hasBedroll_;
+}
+
+void Player::addBedroll()
+{
+    hasBedroll_ = true;
+}
+
+void Player::removeBedroll()
+{
+    hasBedroll_ = false;
+}
+
+bool Player::hasFireStarterKit()
+{
+    return hasFireStarterKit_;
+}
+
+void Player::addFireStarterKit()
+{
+    fireStarterKitAmount_ += 1;
+
+    if (!hasFireStarterKit_)
+        hasFireStarterKit_ = true;
+}
+
+void Player::removeFireStarterKit()
+{
+    fireStarterKitAmount_ -= 1;
+
+    if (fireStarterKitAmount_ < 1)
+        hasFireStarterKit_ = false;
 }
 
 bool Player::isSpecialAbilityLeanred()

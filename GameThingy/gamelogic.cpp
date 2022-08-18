@@ -1532,6 +1532,11 @@ void GameLogic::sellItem()
     {
         player_->addGold(inventoryItems.value(itemIndex).sellPrice);
         player_->removeItemFromInventory(itemIndex);
+
+        if (inventoryItems.value(itemIndex).name == "Bedroll")
+            player_->removeBedroll();
+        if (inventoryItems.value(itemIndex).name == "Firestarter Kit")
+            player_->removeFireStarterKit();
     }
     else
     {
@@ -1589,33 +1594,91 @@ void GameLogic::on_btnRestBS_clicked()
         }
         else if (msgBox.clickedButton() == btnCamp)
         {
-            message_ += QString("You set up camp outside %1 City\n").arg(strLocations_[player_->getLocation()]);
-
-            if (player_->getRation() >= 1)
+            if (!player_->hasBedroll() || !player_->hasFireStarterKit())
             {
-                QMessageBox msgBox;
-                msgBox.setWindowTitle("Rest");
-                msgBox.setText("Would you like to eat a ration before resting?<br>"
-                               "If no, you will not gain health from resting.");
-                QPushButton *btnYes = msgBox.addButton(tr("Yes"), QMessageBox::ActionRole);
-                QPushButton *btnNo = msgBox.addButton(tr("No"), QMessageBox::ActionRole);
-                msgBox.exec();
+                message_ += "You need a Bedroll or Firestarter Kit to set up camp\n";
+            }
+            else
+            {
+                message_ += QString("You set up camp outside %1 City\n").arg(strLocations_[player_->getLocation()]);
 
-                if (msgBox.clickedButton() == btnYes)
+                int itemIndex;
+                bool hasRation = false;
+                QVector<Item> inventoryItems;
+
+                inventoryItems = player_->getInventory();
+
+                for (int a = 0; a < inventoryItems.length(); a++)
                 {
-                    player_->addHealth(5);
-                    player_->removeRation();
-                    message_ += QString("You eat a ration\n"
-                                        "Health is restored by 5\n").arg(strLocations_[player_->getLocation()]);
+                    if (inventoryItems.value(a).name.toUpper() == "RATION")
+                    {
+                        itemIndex = a;
+                        hasRation = true;
+                        break;
+                    }
                 }
-                else if (msgBox.clickedButton() == btnNo)
+
+                if (hasRation)
                 {
-                    //do nothing
+                    QMessageBox msgBox;
+                    msgBox.setWindowTitle("Rest");
+                    msgBox.setText("Would you like to eat a ration before resting?<br>"
+                                   "If no, you will not gain health from resting.");
+                    QPushButton *btnYes = msgBox.addButton(tr("Yes"), QMessageBox::ActionRole);
+                    QPushButton *btnNo = msgBox.addButton(tr("No"), QMessageBox::ActionRole);
+                    msgBox.exec();
+
+                    if (msgBox.clickedButton() == btnYes)
+                    {
+                        if (player_->hasBedroll() && !player_->hasFireStarterKit())
+                        {
+                            player_->addHealth(player_->getMaxHealth() * .25);
+                            player_->addStamina(player_->getMaxStamina() * .30);
+                            message_ += QString("You eat a ration and sleep in your Bedroll\n"
+                                                "Health is restored by 25%\n"
+                                                "Stamina is restored by 30%\n");
+                        }
+                        else if (!player_->hasBedroll() && player_->hasFireStarterKit())
+                        {
+                            player_->addHealth(player_->getMaxHealth() * .25);
+                            player_->addStamina(player_->getMaxStamina() * .40);
+                            message_ += QString("You eat a ration and sleep next to a warm fire\n"
+                                                "Health is restored by 25%\n"
+                                                "Stamina is restored by 40%\n");
+                        }
+                        else if (player_->hasBedroll() && player_->hasFireStarterKit())
+                        {
+                            player_->addHealth(player_->getMaxHealth() * .30);
+                            player_->addStamina(player_->getMaxStamina() * .70);
+                            message_ += QString("You eat a ration and sleep in your Bedroll next to a warm fire\n"
+                                                "Health is restored by 30%\n"
+                                                "Stamina is restored by 70%\n");
+                        }
+                        player_->removeRation(itemIndex);
+                    }
+                    else if (msgBox.clickedButton() == btnNo)
+                    {
+                        if (player_->hasBedroll() && !player_->hasFireStarterKit())
+                        {
+                            player_->addStamina(player_->getMaxStamina() * .20);
+                            message_ += QString("You sleep in your Bedroll\n"
+                                                "Stamina is restored by 20%\n");
+                        }
+                        else if (!player_->hasBedroll() && player_->hasFireStarterKit())
+                        {
+                            player_->addStamina(player_->getMaxStamina() * .30);
+                            message_ += QString("You sleep next to a warm fire\n"
+                                                "Stamina is restored by 30%\n");
+                        }
+                        else if (player_->hasBedroll() && player_->hasFireStarterKit())
+                        {
+                            player_->addStamina(player_->getMaxStamina() * .70);
+                            message_ += QString("You sleep in your Bedroll next to a warm frire\n"
+                                                "Stamina is restored by 50%\n");
+                        }
+                    }
                 }
             }
-
-            player_->addStamina(2);
-            message_ += QString("Stamina is restored by 2");
         }
         else if (msgBox.clickedButton() == btnCancel)
         {
@@ -1659,33 +1722,91 @@ void GameLogic::on_btnRestBS_clicked()
             }
             else if (msgBox.clickedButton() == btnCamp)
             {
-                message_ += QString("You set up camp outside %1 City\n").arg(strLocations_[player_->getLocation()]);
-
-                if (player_->getRation() >= 1)
+                if (!player_->hasBedroll() || !player_->hasFireStarterKit())
                 {
-                    QMessageBox msgBox;
-                    msgBox.setWindowTitle("Rest");
-                    msgBox.setText("Would you like to eat a ration before resting?<br>"
-                                   "If no, you will not gain health from resting.");
-                    QPushButton *btnYes = msgBox.addButton(tr("Yes"), QMessageBox::ActionRole);
-                    QPushButton *btnNo = msgBox.addButton(tr("No"), QMessageBox::ActionRole);
-                    msgBox.exec();
+                    message_ += "You need a Bedroll or Firestarter Kit to set up camp\n";
+                }
+                else
+                {
+                    message_ += QString("You set up camp outside %1 City\n").arg(strLocations_[player_->getLocation()]);
 
-                    if (msgBox.clickedButton() == btnYes)
+                    int itemIndex;
+                    bool hasRation = false;
+                    QVector<Item> inventoryItems;
+
+                    inventoryItems = player_->getInventory();
+
+                    for (int a = 0; a < inventoryItems.length(); a++)
                     {
-                        player_->addHealth(5);
-                        player_->removeRation();
-                        message_ += QString("You eat a ration\n"
-                                            "Health is restored by 5\n").arg(strLocations_[player_->getLocation()]);
+                        if (inventoryItems.value(a).name.toUpper() == "RATION")
+                        {
+                            itemIndex = a;
+                            hasRation = true;
+                            break;
+                        }
                     }
-                    else if (msgBox.clickedButton() == btnNo)
+
+                    if (hasRation)
                     {
-                        //do nothing
+                        QMessageBox msgBox;
+                        msgBox.setWindowTitle("Rest");
+                        msgBox.setText("Would you like to eat a ration before resting?<br>"
+                                       "If no, you will not gain health from resting.");
+                        QPushButton *btnYes = msgBox.addButton(tr("Yes"), QMessageBox::ActionRole);
+                        QPushButton *btnNo = msgBox.addButton(tr("No"), QMessageBox::ActionRole);
+                        msgBox.exec();
+
+                        if (msgBox.clickedButton() == btnYes)
+                        {
+                            if (player_->hasBedroll() && !player_->hasFireStarterKit())
+                            {
+                                player_->addHealth(player_->getMaxHealth() * .25);
+                                player_->addStamina(player_->getMaxStamina() * .30);
+                                message_ += QString("You eat a ration and sleep in your Bedroll\n"
+                                                    "Health is restored by 25%\n"
+                                                    "Stamina is restored by 30%\n");
+                            }
+                            else if (!player_->hasBedroll() && player_->hasFireStarterKit())
+                            {
+                                player_->addHealth(player_->getMaxHealth() * .25);
+                                player_->addStamina(player_->getMaxStamina() * .40);
+                                message_ += QString("You eat a ration and sleep next to a warm fire\n"
+                                                    "Health is restored by 25%\n"
+                                                    "Stamina is restored by 40%\n");
+                            }
+                            else if (player_->hasBedroll() && player_->hasFireStarterKit())
+                            {
+                                player_->addHealth(player_->getMaxHealth() * .30);
+                                player_->addStamina(player_->getMaxStamina() * .70);
+                                message_ += QString("You eat a ration and sleep in your Bedroll next to a warm fire\n"
+                                                    "Health is restored by 30%\n"
+                                                    "Stamina is restored by 70%\n");
+                            }
+                            player_->removeRation(itemIndex);
+                        }
+                        else if (msgBox.clickedButton() == btnNo)
+                        {
+                            if (player_->hasBedroll() && !player_->hasFireStarterKit())
+                            {
+                                player_->addStamina(player_->getMaxStamina() * .20);
+                                message_ += QString("You sleep in your Bedroll\n"
+                                                    "Stamina is restored by 20%\n");
+                            }
+                            else if (!player_->hasBedroll() && player_->hasFireStarterKit())
+                            {
+                                player_->addStamina(player_->getMaxStamina() * .30);
+                                message_ += QString("You sleep next to a warm fire\n"
+                                                    "Stamina is restored by 30%\n");
+                            }
+                            else if (player_->hasBedroll() && player_->hasFireStarterKit())
+                            {
+                                player_->addStamina(player_->getMaxStamina() * .70);
+                                message_ += QString("You sleep in your Bedroll next to a warm frire\n"
+                                                    "Stamina is restored by 50%\n");
+                            }
+                        }
                     }
                 }
-
-                player_->addStamina(2);
-                message_ += QString("Stamina is restored by 2");
             }
             else if (msgBox.clickedButton() == btnCancel)
             {
@@ -1695,38 +1816,97 @@ void GameLogic::on_btnRestBS_clicked()
     }
     else if (strRestLocation_[player_->getLocation()] == "Camp")
     {
-        message_ += QString("You set up camp\n");
-
-        if (player_->getRation() >= 1)
+        if (!player_->hasBedroll() || !player_->hasFireStarterKit())
         {
-            QMessageBox msgBox;
-            msgBox.setWindowTitle("Rest");
-            msgBox.setText("Would you like to eat a ration before resting?<br>"
-                           "If no, you will not gain health from resting.");
-            QPushButton *btnYes = msgBox.addButton(tr("Yes"), QMessageBox::ActionRole);
-            QPushButton *btnNo = msgBox.addButton(tr("No"), QMessageBox::ActionRole);
-            msgBox.exec();
+            message_ += "You need a Bedroll or Firestarter Kit to set up camp\n";
+        }
+        else
+        {
+            message_ += QString("You set up camp\n");
 
-            if (msgBox.clickedButton() == btnYes)
+            int itemIndex;
+            bool hasRation = false;
+            QVector<Item> inventoryItems;
+
+            inventoryItems = player_->getInventory();
+
+            for (int a = 0; a < inventoryItems.length(); a++)
             {
-                player_->addHealth(5);
-                player_->removeRation();
-                message_ += QString("You eat a ration\n"
-                                    "Health is restored by 5\n").arg(strLocations_[player_->getLocation()]);
+                if (inventoryItems.value(a).name.toUpper() == "RATION")
+                {
+                    itemIndex = a;
+                    hasRation = true;
+                    break;
+                }
             }
-            else if (msgBox.clickedButton() == btnNo)
+
+            if (hasRation)
             {
-                //do nothing
+                QMessageBox msgBox;
+                msgBox.setWindowTitle("Rest");
+                msgBox.setText("Would you like to eat a ration before resting?<br>"
+                               "If no, you will not gain health from resting.");
+                QPushButton *btnYes = msgBox.addButton(tr("Yes"), QMessageBox::ActionRole);
+                QPushButton *btnNo = msgBox.addButton(tr("No"), QMessageBox::ActionRole);
+                msgBox.exec();
+
+                if (msgBox.clickedButton() == btnYes)
+                {
+                    if (player_->hasBedroll() && !player_->hasFireStarterKit())
+                    {
+                        player_->addHealth(player_->getMaxHealth() * .25);
+                        player_->addStamina(player_->getMaxStamina() * .30);
+                        message_ += QString("You eat a ration and sleep in your Bedroll\n"
+                                            "Health is restored by 25%\n"
+                                            "Stamina is restored by 30%\n");
+                    }
+                    else if (!player_->hasBedroll() && player_->hasFireStarterKit())
+                    {
+                        player_->addHealth(player_->getMaxHealth() * .25);
+                        player_->addStamina(player_->getMaxStamina() * .40);
+                        message_ += QString("You eat a ration and sleep next to a warm fire\n"
+                                            "Health is restored by 25%\n"
+                                            "Stamina is restored by 40%\n");
+                    }
+                    else if (player_->hasBedroll() && player_->hasFireStarterKit())
+                    {
+                        player_->addHealth(player_->getMaxHealth() * .30);
+                        player_->addStamina(player_->getMaxStamina() * .70);
+                        message_ += QString("You eat a ration and sleep in your Bedroll next to a warm fire\n"
+                                            "Health is restored by 30%\n"
+                                            "Stamina is restored by 70%\n");
+                    }
+                    player_->removeRation(itemIndex);
+                }
+                else if (msgBox.clickedButton() == btnNo)
+                {
+                    if (player_->hasBedroll() && !player_->hasFireStarterKit())
+                    {
+                        player_->addStamina(player_->getMaxStamina() * .20);
+                        message_ += QString("You sleep in your Bedroll\n"
+                                            "Stamina is restored by 20%\n");
+                    }
+                    else if (!player_->hasBedroll() && player_->hasFireStarterKit())
+                    {
+                        player_->addStamina(player_->getMaxStamina() * .30);
+                        message_ += QString("You sleep next to a warm fire\n"
+                                            "Stamina is restored by 30%\n");
+                    }
+                    else if (player_->hasBedroll() && player_->hasFireStarterKit())
+                    {
+                        player_->addStamina(player_->getMaxStamina() * .70);
+                        message_ += QString("You sleep in your Bedroll next to a warm frire\n"
+                                            "Stamina is restored by 50%\n");
+                    }
+                }
             }
         }
-
-        player_->addStamina(2);
-        message_ += QString("Stamina is restored by 2");
     }
 
     setPlayerInfo();
     setPlayerHealth();
     setPlayerStamina();
+    setPlayerInventory();
     ui->txtBattleInfo->setText(message_);
     ui->txtBattleInfo->setEnabled(true);
 }
@@ -3867,6 +4047,7 @@ void GameLogic::on_btnBuyBedroll_clicked()
 
             player_->removeGold(100);
             player_->addItemToInventory(item);
+            player_->addBedroll();
             ui->lblGoldAmount->setText(QString("Gold: %1").arg(player_->getGold()));
             ui->lblGoldInv->setText(QString("Gold: %1").arg(player_->getGold()));
             setPlayerInfo();
@@ -3924,6 +4105,7 @@ void GameLogic::on_btnBuyFirestarterKit_clicked()
 
             player_->removeGold(75);
             player_->addItemToInventory(item);
+            player_->addFireStarterKit();
             ui->lblGoldAmount->setText(QString("Gold: %1").arg(player_->getGold()));
             ui->lblGoldInv->setText(QString("Gold: %1").arg(player_->getGold()));
             setPlayerInfo();

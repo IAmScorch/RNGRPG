@@ -79,6 +79,9 @@ private:
     bool isSpecialAbilityLearned_;
     bool isSpecialReady_;
     bool isAlive_;
+    bool hasBedroll_;
+    bool hasFireStarterKit_;
+    int fireStarterKitAmount_;
     QString name_;
     QString message_;
     QVector<Item> inventory_;
@@ -206,7 +209,7 @@ public:
 
     int getRation();
     void addRation(int ration);
-    void removeRation();
+    void removeRation(int itemIndex);
 
     int getGold();
     void addGold(int gold);
@@ -256,6 +259,14 @@ public:
 
     bool itemEquipped();
     void displayMessage(QString title, QString message);
+
+    bool hasBedroll();
+    void addBedroll();
+    void removeBedroll();
+
+    bool hasFireStarterKit();
+    void addFireStarterKit();
+    void removeFireStarterKit();
 };
 
 #endif // PLAYER_H
