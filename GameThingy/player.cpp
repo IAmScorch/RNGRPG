@@ -76,6 +76,7 @@ Player::Player(int defaultHealth, int intelligence, int defaultStamina,
     ringSlotTwo_ = 0;
     trinketSlotOne_ = 0;
     trinketSlotTwo_ = 0;
+    classXRef_ = new itemCrossReference();
     qsrand(QTime::currentTime().msec());
 }
 
@@ -414,7 +415,9 @@ void Player::saveInventory()
                  << inventory_.value(i).stat3 << ","
                  << inventory_.value(i).statType3 << ","
                  << inventory_.value(i).amount << ","
-                 << inventory_.value(i).numStats << "\n";
+                 << inventory_.value(i).numStats << "\n"
+                 << inventory_.value(i).weaponType << "\n"
+                 << inventory_.value(i).weaponEdgeType << "\n";
     }
     file.close();
 }
@@ -449,7 +452,9 @@ void Player::saveEquipment()
                  << equipment_.value(i).stat3 << ","
                  << equipment_.value(i).statType3 << ","
                  << equipment_.value(i).amount << ","
-                 << equipment_.value(i).numStats << "\n";
+                 << equipment_.value(i).numStats << "\n"
+                 << equipment_.value(i).weaponType << "\n"
+                 << equipment_.value(i).weaponEdgeType << "\n";
     }
     file.close();
 }
@@ -569,6 +574,8 @@ void Player::loadInventory(QString playerName)
         invItem.statType3 = item.value(19).toInt();
         invItem.amount = item.value(20).toInt();
         invItem.numStats = item.value(21).toInt();
+        invItem.weaponType = item.value(22).toInt();
+        invItem.weaponType = item.value(23).toInt();
         addItemToInventory(invItem);
     }
 }
@@ -617,6 +624,8 @@ void Player::loadEquipment(QString playerName)
         invItem.statType3 = item.value(19).toInt();
         invItem.amount = item.value(20).toInt();
         invItem.numStats = item.value(21).toInt();
+        invItem.weaponType = item.value(22).toInt();
+        invItem.weaponType = item.value(23).toInt();
         equipment_.push_back(invItem);
     }
 }
@@ -1121,61 +1130,100 @@ void Player::addEquipment(Item item)
     {
         if (item.holdType == 1)
         {
-            if (mainHandSlot_ != 0)
+            if (classType_ == 2 && (item.weaponType == 3 || item.weaponType == 4 || item.weaponType == 5))
             {
-                message_ = "You already have a weapon equipped\n in your main hand slot";
-                displayMessage("Equipping", message_);
+                message_ = classXRef_->getClassType(classType_) + "s can only equip Daggers and Short Swords";
+                displayMessage("Equipping Restriction", message_);
             }
-            else if (mainHandSlot_ == 0)
+            else if (classType_ == 1 && (item.weaponType == 2 || item.weaponType == 3 || item.weaponType == 4 || item.weaponType == 5))
             {
-                itemEquipped_ = true;
-                mainHandSlot_ = 1;
-                minWeaponAP_ = item.minAtk;
-                maxWeaponAP_ = item.maxAtk;
-                equipment_.push_back(item);
+                message_ = classXRef_->getClassType(classType_) + "s can only equip Daggers, Staffs and Scepters";
+                displayMessage("Equipping Restriction", message_);
+            }
+            else
+            {
+                if (mainHandSlot_ != 0)
+                {
+                    message_ = "You already have a weapon equipped\n in your main hand slot";
+                    displayMessage("Equipping", message_);
+                }
+                else if (mainHandSlot_ == 0)
+                {
+                    itemEquipped_ = true;
+                    mainHandSlot_ = 1;
+                    minWeaponAP_ = item.minAtk;
+                    maxWeaponAP_ = item.maxAtk;
+                    equipment_.push_back(item);
+                }
             }
         }
 
         if (item.holdType == 2)
         {
-            if (mainHandSlot_ == 0)
+            if (classType_ == 2 && (item.weaponType == 3 || item.weaponType == 4 || item.weaponType == 5))
             {
-                itemEquipped_ = true;
-                mainHandSlot_ = 2;
-                minWeaponAP_ = item.minAtk;
-                maxWeaponAP_ = item.maxAtk;
-                equipment_.push_back(item);
+                message_ = classXRef_->getClassType(classType_) + "s can only equip Daggers and Short Swords";
+                displayMessage("Equipping Restriction", message_);
             }
-            else if (mainHandSlot_ != 0 && offHandSlot_ == 0)
+            else if (classType_ == 1 && (item.weaponType == 2 || item.weaponType == 3 || item.weaponType == 4 || item.weaponType == 5))
             {
-                itemEquipped_ = true;
-                offHandSlot_ = 1;
-                minWeaponAP_ += item.minAtk;
-                maxWeaponAP_ += item.maxAtk;
-                equipment_.push_back(item);
+                message_ = classXRef_->getClassType(classType_) + "s can only equip Daggers, Staffs and Scepters";
+                displayMessage("Equipping Restriction", message_);
             }
-            else if (mainHandSlot_ != 0 and offHandSlot_ != 0)
+            else
             {
-                message_ = "Both hand slots are filled";
-                displayMessage("Equipping", message_);
+                if (mainHandSlot_ == 0)
+                {
+                    itemEquipped_ = true;
+                    mainHandSlot_ = 2;
+                    minWeaponAP_ = item.minAtk;
+                    maxWeaponAP_ = item.maxAtk;
+                    equipment_.push_back(item);
+                }
+                else if (mainHandSlot_ != 0 && offHandSlot_ == 0)
+                {
+                    itemEquipped_ = true;
+                    offHandSlot_ = 1;
+                    minWeaponAP_ += item.minAtk;
+                    maxWeaponAP_ += item.maxAtk;
+                    equipment_.push_back(item);
+                }
+                else if (mainHandSlot_ != 0 and offHandSlot_ != 0)
+                {
+                    message_ = "Both hand slots are filled";
+                    displayMessage("Equipping", message_);
+                }
             }
         }
 
         if (item.holdType == 3)
         {
-            if (mainHandSlot_ == 0 && offHandSlot_ == 0)
+            if (classType_ == 2)
             {
-                itemEquipped_ = true;
-                mainHandSlot_ = 3;
-                offHandSlot_ = 3;
-                minWeaponAP_ = item.minAtk;
-                maxWeaponAP_ = item.maxAtk;
-                equipment_.push_back(item);
+                message_ = classXRef_->getClassType(classType_) + "s cannot equip 2 handed weapons";
+                displayMessage("Equipping Restriction", message_);
+            }
+            else if (classType_ == 1 && item.weaponType != 6)
+            {
+                message_ = classXRef_->getClassType(classType_) + "s can only equip Staffs";
+                displayMessage("Equipping Restriction", message_);
             }
             else
             {
-                message_ = "You need both hands for this weapon";
-                displayMessage("Equipping", message_);
+                if (mainHandSlot_ == 0 && offHandSlot_ == 0)
+                {
+                    itemEquipped_ = true;
+                    mainHandSlot_ = 3;
+                    offHandSlot_ = 3;
+                    minWeaponAP_ = item.minAtk;
+                    maxWeaponAP_ = item.maxAtk;
+                    equipment_.push_back(item);
+                }
+                else
+                {
+                    message_ = "You need both hands for this weapon";
+                    displayMessage("Equipping", message_);
+                }
             }
         }
 
@@ -1188,33 +1236,64 @@ void Player::addEquipment(Item item)
 
     if (item.itemType == 4)
     {
-        if (offHandSlot_ == 0)
+        if (classType_ == 1 || classType_ == 2)
         {
-            itemEquipped_ = true;
-            offHandSlot_ = 2;
-            addBlock(item.block);
-            equipment_.push_back(item);
+            message_ = classXRef_->getClassType(classType_) + "s cannot equip shields";
+            displayMessage("Equipping Restriction", message_);
         }
         else
         {
-            message_ = "Your off hand slot is filled";
-            displayMessage("Equipping", message_);
+            if (offHandSlot_ == 0)
+            {
+                itemEquipped_ = true;
+                offHandSlot_ = 2;
+                addBlock(item.block);
+                equipment_.push_back(item);
+            }
+            else
+            {
+                message_ = "Your off hand slot is filled";
+                displayMessage("Equipping", message_);
+            }
         }
     }
 
     if (item.itemType == 3)
     {
-        if (armourSlot_ == 0)
+        if (classType_ == 1 && item.armourType != 1)
         {
-            itemEquipped_ = true;
-            armourSlot_ = 1;
-            equipment_.push_back(item);
-            equipArmour(item.armourRating);
+            message_ = classXRef_->getClassType(classType_) + "s can only wear Cloth armour";
+            displayMessage("Equipping Restriction", message_);
+        }
+        else if (classType_ == 2 && item.armourType != 2)
+        {
+            message_ = classXRef_->getClassType(classType_) + "s can only wear Leather armour";
+            displayMessage("Equipping Restriction", message_);
+        }
+        else if (classType_ == 3 && item.armourType != 3)
+        {
+            message_ = classXRef_->getClassType(classType_) + "s can only wear Mail armour";
+            displayMessage("Equipping Restriction", message_);
+        }
+        else if (classType_ == 4 && item.armourType != 4)
+        {
+            message_ = classXRef_->getClassType(classType_) + "s can only wear Plate armour";
+            displayMessage("Equipping Restriction", message_);
         }
         else
         {
-            message_ = "Your armour slot is filled";
-            displayMessage("Equipping", message_);
+            if (armourSlot_ == 0)
+            {
+                itemEquipped_ = true;
+                armourSlot_ = 1;
+                equipment_.push_back(item);
+                equipArmour(item.armourRating);
+            }
+            else
+            {
+                message_ = "Your armour slot is filled";
+                displayMessage("Equipping", message_);
+            }
         }
     }
 
@@ -1526,6 +1605,8 @@ void Player::addStarterEquipment()
         starterWeapon.statType3=0;
         starterWeapon.amount=1;
         starterWeapon.numStats=0;
+        starterWeapon.weaponType = 1;
+        starterWeapon.weaponEdgeType = 1;
         addEquipment(starterWeapon);
         addEquipment(starterWeapon);
 
@@ -1577,6 +1658,8 @@ void Player::addStarterEquipment()
         starterWeapon.statType3=0;
         starterWeapon.amount=1;
         starterWeapon.numStats=0;
+        starterWeapon.weaponType = 3;
+        starterWeapon.weaponEdgeType = 1;
         addEquipment(starterWeapon);
 
         starterArmour.name="Ruined Mail";
@@ -1627,6 +1710,8 @@ void Player::addStarterEquipment()
         starterWeapon.statType3=0;
         starterWeapon.amount=1;
         starterWeapon.numStats=0;
+        starterWeapon.weaponType = 2;
+        starterWeapon.weaponEdgeType = 1;
         addEquipment(starterWeapon);
 
         starterWeapon.name="Weak Wooden Shield";

@@ -15,6 +15,13 @@
   4 = epic  5 = legendary                 4 = Knight	(Plate)		Agility default = 5
   0 = consumable, junk or quest item
 
+  Weapon Types                      Weapon Edge Type
+  1 = Dagger          6 = Staff     1 = Sharp
+  2 = Short Sword     7 = Scepter   2 = Blunt
+  3 = Long Sword                    3 = Spiked
+  4 = Small Mace
+  5 = Large Mace
+
   ItemSlots 0 for empty 1 for full. Exception for main and off hand slots. They will have additional values for holdTypes
   Main Hand 1 = Main handed equipped, 2 = One handed equipped, 3 = Two handed equipped
   Off Hand 1 = One Handed equipped, 2 = Shield equipped, 3 = Two handed equipped
@@ -42,6 +49,8 @@
       int statType3;
       int amount;
       int numStats;
+      int weaponType = 0;
+      int weaponEdgeType = 0;
   };
 
 #endif // ITEM_H

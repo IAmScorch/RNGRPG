@@ -4,6 +4,7 @@
 #include <QString>
 #include <QVector>
 #include "item.h"
+#include "itemcrossreference.h"
 
 class Player
 {
@@ -84,6 +85,7 @@ private:
     QVector<Item> equipment_;
 
     int location_;
+    itemCrossReference *classXRef_;
 
     void doLevelUp();
 public:

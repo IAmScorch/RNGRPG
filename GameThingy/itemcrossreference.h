@@ -8,12 +8,15 @@
 class itemCrossReference
 {
 private:
-    //QString itemType_ [10] = {"", "", "",  "", "", "",  "",  "",  "",  ""};
-    QString itemType_   [10] = {"Undefined", "Consumable", "Weapon",  "Armour", "Shield", "Quest",  "Ring",  "Trinket",  "random",  "Junk"};
-    QString armourType_ [5]  = {"Undefined", "Cloth", "Leather", "Mail",  "Plate"};
-    QString statType_   [8] =  {"Undefined", "Vitality", "Strength",  "Stamina", "Agility", "Luck",  "Precision",  "Block"};
-    QString itemRarity_ [6]  = {"Undefined", "Common", "Uncommon",  "Rare", "Epic", "Legendary"};
-    QString holdType_   [4]  = {"Undefined", "Main Hand", "1 Handed",  "2 Handed"};
+    //QString itemType_     [10] = {"", "", "",  "", "", "",  "",  "",  "",  ""};
+    QString itemType_       [10] = {"Undefined", "Consumable", "Weapon",  "Armour", "Shield", "Quest",  "Ring",  "Trinket",  "random",  "Junk"};
+    QString armourType_     [5]  = {"Undefined", "Cloth", "Leather", "Mail",  "Plate"};
+    QString statType_       [8]  = {"Undefined", "Vitality", "Strength",  "Stamina", "Agility", "Luck",  "Precision",  "Block"};
+    QString itemRarity_     [6]  = {"Undefined", "Common", "Uncommon",  "Rare", "Epic", "Legendary"};
+    QString holdType_       [4]  = {"Undefined", "Main Hand", "1 Handed",  "2 Handed"};
+    QString weaponType_     [8]  = {"Undefined", "Dagger", "Short Sword", "Long Sword", "Small Mace", "Large Mace", "Staff", "Scepter"};
+    QString weaponEdgeType_ [4]  = {"Undefined", "Sharp", "Blunt", "Spiked"};
+    QString classType_      [5]  = {"Undefined", "Wizard", "Rogue", "Warrior", "Knight"};
 
 public:
     itemCrossReference();
@@ -24,6 +27,9 @@ public:
     QString getStatType(int crossReference);
     QString getItemRarity(int crossReference);
     QString getHoldType(int crossReference);
+    QString getWeaponType(int crossReference);
+    QString getWeaponEdgeType(int crossReference);
+    QString getClassType(int crossReference);
 };
 
 #endif // ITEMCROSSREFERENCE_H
