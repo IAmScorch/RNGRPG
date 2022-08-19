@@ -9,7 +9,7 @@
 #include "item.h"
 
 Bandit::Bandit(QString name, int health, int maxAttackPower, int minAttackPower,
-               int critChance, int XPReward, int level, int enemyType, int agility, int objType, int itemDropChance)
+               int critChance, int XPReward, int level, int enemyType, int agility, int objType, int itemDropChance, int weaponDot, int armourType)
     :name_(name),
     health_(health),
     maxAttackPower_(maxAttackPower),
@@ -20,7 +20,9 @@ Bandit::Bandit(QString name, int health, int maxAttackPower, int minAttackPower,
     enemyType_(enemyType),
     agility_(agility),
     objType_(objType),
-    itemDropChance_(itemDropChance)
+    itemDropChance_(itemDropChance),
+    weaponDot_(weaponDot),
+    armourType_(armourType)
 {
     qsrand(QTime::currentTime().msec());
     isAlive_ = true;
@@ -77,10 +79,11 @@ int Bandit::doHitRoll()
     return hitRoll;
 }
 
-void Bandit::doHit(int dmg, int playerHitRoll, QString playerName)
+void Bandit::doHit(int dmg, int playerHitRoll, QString playerName, int playerDotType)
 {
     if (playerHitRoll >= agility_)
     {
+        int dotChance = rand() % ((100 + 1) - 1) + 1;
         isHit_ = true;
         health_ = health_ - dmg;
         if (health_ <= 0)
@@ -90,7 +93,222 @@ void Bandit::doHit(int dmg, int playerHitRoll, QString playerName)
             isHit_ = false;
         }
         else
+        {
             message_ = name_ + " takes " + QString("%1").arg(dmg) + " damage.\n\n";
+            DoT dotInfo;
+            int dotEffectiveness = rand()% 5 + 3;
+
+            if (armourType_ == 0)
+            {
+                if (playerDotType == 1 && dotChance >= 50)
+                {
+                    dotInfo.name = "Bleeding";
+                    dotInfo.dotType = playerDotType;
+                    dotInfo.dotDamage = 1;
+
+                    for (int i = 0; i < dotEffectiveness; i++)
+                    {
+                        dot_.push_back(dotInfo);
+                    }
+
+                    message_ += playerName + " slashed " + name_ + " and caused a " + dotInfo.name + " effect\n\n";
+                }
+                else if (playerDotType == 2 && dotChance >= 30)
+                {
+                    dotInfo.name = "Blunt Trauma";
+                    dotInfo.dotType = playerDotType;
+                    dotInfo.dotDamage = 1;
+
+                    for (int i = 0; i < dotEffectiveness; i++)
+                    {
+                        dot_.push_back(dotInfo);
+                    }
+
+                    message_ += playerName + " crushed " + name_ + " and caused a " + dotInfo.name + " effect\n\n";
+                }
+                else if (playerDotType == 3 && dotChance >= 50)
+                {
+                    dotInfo.name = "Poison";
+                    dotInfo.dotType = playerDotType;
+                    dotInfo.dotDamage = 1;
+
+                    for (int i = 0; i < dotEffectiveness; i++)
+                    {
+                        dot_.push_back(dotInfo);
+                    }
+
+                    message_ += playerName + " slashed " + name_ + " with a poison laced blade and caused a " + dotInfo.name + " effect\n\n";
+                }
+            }
+            else if (armourType_ == 1)
+            {
+                if (playerDotType == 1 && dotChance >= 80)
+                {
+                    dotInfo.name = "Bleeding";
+                    dotInfo.dotType = playerDotType;
+                    dotInfo.dotDamage = 1;
+
+                    for (int i = 0; i < dotEffectiveness; i++)
+                    {
+                        dot_.push_back(dotInfo);
+                    }
+
+                    message_ += playerName + " slashed " + name_ + " and caused a " + dotInfo.name + " effect\n\n";
+                }
+                else if (playerDotType == 2 && dotChance >= 60)
+                {
+                    dotInfo.name = "Blunt Trauma";
+                    dotInfo.dotType = playerDotType;
+                    dotInfo.dotDamage = 1;
+
+                    for (int i = 0; i < dotEffectiveness; i++)
+                    {
+                        dot_.push_back(dotInfo);
+                    }
+
+                    message_ += playerName + " crushed " + name_ + " and caused a " + dotInfo.name + " effect\n\n";
+                }
+                else if (playerDotType == 3 && dotChance >= 80)
+                {
+                    dotInfo.name = "Poison";
+                    dotInfo.dotType = playerDotType;
+                    dotInfo.dotDamage = 1;
+
+                    for (int i = 0; i < dotEffectiveness; i++)
+                    {
+                        dot_.push_back(dotInfo);
+                    }
+
+                    message_ += playerName + " slashed " + name_ + " with a poison laced blade and caused a " + dotInfo.name + " effect\n\n";
+                }
+            }
+            else if (armourType_ == 2)
+            {
+                if (playerDotType == 1 && dotChance >= 85)
+                {
+                    dotInfo.name = "Bleeding";
+                    dotInfo.dotType = playerDotType;
+                    dotInfo.dotDamage = 1;
+
+                    for (int i = 0; i < dotEffectiveness; i++)
+                    {
+                        dot_.push_back(dotInfo);
+                    }
+
+                    message_ += playerName + " slashed " + name_ + " and caused a " + dotInfo.name + " effect\n\n";
+                }
+                else if (playerDotType == 2 && dotChance >= 65)
+                {
+                    dotInfo.name = "Blunt Trauma";
+                    dotInfo.dotType = playerDotType;
+                    dotInfo.dotDamage = 1;
+
+                    for (int i = 0; i < dotEffectiveness; i++)
+                    {
+                        dot_.push_back(dotInfo);
+                    }
+
+                    message_ += playerName + " crushed " + name_ + " and caused a " + dotInfo.name + " effect\n\n";
+                }
+                else if (playerDotType == 3 && dotChance >= 85)
+                {
+                    dotInfo.name = "Poison";
+                    dotInfo.dotType = playerDotType;
+                    dotInfo.dotDamage = 1;
+
+                    for (int i = 0; i < dotEffectiveness; i++)
+                    {
+                        dot_.push_back(dotInfo);
+                    }
+
+                    message_ += playerName + " slashed " + name_ + " with a poison laced blade and caused a " + dotInfo.name + " effect\n\n";
+                }
+            }
+            else if (armourType_ == 3)
+            {
+                if (playerDotType == 1 && dotChance >= 90)
+                {
+                    dotInfo.name = "Bleeding";
+                    dotInfo.dotType = playerDotType;
+                    dotInfo.dotDamage = 1;
+
+                    for (int i = 0; i < dotEffectiveness; i++)
+                    {
+                        dot_.push_back(dotInfo);
+                    }
+
+                    message_ += playerName + " slashed " + name_ + " and caused a " + dotInfo.name + " effect\n\n";
+                }
+                else if (playerDotType == 2 && dotChance >= 70)
+                {
+                    dotInfo.name = "Blunt Trauma";
+                    dotInfo.dotType = playerDotType;
+                    dotInfo.dotDamage = 1;
+
+                    for (int i = 0; i < dotEffectiveness; i++)
+                    {
+                        dot_.push_back(dotInfo);
+                    }
+
+                    message_ += playerName + " crushed " + name_ + " and caused a " + dotInfo.name + " effect\n\n";
+                }
+                else if (playerDotType == 3 && dotChance >= 90)
+                {
+                    dotInfo.name = "Poison";
+                    dotInfo.dotType = playerDotType;
+                    dotInfo.dotDamage = 1;
+
+                    for (int i = 0; i < dotEffectiveness; i++)
+                    {
+                        dot_.push_back(dotInfo);
+                    }
+
+                    message_ += playerName + " slashed " + name_ + " with a poison laced blade and caused a " + dotInfo.name + " effect\n\n";
+                }
+            }
+            else if (armourType_ == 4)
+            {
+                if (playerDotType == 1 && dotChance >= 95)
+                {
+                    dotInfo.name = "Bleeding";
+                    dotInfo.dotType = playerDotType;
+                    dotInfo.dotDamage = 1;
+
+                    for (int i = 0; i < dotEffectiveness; i++)
+                    {
+                        dot_.push_back(dotInfo);
+                    }
+
+                    message_ += playerName + " slashed " + name_ + " and caused a " + dotInfo.name + " effect\n\n";
+                }
+                else if (playerDotType == 2 && dotChance >= 75)
+                {
+                    dotInfo.name = "Blunt Trauma";
+                    dotInfo.dotType = playerDotType;
+                    dotInfo.dotDamage = 1;
+
+                    for (int i = 0; i < dotEffectiveness; i++)
+                    {
+                        dot_.push_back(dotInfo);
+                    }
+
+                    message_ += playerName + " crushed " + name_ + " and caused a " + dotInfo.name + " effect\n\n";
+                }
+                else if (playerDotType == 3 && dotChance >= 95)
+                {
+                    dotInfo.name = "Poison";
+                    dotInfo.dotType = playerDotType;
+                    dotInfo.dotDamage = 1;
+
+                    for (int i = 0; i < dotEffectiveness; i++)
+                    {
+                        dot_.push_back(dotInfo);
+                    }
+
+                    message_ += playerName + " slashed " + name_ + " with a poison laced blade and caused a " + dotInfo.name + " effect\n\n";
+                }
+            }
+        }
     }
     else
     {
@@ -195,7 +413,7 @@ QVector<Item> Bandit::doLootDrop(QString enemyName, int enemyType, int itemDropC
                         QVector<Item> tempItems;
                         for (int e = 0; e < rows; e++)
                         {
-                            if (itemChance == banditItemDrops_[e][17])
+                            if (itemChance == banditItemDrops_[e][18])
                             {
                                 Item item;
                                 //numItems.push_back(banditItemDrops_[e][0]);
@@ -216,6 +434,7 @@ QVector<Item> Bandit::doLootDrop(QString enemyName, int enemyType, int itemDropC
                                 item.holdType = banditItemDrops_[e][14].toInt();
                                 item.weaponType = banditItemDrops_[e][15].toInt();
                                 item.weaponEdgeType = banditItemDrops_[e][16].toInt();
+                                item.dotType_ = banditItemDrops_[e][17].toInt();
                                 item.stat1 = 0;
                                 item.stat2 = 0;
                                 item.stat3 = 0;
@@ -368,6 +587,7 @@ QVector<Item> Bandit::doLootDrop(QString enemyName, int enemyType, int itemDropC
                                                     item.holdType = 2;
                                                     item.weaponType = 1;
                                                     item.weaponEdgeType = 1;
+                                                    item.dotType_ = 1;
                                                 }
                                                 else if (item.name.contains("Short Sword"))
                                                 {
@@ -377,6 +597,7 @@ QVector<Item> Bandit::doLootDrop(QString enemyName, int enemyType, int itemDropC
                                                     item.holdType = rand()%1 + 1;
                                                     item.weaponType = 2;
                                                     item.weaponEdgeType = 1;
+                                                    item.dotType_ = 1;
                                                 }
                                                 else if (item.name.contains("Long Sword"))
                                                 {
@@ -386,6 +607,7 @@ QVector<Item> Bandit::doLootDrop(QString enemyName, int enemyType, int itemDropC
                                                     item.holdType = 3;
                                                     item.weaponType = 3;
                                                     item.weaponEdgeType = 1;
+                                                    item.dotType_ = 1;
                                                 }
                                                 break;
                                             case 3: //armour
@@ -610,5 +832,28 @@ void Bandit::setEnemyType(int enemyType)
 int Bandit::getItemDropChance()
 {
     return itemDropChance_;
+}
+
+int Bandit::getWeaponDot()
+{
+    return weaponDot_;
+}
+
+bool Bandit::hasActiveDoT()
+{
+    bool hasDot = false;
+
+    if (dot_.length() >= 1)
+        hasDot = true;
+
+    return hasDot;
+}
+
+void Bandit::doDotEffect()
+{
+    health_ -= dot_.value(0).dotDamage;
+    dot_.remove(0);
+
+    message_ = QString("%3 takes %1 damage from the %2 effect\n\n").arg(dot_.value(0).dotDamage).arg(dot_.value(0).name).arg(name_);
 }
 

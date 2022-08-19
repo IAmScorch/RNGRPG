@@ -15,10 +15,10 @@
   4 = epic  5 = legendary                 4 = Knight	(Plate)		Agility default = 5
   0 = consumable, junk or quest item
 
-  Weapon Types                      Weapon Edge Type
-  1 = Dagger          6 = Staff     1 = Sharp
-  2 = Short Sword     7 = Scepter   2 = Blunt
-  3 = Long Sword                    3 = Spiked
+  Weapon Types                      Weapon Edge Type    DoT Type
+  1 = Dagger          6 = Staff     1 = Sharp           1 = Bleeding
+  2 = Short Sword     7 = Scepter   2 = Blunt           2 = Blunt Trauma
+  3 = Long Sword                    3 = Spiked          3 = Poison
   4 = Small Mace
   5 = Large Mace
 
@@ -51,6 +51,7 @@
       int numStats;
       int weaponType = 0;
       int weaponEdgeType = 0;
+      int dotType_ = 0;
   };
 
 #endif // ITEM_H

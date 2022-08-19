@@ -5,6 +5,7 @@
 #include <QVector>
 #include "item.h"
 #include "itemcrossreference.h"
+#include "DoT.h"
 
 class Player
 {
@@ -28,6 +29,7 @@ private:
     int specialAbilityCharged_;
     int specialAbilityCharge_;
     int classType_;
+    int armourType_;
 
     int vitality_;
     int statVitality_;
@@ -86,6 +88,7 @@ private:
     QString message_;
     QVector<Item> inventory_;
     QVector<Item> equipment_;
+    QVector<DoT> dot_;
 
     int location_;
     itemCrossReference *classXRef_;
@@ -99,7 +102,7 @@ public:
     int doAttack(QString enemy);
     int doSpecialAbility(QString enemy);
     int doHitRoll();
-    void doHit(int dmg, int enemyHitRoll, QString enemyName, bool isEnemyAlive);
+    void doHit(int dmg, int enemyHitRoll, QString enemyName, bool isEnemyAlive, int enemyDotType);
     void checkXP();
     void usePotion(int healAmount, int itemIndex);
     void useRation(int stamAmount, int itemIndex);
@@ -267,6 +270,11 @@ public:
     bool hasFireStarterKit();
     void addFireStarterKit();
     void removeFireStarterKit();
+
+    bool hasActiveDoT();
+    void doDotEffect();
+
+    int getWeaponDotType();
 };
 
 #endif // PLAYER_H
