@@ -30,6 +30,10 @@ private:
     int specialAbilityCharge_;
     int classType_;
     int armourType_;
+    int rogueDblAtkBonus_;
+    int warTwoHandAtkBonus_;
+    int knightAbsorbBonus_;
+    int knightBlockBonus_;
 
     int vitality_;
     int statVitality_;
@@ -275,6 +279,11 @@ public:
     void doDotEffect();
 
     int getWeaponDotType();
+    int getWeapon();
+    int getRogueDblAtkBonus();
+    int getShieldBlockBonus();
+    bool didRoguePassSecondAttackCheck();
+    bool didKnightAbsorb(int enemyHitRoll);
 };
 
 #endif // PLAYER_H

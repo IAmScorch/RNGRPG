@@ -198,7 +198,12 @@ void GameLogic::on_btnAttack_clicked()
                 player_->doDotEffect();
                 message_ += player_->getMessage();
             }
-            bandit_->doHit(player_->doAttack(bandit_->getName()), player_->doHitRoll(), player_->getName(), player_->getWeaponDotType());
+            bandit_->doHit(player_->doAttack(bandit_->getName()), player_->doHitRoll(), player_->getName(), player_->getWeaponDotType(), player_->getClassType());
+
+            if (player_->getClassType() == 2 && player_->didRoguePassSecondAttackCheck())
+            {
+                bandit_->doHit(player_->doAttack(bandit_->getName()) / 2, player_->doHitRoll(), player_->getName(), player_->getWeaponDotType(), player_->getClassType());
+            }
 
             if (bandit_->isHit())
             {
@@ -318,7 +323,7 @@ void GameLogic::on_btnSpecialAbility_clicked()
 
     if (player_->isAlive())
     {
-        bandit_->doHit(player_->doSpecialAbility(bandit_->getName()), 20, player_->getName(), player_->getWeaponDotType());
+        bandit_->doHit(player_->doSpecialAbility(bandit_->getName()), 20, player_->getName(), player_->getWeaponDotType(), player_->getClassType());
         message_ += player_->getMessage() + bandit_->getMessage();
     }
 
@@ -1278,7 +1283,7 @@ void GameLogic::on_btnBuyPotion_clicked()
 
 void GameLogic::on_btnBuyRation_clicked()
 {
-    if (player_->getGold() >= 50)
+    if (player_->getGold() >= 30)
     {
         if (strRestLocation_[player_->getLocation()] == "City" || strRestLocation_[player_->getLocation()] == "Town")
         {
@@ -1309,7 +1314,7 @@ void GameLogic::on_btnBuyRation_clicked()
             item.numStats = 0;
 
             QSound::play("Sounds\\rationDrop.wav");
-            player_->removeGold(75);
+            player_->removeGold(30);
             player_->addItemToInventory(item);
             ui->lblGoldAmount->setText(QString("Gold: %1").arg(player_->getGold()));
             ui->lblGoldInv->setText(QString("Gold: %1").arg(player_->getGold()));
@@ -1603,13 +1608,13 @@ void GameLogic::on_btnRestBS_clicked()
 
         if (msgBox.clickedButton() == btnInn)
         {
-            if (player_->getGold() >= 50)
+            if (player_->getGold() >= 1000)
             {
                 message_ += QString("You pay 50 gold to rest for the night at the %1 Inn\n"
                                     "Health and Stamina are fully restored").arg(strLocations_[player_->getLocation()]);
                 player_->setHealth(player_->getMaxHealth());
                 player_->setStamina(player_->getMaxStamina());
-                player_->removeGold(50);
+                player_->removeGold(1000);
             }
             else
             {
@@ -1731,13 +1736,13 @@ void GameLogic::on_btnRestBS_clicked()
 
             if (msgBox.clickedButton() == btnInn)
             {
-                if (player_->getGold() >= 30)
+                if (player_->getGold() >= 700)
                 {
                     message_ += QString("You pay 30 gold to rest for the night at the %1 Inn\n"
                                         "Health and Stamina are restored by 4").arg(strLocations_[player_->getLocation()]);
-                    player_->addHealth(4);
-                    player_->addStamina(4);
-                    player_->removeGold(30);
+                    player_->addHealth(player_->getMaxHealth() * .50);
+                    player_->addStamina(player_->getMaxHealth() * .50);
+                    player_->removeGold(700);
                 }
                 else
                 {
@@ -4040,7 +4045,7 @@ void GameLogic::on_lstEquipment_itemClicked(QListWidgetItem *item)
 
 void GameLogic::on_btnBuyBedroll_clicked()
 {
-    if (player_->getGold() >= 100)
+    if (player_->getGold() >= 250)
     {
         if (strRestLocation_[player_->getLocation()] == "City" ||strRestLocation_[player_->getLocation()] == "Town")
         {
@@ -4070,7 +4075,7 @@ void GameLogic::on_btnBuyBedroll_clicked()
             item.amount = 1;
             item.numStats = 0;
 
-            player_->removeGold(100);
+            player_->removeGold(250);
             player_->addItemToInventory(item);
             player_->addBedroll();
             ui->lblGoldAmount->setText(QString("Gold: %1").arg(player_->getGold()));
@@ -4098,7 +4103,7 @@ void GameLogic::on_btnBuyBedroll_clicked()
 
 void GameLogic::on_btnBuyFirestarterKit_clicked()
 {
-    if (player_->getGold() >= 75)
+    if (player_->getGold() >= 200)
     {
         if (strRestLocation_[player_->getLocation()] == "City" ||strRestLocation_[player_->getLocation()] == "Town")
         {
@@ -4128,7 +4133,7 @@ void GameLogic::on_btnBuyFirestarterKit_clicked()
             item.amount = 1;
             item.numStats = 0;
 
-            player_->removeGold(75);
+            player_->removeGold(200);
             player_->addItemToInventory(item);
             player_->addFireStarterKit();
             ui->lblGoldAmount->setText(QString("Gold: %1").arg(player_->getGold()));

@@ -97,7 +97,7 @@ public:
 
     int doAttack(QString enemy);
     int doHitRoll();
-    void doHit(int dmg, int playerHitRoll, QString playerName, int playerDotType);
+    void doHit(int dmg, int playerHitRoll, QString playerName, int playerDotType, int playerClass);
     int goldDrop();
     QVector<Item> doLootDrop(QString enemyName, int enemyType, int itemDropChance);
 

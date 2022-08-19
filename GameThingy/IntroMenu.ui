@@ -240,7 +240,7 @@
        <string notr="true">color: rgb(255, 255, 255);</string>
       </property>
       <property name="text">
-       <string>Cost: 75 Gold</string>
+       <string>Cost: 30 Gold</string>
       </property>
      </widget>
      <widget class="QPushButton" name="btnBuyRation">
@@ -279,7 +279,7 @@
        <string notr="true">color: rgb(255, 255, 255);</string>
       </property>
       <property name="text">
-       <string>Cost: 75 Gold</string>
+       <string>Cost: 200 Gold</string>
       </property>
      </widget>
      <widget class="QPushButton" name="btnBuyFirestarterKit">
@@ -336,7 +336,7 @@
        <string notr="true">color: rgb(255, 255, 255);</string>
       </property>
       <property name="text">
-       <string>Cost: 100 Gold</string>
+       <string>Cost: 250 Gold</string>
       </property>
      </widget>
      <zorder>lblActionTabBG</zorder>

@@ -80,6 +80,10 @@ Player::Player(int defaultHealth, int intelligence, int defaultStamina,
     hasBedroll_ = 0;
     hasFireStarterKit_ = 0;
     armourType_ = 0;
+    rogueDblAtkBonus_ = 0;
+    warTwoHandAtkBonus_ = 0;
+    knightAbsorbBonus_ = 0;
+    knightBlockBonus_ = 0;
     qsrand(QTime::currentTime().msec());
 }
 
@@ -92,7 +96,14 @@ int Player::doAttack(QString enemy)
 {
     int critRoll;
 
-    attackDmg_ = rand() % ((maxAttackPower_ + 1) - minAttackPower_) + minAttackPower_;
+    if (classType_ == 3 && warTwoHandAtkBonus_ >= 1)
+    {
+        double atkBonus = warTwoHandAtkBonus_ * .10;
+        attackDmg_ = (rand() % ((maxAttackPower_ + 1) - minAttackPower_) + minAttackPower_) * atkBonus ;
+    }
+    else
+        attackDmg_ = rand() % ((maxAttackPower_ + 1) - minAttackPower_) + minAttackPower_;
+
 
     critRoll   = rand() % ((20 + 1) - 1) + 1;
 
@@ -153,9 +164,18 @@ void Player::doHit(int dmg, int enemyHitRoll, QString enemyName, bool isEnemyAli
     {
         if (enemyHitRoll >= dodgeChance)
         {
-            if (enemyHitRoll >= block_)
+            if (enemyHitRoll >= block_ + getShieldBlockBonus())
             {
                 int dotChance = rand() % ((100 + 1) - 1) + 1;
+                bool absorbed = false;
+                //int orgDmg = dmg;
+
+                if (classType_ == 4 && didKnightAbsorb(enemyHitRoll))
+                {
+                    absorbed = 2;
+                    dmg /= 2;
+                }
+
                 health_ = health_ - dmg;
                 if (health_ <= 0)
                 {
@@ -168,7 +188,11 @@ void Player::doHit(int dmg, int enemyHitRoll, QString enemyName, bool isEnemyAli
                 }
                 else
                 {
-                    message_ = name_ + " takes " + QString("%1").arg(dmg) + " damage.\n\n";
+                    if (absorbed)
+                        message_ = name_ + " absorbed " + enemyName + "'s attack, taking only " + QString("%1").arg(dmg) + " damage.\n\n";
+                    else
+                        message_ = name_ + " takes " + QString("%1").arg(dmg) + " damage.\n\n";
+
                     DoT dotInfo;
                     int dotEffectiveness = rand()% 5 + 3;
 
@@ -342,6 +366,8 @@ void Player::doHit(int dmg, int enemyHitRoll, QString enemyName, bool isEnemyAli
                     }
                     else if (armourType_ == 4)
                     {
+                        int BTBonus = (block_ / 5) * 5;
+
                         if (enemyDotType == 1 && dotChance >= 95)
                         {
                             dotInfo.name = "Bleeding";
@@ -355,7 +381,7 @@ void Player::doHit(int dmg, int enemyHitRoll, QString enemyName, bool isEnemyAli
 
                             message_ += enemyName + " slashed you and caused a " + dotInfo.name + " effect\n\n";
                         }
-                        else if (enemyDotType == 2 && dotChance >= 75)
+                        else if (enemyDotType == 2 && dotChance >= 75 + BTBonus)
                         {
                             dotInfo.name = "Blunt Trauma";
                             dotInfo.dotType = enemyDotType;
@@ -601,6 +627,9 @@ void Player::save()
     saveFile << trinketSlotTwo_ << "\n";
     saveFile << isShieldEquipped_ << "\n";
     saveFile << armourType_ << "\n";
+    saveFile << rogueDblAtkBonus_ << "\n";
+    saveFile << warTwoHandAtkBonus_ << "\n";
+    saveFile << knightAbsorbBonus_ << "\n";
     file.close();
     saveInventory();
     saveEquipment();
@@ -636,10 +665,10 @@ void Player::saveInventory()
                  << inventory_.value(i).stat3 << ","
                  << inventory_.value(i).statType3 << ","
                  << inventory_.value(i).amount << ","
-                 << inventory_.value(i).numStats << "\n"
-                 << inventory_.value(i).weaponType << "\n"
-                 << inventory_.value(i).weaponEdgeType << "\n"
-                 << inventory_.value(i).dotType_ << "\n";
+                 << inventory_.value(i).numStats << ","
+                 << inventory_.value(i).weaponType << ","
+                 << inventory_.value(i).weaponEdgeType << ","
+                 << inventory_.value(i).dotType_ << "/n";
     }
     file.close();
 }
@@ -674,9 +703,9 @@ void Player::saveEquipment()
                  << equipment_.value(i).stat3 << ","
                  << equipment_.value(i).statType3 << ","
                  << equipment_.value(i).amount << ","
-                 << equipment_.value(i).numStats << "\n"
-                 << equipment_.value(i).weaponType << "\n"
-                 << equipment_.value(i).weaponEdgeType << "\n"
+                 << equipment_.value(i).numStats << ","
+                 << equipment_.value(i).weaponType << ","
+                 << equipment_.value(i).weaponEdgeType << ","
                  << equipment_.value(i).dotType_ << "\n";
     }
     file.close();
@@ -746,6 +775,9 @@ void Player::load(QString playerName)
         trinketSlotTwo_ = saveFile.readLine().toInt();
         isShieldEquipped_ = saveFile.readLine().toInt();
         armourType_ = saveFile.readLine().toInt();
+        rogueDblAtkBonus_ = saveFile.readLine().toInt();
+        warTwoHandAtkBonus_ = saveFile.readLine().toInt();
+        knightAbsorbBonus_ = saveFile.readLine().toInt();
         file.close();
     }
     loadInventory(playerName);
@@ -876,10 +908,18 @@ void Player::removeVitality(int vitality)
 
 void Player::setMaxHealth()
 {
+    int knightHPBonus = 0;
     int statHealth = statVitality_ * 2;
     int equippedHealth = equippedVitality_ * 2;
     maxHealth_ = defaultHealth_ + statHealth + equippedHealth;
     vitality_ = statVitality_ + equippedVitality_;
+
+    if (classType_ == 4)
+    {
+        knightAbsorbBonus_ = vitality_ / 5;
+        knightHPBonus = vitality_ / 4;
+        maxHealth_ += knightHPBonus * 2;
+    }
 }
 
 int Player::getVitality()
@@ -913,6 +953,10 @@ void Player::removeStrength(int strength)
 void Player::setStrength()
 {
     strength_ = statStrength_ + equippedStrength_;
+
+    if (classType_ == 3)
+        warTwoHandAtkBonus_ = strength_ / 6;
+
     calculateMinAttackPower();
     calculateMaxAttackPower();
 }
@@ -948,7 +992,15 @@ void Player::removeAgility(int agility)
 void Player::setAgility()
 {
     int totalAgilityPoints = statAgility_ + equippedAgility_;
-    int agilityBonus = totalAgilityPoints / 5;
+    int agilityBonus = 0;
+
+    if (classType_ == 2)
+        agilityBonus = totalAgilityPoints / 3;
+    else if (classType_ == 4)
+        knightBlockBonus_ = totalAgilityPoints / 5;
+    else
+        agilityBonus = totalAgilityPoints / 5;
+
     agility_ = agilityDefault_ + agilityBonus;
 }
 
@@ -983,7 +1035,16 @@ void Player::removeLuck(int luck)
 void Player::setLuck()
 {
     int totalLuckPoints = statLuck_ + equippedLuck_;
-    int luckBonus = totalLuckPoints / 5;
+    int luckBonus;
+
+    if (classType_ == 2)
+    {
+        luckBonus = totalLuckPoints / 4;
+        rogueDblAtkBonus_ = totalLuckPoints / 6;
+    }
+    else
+        luckBonus = totalLuckPoints / 5;
+
     luck_ = luckDefault_ - luckBonus;
 }
 
@@ -1033,7 +1094,12 @@ void Player::removePrecision(int precision)
 void Player::setPrecision()
 {
     int totalPrecisionPoints = statPrecision_ + equippedPrecision_;
-    precision_ = totalPrecisionPoints / 5;
+
+    if (classType_ == 3)
+        precision_ = totalPrecisionPoints / 3;
+    else
+        precision_ = totalPrecisionPoints / 5;
+
 }
 
 int Player::getPrecision()
@@ -1200,12 +1266,27 @@ void Player::setMaxHealth(int maxHealth)
 
 void Player::calculateMaxAttackPower()
 {
-    maxAttackPower_ = maxWeaponAP_ + strength_;
+    int warrMaxBonus = 0;
+    if (classType_ == 3)
+    {
+        warrMaxBonus = strength_ / 4;
+        warrMaxBonus *= 2;
+        maxAttackPower_ = maxWeaponAP_ + strength_ + warrMaxBonus;
+    }
+    else
+        maxAttackPower_ = maxWeaponAP_ + strength_;
+
 }
 
 void Player::calculateMinAttackPower()
 {
-    int minBonus = strength_ / 5;
+    int minBonus;
+
+    if (classType_ == 3)
+        minBonus = strength_ / 3;
+    else
+        minBonus = strength_ / 5;
+
     minAttackPower_ = minWeaponAP_ + minBonus;
 }
 
@@ -2167,6 +2248,59 @@ int Player::getWeaponDotType()
     }
 
     return weaponDot;
+}
+
+int Player::getWeapon()
+{
+    int weapon = 0;
+
+    for (int i = 0; i < equipment_.length(); i++)
+    {
+        if (equipment_.value(i).itemType == 2)
+        {
+            weapon = equipment_.value(i).holdType;
+        }
+    }
+
+    return weapon;
+}
+
+int Player::getRogueDblAtkBonus()
+{
+    return rogueDblAtkBonus_;
+}
+
+int Player::getShieldBlockBonus()
+{
+    int blockBonus = 0;
+
+    if (classType_ == 4 && isShieldEquipped_)
+        blockBonus = knightAbsorbBonus_;
+
+    return blockBonus;
+}
+
+bool Player::didRoguePassSecondAttackCheck()
+{
+    bool passedCheck = false;
+    int secondAttackChanceBonus = rogueDblAtkBonus_ * 10;
+    int secondAttackChance = rand() % ((100 + 1) - 1) + 1;
+
+    if (secondAttackChance >= (100 - secondAttackChanceBonus))
+        passedCheck = true;
+
+    return passedCheck;
+}
+
+bool Player::didKnightAbsorb(int enemyHitRoll)
+{
+    bool didAbsorb = false;
+    int absorbChanceBonus = knightAbsorbBonus_ * 10;
+
+    if (enemyHitRoll <= absorbChanceBonus)
+        didAbsorb = true;
+
+    return didAbsorb;
 }
 
 bool Player::isSpecialAbilityLeanred()

@@ -79,7 +79,7 @@ int Bandit::doHitRoll()
     return hitRoll;
 }
 
-void Bandit::doHit(int dmg, int playerHitRoll, QString playerName, int playerDotType)
+void Bandit::doHit(int dmg, int playerHitRoll, QString playerName, int playerDotType, int playerClass)
 {
     if (playerHitRoll >= agility_)
     {
@@ -128,6 +128,9 @@ void Bandit::doHit(int dmg, int playerHitRoll, QString playerName, int playerDot
                 }
                 else if (playerDotType == 3 && dotChance >= 50)
                 {
+                    if (playerClass == 2)
+                        dotEffectiveness += 1;
+
                     dotInfo.name = "Poison";
                     dotInfo.dotType = playerDotType;
                     dotInfo.dotDamage = 1;
@@ -170,6 +173,9 @@ void Bandit::doHit(int dmg, int playerHitRoll, QString playerName, int playerDot
                 }
                 else if (playerDotType == 3 && dotChance >= 80)
                 {
+                    if (playerClass == 2)
+                        dotEffectiveness += 1;
+
                     dotInfo.name = "Poison";
                     dotInfo.dotType = playerDotType;
                     dotInfo.dotDamage = 1;
@@ -212,6 +218,9 @@ void Bandit::doHit(int dmg, int playerHitRoll, QString playerName, int playerDot
                 }
                 else if (playerDotType == 3 && dotChance >= 85)
                 {
+                    if (playerClass == 2)
+                        dotEffectiveness += 1;
+
                     dotInfo.name = "Poison";
                     dotInfo.dotType = playerDotType;
                     dotInfo.dotDamage = 1;
@@ -254,6 +263,9 @@ void Bandit::doHit(int dmg, int playerHitRoll, QString playerName, int playerDot
                 }
                 else if (playerDotType == 3 && dotChance >= 90)
                 {
+                    if (playerClass == 2)
+                        dotEffectiveness += 1;
+
                     dotInfo.name = "Poison";
                     dotInfo.dotType = playerDotType;
                     dotInfo.dotDamage = 1;
@@ -296,6 +308,9 @@ void Bandit::doHit(int dmg, int playerHitRoll, QString playerName, int playerDot
                 }
                 else if (playerDotType == 3 && dotChance >= 95)
                 {
+                    if (playerClass == 2)
+                        dotEffectiveness += 1;
+
                     dotInfo.name = "Poison";
                     dotInfo.dotType = playerDotType;
                     dotInfo.dotDamage = 1;
