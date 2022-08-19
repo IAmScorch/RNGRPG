@@ -29,3 +29,18 @@ QString itemCrossReference::getHoldType(int crossReference)
 {
     return  holdType_[crossReference];
 }
+
+QString itemCrossReference::getWeaponType(int crossReference)
+{
+    return weaponType_[crossReference];
+}
+
+QString itemCrossReference::getWeaponEdgeType(int crossReference)
+{
+    return weaponEdgeType_[crossReference];
+}
+
+QString itemCrossReference::getClassType(int crossReference)
+{
+    return classType_[crossReference];
+}

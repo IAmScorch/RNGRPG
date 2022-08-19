@@ -22,6 +22,7 @@ SOURCES += main.cpp\
     quests.cpp
 
 HEADERS  += gamelogic.h \
+    DoT.h \
     inventorybag.h \
     item.h \
     itemcrossreference.h \

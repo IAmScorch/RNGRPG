@@ -13,44 +13,77 @@
 #include "item.h"
 
 
-Player::Player(int health, int maxHealth, int maxAttackPower, int minAttackPower,
-               int vitality, int strength, int agility, int luck, int intelligence, int precision, int stamina, int maxStamina,
-               int agilityDefault, int luckDefault)
-    : health_(health),
-      maxHealth_(maxHealth),
-      maxAttackPower_(maxAttackPower),
-      minAttackPower_(minAttackPower),
-      vitality_(vitality),
-      strength_(strength),
-      agility_(agility),
-      luck_(luck),
-      intelligence_(intelligence),
-      precision_(precision),
-      stamina_(stamina),
-      maxStamina_(maxStamina),
+Player::Player(int defaultHealth, int intelligence, int defaultStamina,
+               int agilityDefault, int luckDefault, int classType)
+    : defaultHealth_(defaultHealth),
+      maxHealth_(defaultHealth_),
+      classType_(classType),
       agilityDefault_(agilityDefault),
-      luckDefault_(luckDefault)
+      luckDefault_(luckDefault),
+      intelligence_(intelligence),
+      defaultStamina_(defaultStamina)
 {
     level_ = 1;
     XP_ = 0;
     XPTillLevel_ = 500;
+    health_ = defaultHealth;
+    strength_ = 0;
+    maxStamina_ = defaultStamina;
+    stamina_ = defaultStamina;
+    agility_ = agilityDefault;
+    luck_ = luckDefault;
+    precision_ = 0;
     isAlive_ = true;
+    maxAttackPower_ = 0;
+    minAttackPower_ = 0;
+    maxWeaponAP_ = 0;
+    minWeaponAP_ = 0;
     potion_ = 0;
     ration_ = 0;
     gold_ = 0;
+    minAttackPower_ = 0;
+    maxAttackPower_ = 0;
     skillpoints_ = 0;
     specialAbilityCharge_ = 0;
     specialAbilityCharged_ = 0;
     specialAbilityMaxCharges_ = 0;
-    agilityBonus_ = 0;
-    luckBonus_ = 0;
     intelligenceBonus_ = 0;
-    precisionBonus_ = 0;
     block_ = 0;
     isSpecialAbilityLearned_ = false;
     isSpecialReady_ = false;
     questsCompleted_ = 0;
     location_ = 0;
+    statVitality_ = 0;
+    statAgility_ = 0;
+    statLuck_ = 0;
+    statPrecision_ = 0;
+    statStrength_ = 0;
+    statStamina_ = 0;
+    statIntelligence_ = 0;
+    equippedAgility_ = 0;
+    equippedVitality_ = 0;
+    equippedLuck_ = 0;
+    equippedIntelligence_ = 0;
+    equippedLuck_ = 0;
+    equippedPrecision_ = 0;
+    equippedStamina_ = 0;
+    equippedStrength_ = 0;
+    isShieldEquipped_ = false;
+    mainHandSlot_ = 0;
+    offHandSlot_ = 0;
+    armourSlot_ = 0;
+    ringSlotOne_ = 0;
+    ringSlotTwo_ = 0;
+    trinketSlotOne_ = 0;
+    trinketSlotTwo_ = 0;
+    classXRef_ = new itemCrossReference();
+    hasBedroll_ = 0;
+    hasFireStarterKit_ = 0;
+    armourType_ = 0;
+    rogueDblAtkBonus_ = 0;
+    warTwoHandAtkBonus_ = 0;
+    knightAbsorbBonus_ = 0;
+    knightBlockBonus_ = 0;
     qsrand(QTime::currentTime().msec());
 }
 
@@ -63,7 +96,14 @@ int Player::doAttack(QString enemy)
 {
     int critRoll;
 
-    attackDmg_ = rand() % ((maxAttackPower_ + 1) - minAttackPower_) + minAttackPower_;
+    if (classType_ == 3 && warTwoHandAtkBonus_ >= 1)
+    {
+        double atkBonus = warTwoHandAtkBonus_ * .10;
+        attackDmg_ = (rand() % ((maxAttackPower_ + 1) - minAttackPower_) + minAttackPower_) * atkBonus ;
+    }
+    else
+        attackDmg_ = rand() % ((maxAttackPower_ + 1) - minAttackPower_) + minAttackPower_;
+
 
     critRoll   = rand() % ((20 + 1) - 1) + 1;
 
@@ -73,7 +113,7 @@ int Player::doAttack(QString enemy)
     if (attackDmg_ == 0)
         attackDmg_ = 1;
 
-    if (critRoll >= luckDefault_ - luckBonus_)
+    if (critRoll >= luck_)
     {
         attackDmg_*= 2;
         message_ = name_ + " Attacks " + enemy + " for " + QString("%1").arg(attackDmg_) + " damage. CRITICAL HIT!\n";
@@ -105,26 +145,37 @@ int Player::doSpecialAbility(QString enemy)
 int Player::doHitRoll()
 {
     int hitRoll = rand()% ((20 + 1) - 1) + 1;
-    return hitRoll + precisionBonus_;
+    return hitRoll + precision_;
 }
 
-void Player::doHit(int dmg, int enemyHitRoll, QString enemyName, bool isEnemyAlive)
+void Player::doHit(int dmg, int enemyHitRoll, QString enemyName, bool isEnemyAlive, int enemyDotType)
 {
-    int dodgeChance = agilityDefault_ + agilityBonus_;
+    int dodgeChance = agility_;
 
     if (stamina_ == 0)
-        dodgeChance = (agilityDefault_ + agilityBonus_) / 2;
+        dodgeChance = (agilityDefault_) / 2;
 
     if (!isEnemyAlive)
     {
         message_ = name_ + " Wins the battle!\n\n";
+        dot_.clear();
     }
     else
     {
         if (enemyHitRoll >= dodgeChance)
         {
-            if (enemyHitRoll >= block_)
+            if (enemyHitRoll >= block_ + getShieldBlockBonus())
             {
+                int dotChance = rand() % ((100 + 1) - 1) + 1;
+                bool absorbed = false;
+                //int orgDmg = dmg;
+
+                if (classType_ == 4 && didKnightAbsorb(enemyHitRoll))
+                {
+                    absorbed = 2;
+                    dmg /= 2;
+                }
+
                 health_ = health_ - dmg;
                 if (health_ <= 0)
                 {
@@ -136,7 +187,228 @@ void Player::doHit(int dmg, int enemyHitRoll, QString enemyName, bool isEnemyAli
                     msgBox.exec();
                 }
                 else
-                    message_ = name_ + " takes " + QString("%1").arg(dmg) + " damage.\n\n";
+                {
+                    if (absorbed)
+                        message_ = name_ + " absorbed " + enemyName + "'s attack, taking only " + QString("%1").arg(dmg) + " damage.\n\n";
+                    else
+                        message_ = name_ + " takes " + QString("%1").arg(dmg) + " damage.\n\n";
+
+                    DoT dotInfo;
+                    int dotEffectiveness = rand()% 5 + 3;
+
+                    if (armourType_ == 0)
+                    {
+                        if (enemyDotType == 1 && dotChance >= 50)
+                        {
+                            dotInfo.name = "Bleeding";
+                            dotInfo.dotType = enemyDotType;
+                            dotInfo.dotDamage = 1;
+
+                            for (int i = 0; i < dotEffectiveness; i++)
+                            {
+                                dot_.push_back(dotInfo);
+                            }
+
+                            message_ += enemyName + " slashed you and caused a " + dotInfo.name + " effect\n\n";
+                        }
+                        else if (enemyDotType == 2 && dotChance >= 30)
+                        {
+                            dotInfo.name = "Blunt Trauma";
+                            dotInfo.dotType = enemyDotType;
+                            dotInfo.dotDamage = 1;
+
+                            for (int i = 0; i < dotEffectiveness; i++)
+                            {
+                                dot_.push_back(dotInfo);
+                            }
+
+                            message_ += enemyName + " crushed you and caused a " + dotInfo.name + " effect\n\n";
+                        }
+                        else if (enemyDotType == 3 && dotChance >= 50)
+                        {
+                            dotInfo.name = "Poison";
+                            dotInfo.dotType = enemyDotType;
+                            dotInfo.dotDamage = 1;
+
+                            for (int i = 0; i < dotEffectiveness; i++)
+                            {
+                                dot_.push_back(dotInfo);
+                            }
+
+                            message_ += enemyName + " slashed you with a poison laced blade and caused a " + dotInfo.name + " effect\n\n";
+                        }
+                    }
+                    else if (armourType_ == 1)
+                    {
+                        if (enemyDotType == 1 && dotChance >= 80)
+                        {
+                            dotInfo.name = "Bleeding";
+                            dotInfo.dotType = enemyDotType;
+                            dotInfo.dotDamage = 1;
+
+                            for (int i = 0; i < dotEffectiveness; i++)
+                            {
+                                dot_.push_back(dotInfo);
+                            }
+
+                            message_ += enemyName + " slashed you and caused a " + dotInfo.name + " effect\n\n";
+                        }
+                        else if (enemyDotType == 2 && dotChance >= 60)
+                        {
+                            dotInfo.name = "Blunt Trauma";
+                            dotInfo.dotType = enemyDotType;
+                            dotInfo.dotDamage = 1;
+
+                            for (int i = 0; i < dotEffectiveness; i++)
+                            {
+                                dot_.push_back(dotInfo);
+                            }
+
+                            message_ += enemyName + " crushed you and caused a " + dotInfo.name + " effect\n\n";
+                        }
+                        else if (enemyDotType == 3 && dotChance >= 80)
+                        {
+                            dotInfo.name = "Poison";
+                            dotInfo.dotType = enemyDotType;
+                            dotInfo.dotDamage = 1;
+
+                            for (int i = 0; i < dotEffectiveness; i++)
+                            {
+                                dot_.push_back(dotInfo);
+                            }
+
+                            message_ += enemyName + " slashed you with a poison laced blade and caused a " + dotInfo.name + " effect\n\n";
+                        }
+                    }
+                    else if (armourType_ == 2)
+                    {
+                        if (enemyDotType == 1 && dotChance >= 85)
+                        {
+                            dotInfo.name = "Bleeding";
+                            dotInfo.dotType = enemyDotType;
+                            dotInfo.dotDamage = 1;
+
+                            for (int i = 0; i < dotEffectiveness; i++)
+                            {
+                                dot_.push_back(dotInfo);
+                            }
+
+                            message_ += enemyName + " slashed you and caused a " + dotInfo.name + " effect\n\n";
+                        }
+                        else if (enemyDotType == 2 && dotChance >= 65)
+                        {
+                            dotInfo.name = "Blunt Trauma";
+                            dotInfo.dotType = enemyDotType;
+                            dotInfo.dotDamage = 1;
+
+                            for (int i = 0; i < dotEffectiveness; i++)
+                            {
+                                dot_.push_back(dotInfo);
+                            }
+
+                            message_ += enemyName + " crushed you and caused a " + dotInfo.name + " effect\n\n";
+                        }
+                        else if (enemyDotType == 3 && dotChance >= 85)
+                        {
+                            dotInfo.name = "Poison";
+                            dotInfo.dotType = enemyDotType;
+                            dotInfo.dotDamage = 1;
+
+                            for (int i = 0; i < dotEffectiveness; i++)
+                            {
+                                dot_.push_back(dotInfo);
+                            }
+
+                            message_ += enemyName + " slashed you with a poison laced blade and caused a " + dotInfo.name + " effect\n\n";
+                        }
+                    }
+                    else if (armourType_ == 3)
+                    {
+                        if (enemyDotType == 1 && dotChance >= 90)
+                        {
+                            dotInfo.name = "Bleeding";
+                            dotInfo.dotType = enemyDotType;
+                            dotInfo.dotDamage = 1;
+
+                            for (int i = 0; i < dotEffectiveness; i++)
+                            {
+                                dot_.push_back(dotInfo);
+                            }
+
+                            message_ += enemyName + " slashed you and caused a " + dotInfo.name + " effect\n\n";
+                        }
+                        else if (enemyDotType == 2 && dotChance >= 70)
+                        {
+                            dotInfo.name = "Blunt Trauma";
+                            dotInfo.dotType = enemyDotType;
+                            dotInfo.dotDamage = 1;
+
+                            for (int i = 0; i < dotEffectiveness; i++)
+                            {
+                                dot_.push_back(dotInfo);
+                            }
+
+                            message_ += enemyName + " crushed you and caused a " + dotInfo.name + " effect\n\n";
+                        }
+                        else if (enemyDotType == 3 && dotChance >= 90)
+                        {
+                            dotInfo.name = "Poison";
+                            dotInfo.dotType = enemyDotType;
+                            dotInfo.dotDamage = 1;
+
+                            for (int i = 0; i < dotEffectiveness; i++)
+                            {
+                                dot_.push_back(dotInfo);
+                            }
+
+                            message_ += enemyName + " slashed you with a poison laced blade and caused a " + dotInfo.name + " effect\n\n";
+                        }
+                    }
+                    else if (armourType_ == 4)
+                    {
+                        int BTBonus = (block_ / 5) * 5;
+
+                        if (enemyDotType == 1 && dotChance >= 95)
+                        {
+                            dotInfo.name = "Bleeding";
+                            dotInfo.dotType = enemyDotType;
+                            dotInfo.dotDamage = 1;
+
+                            for (int i = 0; i < dotEffectiveness; i++)
+                            {
+                                dot_.push_back(dotInfo);
+                            }
+
+                            message_ += enemyName + " slashed you and caused a " + dotInfo.name + " effect\n\n";
+                        }
+                        else if (enemyDotType == 2 && dotChance >= 75 + BTBonus)
+                        {
+                            dotInfo.name = "Blunt Trauma";
+                            dotInfo.dotType = enemyDotType;
+                            dotInfo.dotDamage = 1;
+
+                            for (int i = 0; i < dotEffectiveness; i++)
+                            {
+                                dot_.push_back(dotInfo);
+                            }
+
+                            message_ += enemyName + " crushed you and caused a " + dotInfo.name + " effect\n\n";
+                        }
+                        else if (enemyDotType == 3 && dotChance >= 95)
+                        {
+                            dotInfo.name = "Poison";
+                            dotInfo.dotType = enemyDotType;
+                            dotInfo.dotDamage = 1;
+
+                            for (int i = 0; i < dotEffectiveness; i++)
+                            {
+                                dot_.push_back(dotInfo);
+                            }
+
+                            message_ += enemyName + " slashed you with a poison laced blade and caused a " + dotInfo.name + " effect\n\n";
+                        }
+                    }
+                }
             }
             else
                 message_ = name_ + " blocks " + enemyName + "'s attack.\n\n";
@@ -166,6 +438,11 @@ void Player::resetSpecialAbility()
     isSpecialReady_ = false;
     specialAbilityCharge_ = 0;
     specialAbilityCharged_ = 0;
+}
+
+int Player::getClassType()
+{
+    return classType_;
 }
 
 void Player::doLevelUp()
@@ -297,8 +574,11 @@ void Player::save()
     saveFile << name_ << "\n";
     saveFile << health_ << "\n";
     saveFile << maxHealth_ << "\n";
+    saveFile << defaultHealth_ << "\n";
     saveFile << minAttackPower_ << "\n";
     saveFile << maxAttackPower_ << "\n";
+    saveFile << minWeaponAP_ << "\n";
+    saveFile << maxWeaponAP_ << "\n";
     saveFile << level_ << "\n";
     saveFile << gold_ << "\n";
     saveFile << potion_ << "\n";
@@ -311,24 +591,123 @@ void Player::save()
     saveFile << specialAbilityMaxCharges_ << "\n";
     saveFile << isSpecialAbilityLearned_ << "\n";
     saveFile << isSpecialReady_ << "\n";
-    saveFile << vitality_ << "\n";
-    saveFile << strength_ << "\n";
+    saveFile << statVitality_ << "\n";
+    saveFile << equippedVitality_ << "\n";
+    saveFile << statStrength_ << "\n";
+    saveFile << equippedStrength_ << "\n";
     saveFile << agility_ << "\n";
-    saveFile << agilityBonus_ << "\n";
     saveFile << agilityDefault_ << "\n";
+    saveFile << statAgility_ << "\n";
+    saveFile << equippedAgility_ << "\n";
     saveFile << luck_ << "\n";
-    saveFile << luckBonus_ << "\n";
     saveFile << luckDefault_ << "\n";
+    saveFile << statLuck_ << "\n";
+    saveFile << equippedLuck_ << "\n";
     saveFile << intelligence_ << "\n";
     saveFile << intelligenceBonus_ << "\n";
     saveFile << questsCompleted_ << "\n";
     saveFile << precision_ << "\n";
-    saveFile << precisionBonus_ << "\n";
+    saveFile << statPrecision_ << "\n";
+    saveFile << equippedPrecision_ << "\n";
     saveFile << stamina_ << "\n";
     saveFile << maxStamina_ << "\n";
+    saveFile << defaultStamina_ << "\n";
+    saveFile << statStamina_ << "\n";
+    saveFile << equippedStamina_ << "\n";
     saveFile << ration_ << "\n";
     saveFile << location_ << "\n";
     saveFile << block_ << "\n";
+    saveFile << classType_ << "\n";
+    saveFile << mainHandSlot_ << "\n";
+    saveFile << offHandSlot_ << "\n";
+    saveFile << armourSlot_ << "\n";
+    saveFile << ringSlotOne_ << "\n";
+    saveFile << ringSlotTwo_ << "\n";
+    saveFile << trinketSlotOne_ << "\n";
+    saveFile << trinketSlotTwo_ << "\n";
+    saveFile << isShieldEquipped_ << "\n";
+    saveFile << armourType_ << "\n";
+    saveFile << rogueDblAtkBonus_ << "\n";
+    saveFile << warTwoHandAtkBonus_ << "\n";
+    saveFile << knightAbsorbBonus_ << "\n";
+    file.close();
+    saveInventory();
+    saveEquipment();
+}
+
+void Player::saveInventory()
+{
+    QString fileName = "saves\\" + name_ + "Inventory.save";
+    QFile file(fileName);
+    file.open(QIODevice::WriteOnly | QIODevice::Text);
+    QTextStream saveFile(&file);
+
+    for (int i = 0; i < inventory_.length(); i++)
+    {
+        saveFile << inventory_.value(i).name << ","
+                 << inventory_.value(i).itemRarity << ","
+                 << inventory_.value(i).itemType << ","
+                 << inventory_.value(i).armourRating << ","
+                 << inventory_.value(i).armourType << ","
+                 << inventory_.value(i).healType << ","
+                 << inventory_.value(i).healAmount << ","
+                 << inventory_.value(i).isEquippable << ","
+                 << inventory_.value(i).sellPrice << ","
+                 << inventory_.value(i).isUsable << ","
+                 << inventory_.value(i).minAtk << ","
+                 << inventory_.value(i).maxAtk << ","
+                 << inventory_.value(i).block << ","
+                 << inventory_.value(i).holdType << ","
+                 << inventory_.value(i).stat1 << ","
+                 << inventory_.value(i).statType1 << ","
+                 << inventory_.value(i).stat2 << ","
+                 << inventory_.value(i).statType2 << ","
+                 << inventory_.value(i).stat3 << ","
+                 << inventory_.value(i).statType3 << ","
+                 << inventory_.value(i).amount << ","
+                 << inventory_.value(i).numStats << ","
+                 << inventory_.value(i).weaponType << ","
+                 << inventory_.value(i).weaponEdgeType << ","
+                 << inventory_.value(i).dotType_ << "/n";
+    }
+    file.close();
+}
+
+void Player::saveEquipment()
+{
+    QString fileName = "saves\\" + name_ + "Equipment.save";
+    QFile file(fileName);
+    file.open(QIODevice::WriteOnly | QIODevice::Text);
+    QTextStream saveFile(&file);
+
+    for (int i = 0; i < equipment_.length(); i++)
+    {
+        saveFile << equipment_.value(i).name << ","
+                 << equipment_.value(i).itemRarity << ","
+                 << equipment_.value(i).itemType << ","
+                 << equipment_.value(i).armourRating << ","
+                 << equipment_.value(i).armourType << ","
+                 << equipment_.value(i).healType << ","
+                 << equipment_.value(i).healAmount << ","
+                 << equipment_.value(i).isEquippable << ","
+                 << equipment_.value(i).sellPrice << ","
+                 << equipment_.value(i).isUsable << ","
+                 << equipment_.value(i).minAtk << ","
+                 << equipment_.value(i).maxAtk << ","
+                 << equipment_.value(i).block << ","
+                 << equipment_.value(i).holdType << ","
+                 << equipment_.value(i).stat1 << ","
+                 << equipment_.value(i).statType1 << ","
+                 << equipment_.value(i).stat2 << ","
+                 << equipment_.value(i).statType2 << ","
+                 << equipment_.value(i).stat3 << ","
+                 << equipment_.value(i).statType3 << ","
+                 << equipment_.value(i).amount << ","
+                 << equipment_.value(i).numStats << ","
+                 << equipment_.value(i).weaponType << ","
+                 << equipment_.value(i).weaponEdgeType << ","
+                 << equipment_.value(i).dotType_ << "\n";
+    }
     file.close();
 }
 
@@ -343,8 +722,11 @@ void Player::load(QString playerName)
         name_ = saveFile.readLine();
         health_ = saveFile.readLine().toInt();
         maxHealth_ = saveFile.readLine().toInt();
+        defaultHealth_ = saveFile.readLine().toUInt();
         minAttackPower_ = saveFile.readLine().toInt();
         maxAttackPower_ = saveFile.readLine().toInt();
+        minWeaponAP_ = saveFile.readLine().toInt();
+        maxWeaponAP_ = saveFile.readLine().toInt();
         level_ = saveFile.readLine().toInt();
         gold_ = saveFile.readLine().toInt();
         potion_ = saveFile.readLine().toInt();
@@ -357,38 +739,187 @@ void Player::load(QString playerName)
         specialAbilityMaxCharges_ = saveFile.readLine().toInt();
         isSpecialAbilityLearned_ = saveFile.readLine().toInt();
         isSpecialReady_ = saveFile.readLine().toInt();
-        vitality_ = saveFile.readLine().toInt();
-        strength_ = saveFile.readLine().toInt();
+        statVitality_ = saveFile.readLine().toInt();
+        equippedVitality_ = saveFile.readLine().toInt();
+        statStrength_ = saveFile.readLine().toInt();
+        equippedStrength_ = saveFile.readLine().toInt();
         agility_ = saveFile.readLine().toInt();
-        agilityBonus_ = saveFile.readLine().toInt();
         agilityDefault_ = saveFile.readLine().toInt();
+        statAgility_ = saveFile.readLine().toInt();
+        equippedAgility_ = saveFile.readLine().toInt();
         luck_ = saveFile.readLine().toInt();
-        luckBonus_ = saveFile.readLine().toInt();
         luckDefault_ = saveFile.readLine().toInt();
+        statLuck_ = saveFile.readLine().toInt();
+        equippedLuck_ = saveFile.readLine().toInt();
         intelligence_ = saveFile.readLine().toInt();
         intelligenceBonus_ = saveFile.readLine().toInt();
         questsCompleted_ = saveFile.readLine().toInt();
         precision_ = saveFile.readLine().toInt();
-        precisionBonus_ = saveFile.readLine().toInt();
+        statPrecision_ = saveFile.readLine().toInt();
+        equippedPrecision_ = saveFile.readLine().toInt();
         stamina_ = saveFile.readLine().toInt();
         maxStamina_ = saveFile.readLine().toInt();
+        defaultStamina_ = saveFile.readLine().toInt();
+        statStamina_ = saveFile.readLine().toInt();
+        equippedStamina_ = saveFile.readLine().toInt();
         ration_ = saveFile.readLine().toInt();
         location_ = saveFile.readLine().toInt();
         block_ = saveFile.readLine().toInt();
+        classType_ = saveFile.readLine().toInt();
+        mainHandSlot_ = saveFile.readLine().toInt();
+        offHandSlot_ = saveFile.readLine().toInt();
+        armourSlot_ = saveFile.readLine().toInt();
+        ringSlotOne_ = saveFile.readLine().toInt();
+        ringSlotTwo_ = saveFile.readLine().toInt();
+        trinketSlotOne_ = saveFile.readLine().toInt();
+        trinketSlotTwo_ = saveFile.readLine().toInt();
+        isShieldEquipped_ = saveFile.readLine().toInt();
+        armourType_ = saveFile.readLine().toInt();
+        rogueDblAtkBonus_ = saveFile.readLine().toInt();
+        warTwoHandAtkBonus_ = saveFile.readLine().toInt();
+        knightAbsorbBonus_ = saveFile.readLine().toInt();
         file.close();
+    }
+    loadInventory(playerName);
+    loadEquipment(playerName);
+    setMaxHealth();
+    setStrength();
+}
+
+void Player::loadInventory(QString playerName)
+{
+    QString fileName = "saves\\" + playerName + "Inventory.save";
+    QFile file(fileName);
+    QStringList inventory;
+    file.open(QIODevice::ReadOnly| QIODevice::Text);
+    QTextStream saveFile(&file);
+    if (file.exists() && file.isOpen())
+    {
+        while (!file.atEnd())
+        {
+            QByteArray line = file.readLine();
+            inventory.append(line.split('\n').first());
+        }
+        file.close();
+    }
+
+    QStringList item;
+    Item invItem;
+    for (int i = 0; i < inventory.length(); i++)
+    {
+        item = inventory.value(i).split(',');
+        invItem.name = item.value(0);
+        invItem.itemRarity = item.value(1).toInt();
+        invItem.itemType = item.value(2).toInt();
+        invItem.armourRating = item.value(3).toInt();
+        invItem.armourType = item.value(4).toInt();
+        invItem.healType = item.value(5).toInt();
+        invItem.healAmount = item.value(6).toInt();
+        invItem.isEquippable = item.value(7).toInt();
+        invItem.sellPrice = item.value(8).toInt();
+        invItem.isUsable = item.value(9).toInt();
+        invItem.minAtk = item.value(10).toInt();
+        invItem.maxAtk = item.value(11).toInt();
+        invItem.block = item.value(12).toInt();
+        invItem.holdType = item.value(13).toInt();
+        invItem.stat1 = item.value(14).toInt();
+        invItem.statType1 = item.value(15).toInt();
+        invItem.stat2 = item.value(16).toInt();
+        invItem.statType2 = item.value(17).toInt();
+        invItem.stat3 = item.value(18).toInt();
+        invItem.statType3 = item.value(19).toInt();
+        invItem.amount = item.value(20).toInt();
+        invItem.numStats = item.value(21).toInt();
+        invItem.weaponType = item.value(22).toInt();
+        invItem.weaponType = item.value(23).toInt();
+        invItem.dotType_ = item.value(24).toInt();
+        addItemToInventory(invItem);
     }
 }
 
-void Player::addVitality(int vitality)
+void Player::loadEquipment(QString playerName)
 {
-    vitality_ += vitality;
-    maxHealth_ += 2;
+    QString fileName = "saves\\" + playerName + "Equipment.save";
+    QFile file(fileName);
+    QStringList equipment;
+    file.open(QIODevice::ReadOnly| QIODevice::Text);
+    QTextStream saveFile(&file);
+    if (file.exists() && file.isOpen())
+    {
+        while (!file.atEnd())
+        {
+            QByteArray line = file.readLine();
+            equipment.append(line.split('\n').first());
+        }
+        file.close();
+    }
+
+    QStringList item;
+    Item invItem;
+    for (int i = 0; i < equipment.length(); i++)
+    {
+        item = equipment.value(i).split(',');
+        invItem.name = item.value(0);
+        invItem.itemRarity = item.value(1).toInt();
+        invItem.itemType = item.value(2).toInt();
+        invItem.armourRating = item.value(3).toInt();
+        invItem.armourType = item.value(4).toInt();
+        invItem.healType = item.value(5).toInt();
+        invItem.healAmount = item.value(6).toInt();
+        invItem.isEquippable = item.value(7).toInt();
+        invItem.sellPrice = item.value(8).toInt();
+        invItem.isUsable = item.value(9).toInt();
+        invItem.minAtk = item.value(10).toInt();
+        invItem.maxAtk = item.value(11).toInt();
+        invItem.block = item.value(12).toInt();
+        invItem.holdType = item.value(13).toInt();
+        invItem.stat1 = item.value(14).toInt();
+        invItem.statType1 = item.value(15).toInt();
+        invItem.stat2 = item.value(16).toInt();
+        invItem.statType2 = item.value(17).toInt();
+        invItem.stat3 = item.value(18).toInt();
+        invItem.statType3 = item.value(19).toInt();
+        invItem.amount = item.value(20).toInt();
+        invItem.numStats = item.value(21).toInt();
+        invItem.weaponType = item.value(22).toInt();
+        invItem.weaponType = item.value(23).toInt();
+        invItem.dotType_ = item.value(24).toInt();
+        equipment_.push_back(invItem);
+    }
+}
+
+void Player::addStatVitality(int vitality)
+{
+    statVitality_ += vitality;
+    setMaxHealth();
+}
+
+void Player::addEquippedVitality(int vitality)
+{
+    equippedVitality_ += vitality;
+    setMaxHealth();
 }
 
 void Player::removeVitality(int vitality)
 {
-    vitality_ -= vitality;
-    maxHealth_ -= 2;
+    equippedVitality_ -= vitality;
+    setMaxHealth();
+}
+
+void Player::setMaxHealth()
+{
+    int knightHPBonus = 0;
+    int statHealth = statVitality_ * 2;
+    int equippedHealth = equippedVitality_ * 2;
+    maxHealth_ = defaultHealth_ + statHealth + equippedHealth;
+    vitality_ = statVitality_ + equippedVitality_;
+
+    if (classType_ == 4)
+    {
+        knightAbsorbBonus_ = vitality_ / 5;
+        knightHPBonus = vitality_ / 4;
+        maxHealth_ += knightHPBonus * 2;
+    }
 }
 
 int Player::getVitality()
@@ -396,26 +927,38 @@ int Player::getVitality()
     return vitality_;
 }
 
-void Player::addStrength(int strength)
+int Player::getStatVitality()
 {
-    strength_ += strength;
-    maxAttackPower_ += strength;
+    return statVitality_;
+}
 
-    if (strength_ % 5 == 0)
-    {
-        minAttackPower_ += 5;
-    }
+void Player::addStatStrength(int strength)
+{
+    statStrength_ += strength;
+    setStrength();
+}
+
+void Player::addEquippedStrength(int strength)
+{
+    equippedStrength_ += strength;
+    setStrength();
 }
 
 void Player::removeStrength(int strength)
 {
-    strength_ -= strength;
-    maxAttackPower_ -= strength;
+    equippedStrength_ -= strength;
+    setStrength();
+}
 
-    if (strength_ % 5-4 == 0 )
-    {
-        minAttackPower_ -= 5;
-    }
+void Player::setStrength()
+{
+    strength_ = statStrength_ + equippedStrength_;
+
+    if (classType_ == 3)
+        warTwoHandAtkBonus_ = strength_ / 6;
+
+    calculateMinAttackPower();
+    calculateMaxAttackPower();
 }
 
 int Player::getStrength()
@@ -423,24 +966,42 @@ int Player::getStrength()
     return strength_;
 }
 
-void Player::addAgility(int agility)
+int Player::getStatStrength()
 {
-    agility_ += agility;
+    return statStrength_;
+}
 
-    if (agility_ % 5 == 0)
-    {
-        agilityBonus_ += 1;
-    }
+void Player::addStatAgility(int agility)
+{
+    statAgility_ += agility;
+    setAgility();
+}
+
+void Player::addEquippedAgility(int agility)
+{
+    equippedAgility_ += agility;
+    setAgility();
 }
 
 void Player::removeAgility(int agility)
 {
-    agility_ -= agility;
+    equippedAgility_ -= agility;
+    setAgility();
+}
 
-    if (agility_ % 5-4 == 0)
-    {
-        agilityBonus_ -= 1;
-    }
+void Player::setAgility()
+{
+    int totalAgilityPoints = statAgility_ + equippedAgility_;
+    int agilityBonus = 0;
+
+    if (classType_ == 2)
+        agilityBonus = totalAgilityPoints / 3;
+    else if (classType_ == 4)
+        knightBlockBonus_ = totalAgilityPoints / 5;
+    else
+        agilityBonus = totalAgilityPoints / 5;
+
+    agility_ = agilityDefault_ + agilityBonus;
 }
 
 int Player::getAgility()
@@ -448,29 +1009,53 @@ int Player::getAgility()
     return agility_;
 }
 
-void Player::addLuck(int luck)
+int Player::getStatAgility()
 {
-    luck_ += luck;
+    return statAgility_;
+}
 
-    if (luck_ % 5 == 0)
-    {
-        luckBonus_ += 1;
-    }
+void Player::addStatLuck(int luck)
+{
+    statLuck_ += luck;
+    setLuck();
+}
+
+void Player::addEquippedLuck(int luck)
+{
+    equippedLuck_ += luck;
+    setLuck();
 }
 
 void Player::removeLuck(int luck)
 {
-    luck_ -= luck;
+    equippedLuck_ -= luck;
+    setLuck();
+}
 
-    if (luck_ % 5-4 == 0)
+void Player::setLuck()
+{
+    int totalLuckPoints = statLuck_ + equippedLuck_;
+    int luckBonus;
+
+    if (classType_ == 2)
     {
-        luckBonus_ -= 1;
+        luckBonus = totalLuckPoints / 4;
+        rogueDblAtkBonus_ = totalLuckPoints / 6;
     }
+    else
+        luckBonus = totalLuckPoints / 5;
+
+    luck_ = luckDefault_ - luckBonus;
 }
 
 int Player::getLuck()
 {
     return luck_;
+}
+
+int Player::getStatLuck()
+{
+    return statLuck_;
 }
 
 void Player::addIntelligence(int intelligence)
@@ -488,24 +1073,33 @@ int Player::getIntelligence()
     return intelligence_;
 }
 
-void Player::addPrecision(int precision)
+void Player::addStatPrecision(int precision)
 {
-    precision_ += precision;
+    statPrecision_ += precision;
+    setPrecision();
+}
 
-    if (precision_ % 5 == 0)
-    {
-        precisionBonus_ += 1;
-    }
+void Player::addEquippedPrecision(int precision)
+{
+    equippedPrecision_ += precision;
+    setPrecision();
 }
 
 void Player::removePrecision(int precision)
 {
-    precision_ -= precision;
+    equippedPrecision_ -= precision;
+    setPrecision();
+}
 
-    if (precision_ % 5-4 == 0)
-    {
-        precisionBonus_ -= 1;
-    }
+void Player::setPrecision()
+{
+    int totalPrecisionPoints = statPrecision_ + equippedPrecision_;
+
+    if (classType_ == 3)
+        precision_ = totalPrecisionPoints / 3;
+    else
+        precision_ = totalPrecisionPoints / 5;
+
 }
 
 int Player::getPrecision()
@@ -513,9 +1107,19 @@ int Player::getPrecision()
     return precision_;
 }
 
+int Player::getStatPrecision()
+{
+    return statPrecision_;
+}
+
 void Player::setStamina(int stamina)
 {
     stamina_ = stamina;
+}
+
+void Player::setMaxStamina()
+{
+    maxStamina_ = defaultStamina_ + statStamina_ + equippedStamina_;
 }
 
 void Player::addStamina(int stamina)
@@ -528,15 +1132,20 @@ void Player::addStamina(int stamina)
 
 void Player::removeStatStamina(int stamina)
 {
-    maxStamina_ -= stamina;
-
-    if (stamina_ > maxStamina_)
-        stamina_ = maxStamina_;
+    equippedStamina_ -= stamina;
+    setMaxStamina();
 }
 
 void Player::addStatStamina(int stamina)
 {
-    maxStamina_ += stamina;
+    statStamina_ += stamina;
+    setMaxStamina();
+}
+
+void Player::addEquippedStamina(int stamina)
+{
+    equippedStamina_ += stamina;
+    setMaxStamina();
 }
 
 void Player::removeStamina(int action)
@@ -560,10 +1169,39 @@ int Player::getMaxStamina()
     return maxStamina_;
 }
 
-void Player::addMaxStamina(int maxStamina)
+int Player::getStatStamina()
 {
-    maxStamina_ += maxStamina;
-    stamina_ = maxStamina_;
+    return statStamina_;
+}
+
+int Player::getTotalAgilityPoints()
+{
+    return statAgility_ + equippedAgility_;
+}
+
+int Player::getTotalVitalityPoints()
+{
+    return statVitality_ + equippedVitality_;
+}
+
+int Player::getTotalStrengthPoints()
+{
+    return statStrength_ + equippedStrength_;
+}
+
+int Player::getTotalPrecisionPoints()
+{
+    return statPrecision_ + equippedPrecision_;
+}
+
+int Player::getTotalLuckPoints()
+{
+    return statLuck_ + equippedLuck_;
+}
+
+int Player::getTotalStaminaPoints()
+{
+    return statStamina_ + equippedStamina_;
 }
 
 int Player::getBlock()
@@ -584,11 +1222,13 @@ void Player::removeBlock(int block)
 void Player::equipArmour(int armourRating)
 {
     agilityDefault_ += armourRating;
+    setAgility();
 }
 
 void Player::unequipArmour(int armourRating)
 {
     agilityDefault_ -= armourRating;
+    setAgility();
 }
 
 bool Player::isAlive()
@@ -614,30 +1254,6 @@ void Player::addHealth(int health)
         health_ = maxHealth_;
 }
 
-int Player::getMaxAttackPower()
-{
-    return maxAttackPower_;
-}
-
-void Player::setMaxAttackPower(int maxAttackPower)
-{
-    maxAttackPower_ += maxAttackPower;
-}
-
-int Player::getMinAttackPower()
-{
-    return minAttackPower_;
-}
-
-void Player::setMinAttackPower(int minAttackPower)
-{
-    QString maxAtk = QString::number(maxAttackPower_);
-    if (maxAtk.endsWith('0'))
-    {
-        minAttackPower_ += minAttackPower;
-    }
-}
-
 int Player::getMaxHealth()
 {
     return maxHealth_;
@@ -646,6 +1262,42 @@ int Player::getMaxHealth()
 void Player::setMaxHealth(int maxHealth)
 {
     maxHealth_ += maxHealth;
+}
+
+void Player::calculateMaxAttackPower()
+{
+    int warrMaxBonus = 0;
+    if (classType_ == 3)
+    {
+        warrMaxBonus = strength_ / 4;
+        warrMaxBonus *= 2;
+        maxAttackPower_ = maxWeaponAP_ + strength_ + warrMaxBonus;
+    }
+    else
+        maxAttackPower_ = maxWeaponAP_ + strength_;
+
+}
+
+void Player::calculateMinAttackPower()
+{
+    int minBonus;
+
+    if (classType_ == 3)
+        minBonus = strength_ / 3;
+    else
+        minBonus = strength_ / 5;
+
+    minAttackPower_ = minWeaponAP_ + minBonus;
+}
+
+int Player::getMaxAttackPower()
+{
+    return maxAttackPower_;
+}
+
+int Player::getMinAttackPower()
+{
+    return minAttackPower_;
 }
 
 int Player::getLevel()
@@ -729,9 +1381,9 @@ void Player::addRation(int ration)
         ration_ += ration;
 }
 
-void Player::removeRation()
+void Player::removeRation(int itemIndex)
 {
-    ration_ -= 1;
+    inventory_.remove(itemIndex);
 }
 
 int Player::getGold()
@@ -779,97 +1431,298 @@ QVector<Item> Player::getEquiped()
 
 void Player::addEquipment(Item item)
 {
-    equipment_.push_back(item);
+    itemEquipped_ = false;
 
     if (item.itemType == 2)
     {
-        minAttackPower_ += item.minAtk;
-        maxAttackPower_ += item.maxAtk;
+        if (item.holdType == 1)
+        {
+            if (classType_ == 2 && (item.weaponType == 3 || item.weaponType == 4 || item.weaponType == 5))
+            {
+                message_ = classXRef_->getClassType(classType_) + "s can only equip Daggers and Short Swords";
+                displayMessage("Equipping Restriction", message_);
+            }
+            else if (classType_ == 1 && (item.weaponType == 2 || item.weaponType == 3 || item.weaponType == 4 || item.weaponType == 5))
+            {
+                message_ = classXRef_->getClassType(classType_) + "s can only equip Daggers, Staffs and Scepters";
+                displayMessage("Equipping Restriction", message_);
+            }
+            else
+            {
+                if (mainHandSlot_ != 0)
+                {
+                    message_ = "You already have a weapon equipped\n in your main hand slot";
+                    displayMessage("Equipping", message_);
+                }
+                else if (mainHandSlot_ == 0)
+                {
+                    itemEquipped_ = true;
+                    mainHandSlot_ = 1;
+                    minWeaponAP_ = item.minAtk;
+                    maxWeaponAP_ = item.maxAtk;
+                    equipment_.push_back(item);
+                }
+            }
+        }
+
+        if (item.holdType == 2)
+        {
+            if (classType_ == 2 && (item.weaponType == 3 || item.weaponType == 4 || item.weaponType == 5))
+            {
+                message_ = classXRef_->getClassType(classType_) + "s can only equip Daggers and Short Swords";
+                displayMessage("Equipping Restriction", message_);
+            }
+            else if (classType_ == 1 && (item.weaponType == 2 || item.weaponType == 3 || item.weaponType == 4 || item.weaponType == 5))
+            {
+                message_ = classXRef_->getClassType(classType_) + "s can only equip Daggers, Staffs and Scepters";
+                displayMessage("Equipping Restriction", message_);
+            }
+            else
+            {
+                if (mainHandSlot_ == 0)
+                {
+                    itemEquipped_ = true;
+                    mainHandSlot_ = 2;
+                    minWeaponAP_ = item.minAtk;
+                    maxWeaponAP_ = item.maxAtk;
+                    equipment_.push_back(item);
+                }
+                else if (mainHandSlot_ != 0 && offHandSlot_ == 0)
+                {
+                    itemEquipped_ = true;
+                    offHandSlot_ = 1;
+                    minWeaponAP_ += item.minAtk;
+                    maxWeaponAP_ += item.maxAtk;
+                    equipment_.push_back(item);
+                }
+                else if (mainHandSlot_ != 0 and offHandSlot_ != 0)
+                {
+                    message_ = "Both hand slots are filled";
+                    displayMessage("Equipping", message_);
+                }
+            }
+        }
+
+        if (item.holdType == 3)
+        {
+            if (classType_ == 2)
+            {
+                message_ = classXRef_->getClassType(classType_) + "s cannot equip 2 handed weapons";
+                displayMessage("Equipping Restriction", message_);
+            }
+            else if (classType_ == 1 && item.weaponType != 6)
+            {
+                message_ = classXRef_->getClassType(classType_) + "s can only equip Staffs";
+                displayMessage("Equipping Restriction", message_);
+            }
+            else
+            {
+                if (mainHandSlot_ == 0 && offHandSlot_ == 0)
+                {
+                    itemEquipped_ = true;
+                    mainHandSlot_ = 3;
+                    offHandSlot_ = 3;
+                    minWeaponAP_ = item.minAtk;
+                    maxWeaponAP_ = item.maxAtk;
+                    equipment_.push_back(item);
+                }
+                else
+                {
+                    message_ = "You need both hands for this weapon";
+                    displayMessage("Equipping", message_);
+                }
+            }
+        }
+
+        if (itemEquipped_)
+        {
+            calculateMinAttackPower();
+            calculateMaxAttackPower();
+        }
     }
 
     if (item.itemType == 4)
     {
-        addBlock(item.block);
+        if (classType_ == 1 || classType_ == 2)
+        {
+            message_ = classXRef_->getClassType(classType_) + "s cannot equip shields";
+            displayMessage("Equipping Restriction", message_);
+        }
+        else
+        {
+            if (offHandSlot_ == 0)
+            {
+                itemEquipped_ = true;
+                offHandSlot_ = 2;
+                addBlock(item.block);
+                equipment_.push_back(item);
+            }
+            else
+            {
+                message_ = "Your off hand slot is filled";
+                displayMessage("Equipping", message_);
+            }
+        }
     }
 
     if (item.itemType == 3)
     {
-        equipArmour(item.armourRating);
+        if (classType_ == 1 && item.armourType != 1)
+        {
+            message_ = classXRef_->getClassType(classType_) + "s can only wear Cloth armour";
+            displayMessage("Equipping Restriction", message_);
+        }
+        else if (classType_ == 2 && item.armourType != 2)
+        {
+            message_ = classXRef_->getClassType(classType_) + "s can only wear Leather armour";
+            displayMessage("Equipping Restriction", message_);
+        }
+        else if (classType_ == 3 && item.armourType != 3)
+        {
+            message_ = classXRef_->getClassType(classType_) + "s can only wear Mail armour";
+            displayMessage("Equipping Restriction", message_);
+        }
+        else if (classType_ == 4 && item.armourType != 4)
+        {
+            message_ = classXRef_->getClassType(classType_) + "s can only wear Plate armour";
+            displayMessage("Equipping Restriction", message_);
+        }
+        else
+        {
+            if (armourSlot_ == 0)
+            {
+                itemEquipped_ = true;
+                armourSlot_ = 1;
+                armourType_ = item.armourType;
+                equipment_.push_back(item);
+                equipArmour(item.armourRating);
+            }
+            else
+            {
+                message_ = "Your armour slot is filled";
+                displayMessage("Equipping", message_);
+            }
+        }
     }
 
-    switch (item.statType1)
+    if (item.itemType == 6)
     {
-        case 1: //Vitality
-            addVitality(item.stat1);
-            break;
-        case 2: //Strength
-            addStrength(item.stat1);
-            break;
-        case 3: //Stamina
-            addStatStamina(item.stat1);
-            break;
-        case 4: //Agility
-            addAgility(item.stat1);
-            break;
-        case 5: //Luck
-            addLuck(item.stat1);
-            break;
-        case 6: //Precision
-            addPrecision(item.stat1);
-            break;
-        case 7: //Block
-            //do nothing
-            break;
+        if (ringSlotOne_ == 0 && ringSlotTwo_ == 0)
+        {
+            itemEquipped_ = true;
+            ringSlotOne_ = 1;
+            equipment_.push_back(item);
+        }
+        else if (ringSlotOne_ == 1 && ringSlotTwo_ == 0)
+        {
+            itemEquipped_ = true;
+            ringSlotTwo_ = 1;
+            equipment_.push_back(item);
+        }
+        else
+        {
+            message_ = "Both ring slots are filled";
+            displayMessage("Equipping", message_);
+        }
     }
 
-    switch (item.statType2)
+    if (item.itemType == 7)
     {
-        case 1: //Vitality
-            addVitality(item.stat2);
-            break;
-        case 2: //Strength
-            addStrength(item.stat2);
-            break;
-        case 3: //Stamina
-            addStatStamina(item.stat2);
-            break;
-        case 4: //Agility
-            addAgility(item.stat2);
-            break;
-        case 5: //Luck
-            addLuck(item.stat2);
-            break;
-        case 6: //Precision
-            addPrecision(item.stat2);
-            break;
-        case 7: //Block
-            //do nothing
-            break;
+        if (trinketSlotOne_ == 0 && trinketSlotTwo_ == 0)
+        {
+            itemEquipped_ = true;
+            trinketSlotOne_ = 1;
+            equipment_.push_back(item);
+        }
+        else if (trinketSlotOne_ == 1 && trinketSlotTwo_ == 0)
+        {
+            itemEquipped_ = true;
+            trinketSlotTwo_ = 1;
+            equipment_.push_back(item);
+        }
+        else
+        {
+            message_ = "Both trinket slots are filled";
+            displayMessage("Equipping", message_);
+        }
     }
 
-    switch (item.statType3)
+    if (itemEquipped_)
     {
-        case 1: //Vitality
-            addVitality(item.stat3);
-            break;
-        case 2: //Strength
-            addStrength(item.stat3);
-            break;
-        case 3: //Stamina
-            addStatStamina(item.stat3);
-            break;
-        case 4: //Agility
-            addAgility(item.stat3);
-            break;
-        case 5: //Luck
-            addLuck(item.stat3);
-            break;
-        case 6: //Precision
-            addPrecision(item.stat3);
-            break;
-        case 7: //Block
-            //do nothing
-            break;
+        switch (item.statType1)
+        {
+            case 1: //Vitality
+                addEquippedVitality(item.stat1);
+                break;
+            case 2: //Strength
+                addEquippedStrength(item.stat1);
+                break;
+            case 3: //Stamina
+                addEquippedStamina(item.stat1);
+                break;
+            case 4: //Agility
+                addEquippedAgility(item.stat1);
+                break;
+            case 5: //Luck
+                addEquippedLuck(item.stat1);
+                break;
+            case 6: //Precision
+                addEquippedPrecision(item.stat1);
+                break;
+            case 7: //Block
+                addBlock(item.stat1);
+                break;
+        }
+
+        switch (item.statType2)
+        {
+            case 1: //Vitality
+                addEquippedVitality(item.stat2);
+                break;
+            case 2: //Strength
+                addEquippedStrength(item.stat2);
+                break;
+            case 3: //Stamina
+                addEquippedStamina(item.stat2);
+                break;
+            case 4: //Agility
+                addEquippedAgility(item.stat2);
+                break;
+            case 5: //Luck
+                addEquippedLuck(item.stat2);
+                break;
+            case 6: //Precision
+                addEquippedPrecision(item.stat2);
+                break;
+            case 7: //Block
+                addBlock(item.stat2);
+                break;
+        }
+
+        switch (item.statType3)
+        {
+            case 1: //Vitality
+                addEquippedVitality(item.stat3);
+                break;
+            case 2: //Strength
+                addEquippedStrength(item.stat3);
+                break;
+            case 3: //Stamina
+                addEquippedStamina(item.stat3);
+                break;
+            case 4: //Agility
+                addEquippedAgility(item.stat3);
+                break;
+            case 5: //Luck
+                addEquippedLuck(item.stat3);
+                break;
+            case 6: //Precision
+                addEquippedPrecision(item.stat3);
+                break;
+            case 7: //Block
+                addBlock(item.stat3);
+                break;
+        }
     }
 }
 
@@ -880,18 +1733,76 @@ void Player::removeEquipment(int index)
 
     if (item.itemType == 2)
     {
-        minAttackPower_ -= item.minAtk;
-        maxAttackPower_ -= item.maxAtk;
+        minWeaponAP_ -= item.minAtk;
+        maxWeaponAP_ -= item.maxAtk;
+        calculateMinAttackPower();
+        calculateMaxAttackPower();
+
+        if (item.holdType == 3)
+        {
+            mainHandSlot_ = 0;
+            offHandSlot_ = 0;
+        }
+        else if (item.holdType == 1)
+        {
+            mainHandSlot_ = 0;
+        }
+        else if (item.holdType == 2)
+        {
+            if (mainHandSlot_ == 1 && offHandSlot_ == 1)
+            {
+                offHandSlot_ = 0;
+            }
+            else if (mainHandSlot_ == 2 && offHandSlot_ == 1)
+            {
+                offHandSlot_ = 0;
+            }
+            else if (mainHandSlot_ == 2 && offHandSlot_ == 2)
+            {
+                mainHandSlot_ = 0;
+            }
+            else if (mainHandSlot_ == 2 && offHandSlot_ == 0)
+            {
+                mainHandSlot_ = 0;
+            }
+        }
     }
 
     if (item.itemType == 4)
     {
+        offHandSlot_ = 0;
         removeBlock(item.block);
     }
 
     if (item.itemType == 3)
     {
+        armourSlot_ = 0;
+        armourType_ = 0;
         unequipArmour(item.armourRating);
+    }
+
+    if (item.itemType == 6)
+    {
+        if (ringSlotOne_ == 1 && ringSlotTwo_ == 1)
+        {
+            ringSlotTwo_ = 0;
+        }
+        else if (ringSlotOne_ == 1 && ringSlotTwo_ == 0)
+        {
+            ringSlotOne_ = 0;
+        }
+    }
+
+    if (item.itemType == 7)
+    {
+        if (trinketSlotOne_ == 1 && trinketSlotTwo_ == 1)
+        {
+            trinketSlotTwo_ = 0;
+        }
+        else if (trinketSlotOne_ == 1 && trinketSlotTwo_ == 0)
+        {
+            trinketSlotOne_ = 0;
+        }
     }
 
     switch (item.statType1)
@@ -915,7 +1826,7 @@ void Player::removeEquipment(int index)
             removePrecision(item.stat1);
             break;
         case 7: //Block
-            //do nothing
+            removeBlock(item.stat1);
             break;
     }
 
@@ -940,7 +1851,7 @@ void Player::removeEquipment(int index)
             removePrecision(item.stat2);
             break;
         case 7: //Block
-            //do nothing
+            removeBlock(item.stat2);
             break;
     }
 
@@ -965,8 +1876,203 @@ void Player::removeEquipment(int index)
             removePrecision(item.stat3);
             break;
         case 7: //Block
-            //do nothing
+            removeBlock(item.stat3);
             break;
+    }
+}
+
+void Player::addStarterEquipment()
+{
+    Item starterWeapon;
+    Item starterArmour;
+
+    if (classType_ == 1)
+    {
+        //todo
+    }
+    else if (classType_ == 2)
+    {
+        starterWeapon.name="Weak Dagger";
+        starterWeapon.itemRarity=1;
+        starterWeapon.itemType=2;
+        starterWeapon.armourRating=0;
+        starterWeapon.armourType=0;
+        starterWeapon.healType=0;
+        starterWeapon.healAmount=0;
+        starterWeapon.isEquippable=true;
+        starterWeapon.sellPrice=10;
+        starterWeapon.isUsable=false;
+        starterWeapon.minAtk=1;
+        starterWeapon.maxAtk=3;
+        starterWeapon.block=0;
+        starterWeapon.holdType=2;
+        starterWeapon.stat1=0;
+        starterWeapon.stat2=0;
+        starterWeapon.stat3=0;
+        starterWeapon.statType1=0;
+        starterWeapon.statType2=0;
+        starterWeapon.statType3=0;
+        starterWeapon.amount=1;
+        starterWeapon.numStats=0;
+        starterWeapon.weaponType = 1;
+        starterWeapon.weaponEdgeType = 1;
+        starterWeapon.dotType_ = 1;
+        addEquipment(starterWeapon);
+        addEquipment(starterWeapon);
+
+        starterArmour.name="Ruined Leather";
+        starterArmour.itemRarity=1;
+        starterArmour.itemType=3;
+        starterArmour.armourRating=2;
+        starterArmour.armourType=2;
+        starterArmour.healType=0;
+        starterArmour.healAmount=0;
+        starterArmour.isEquippable=true;
+        starterArmour.sellPrice=20;
+        starterArmour.isUsable=false;
+        starterArmour.minAtk=0;
+        starterArmour.maxAtk=0;
+        starterArmour.block=0;
+        starterArmour.holdType=0;
+        starterArmour.stat1=0;
+        starterArmour.stat2=0;
+        starterArmour.stat3=0;
+        starterArmour.statType1=0;
+        starterArmour.statType2=0;
+        starterArmour.statType3=0;
+        starterArmour.amount=1;
+        starterArmour.numStats=0;
+        addEquipment(starterArmour);
+    }
+    else if (classType_ == 3)
+    {
+        starterWeapon.name="Weak Long Sword";
+        starterWeapon.itemRarity=1;
+        starterWeapon.itemType=2;
+        starterWeapon.armourRating=0;
+        starterWeapon.armourType=0;
+        starterWeapon.healType=0;
+        starterWeapon.healAmount=0;
+        starterWeapon.isEquippable=true;
+        starterWeapon.sellPrice=20;
+        starterWeapon.isUsable=false;
+        starterWeapon.minAtk=1;
+        starterWeapon.maxAtk=7;
+        starterWeapon.block=0;
+        starterWeapon.holdType=3;
+        starterWeapon.stat1=0;
+        starterWeapon.stat2=0;
+        starterWeapon.stat3=0;
+        starterWeapon.statType1=0;
+        starterWeapon.statType2=0;
+        starterWeapon.statType3=0;
+        starterWeapon.amount=1;
+        starterWeapon.numStats=0;
+        starterWeapon.weaponType = 3;
+        starterWeapon.weaponEdgeType = 1;
+        starterWeapon.dotType_ = 1;
+        addEquipment(starterWeapon);
+
+        starterArmour.name="Ruined Mail";
+        starterArmour.itemRarity=1;
+        starterArmour.itemType=3;
+        starterArmour.armourRating=1;
+        starterArmour.armourType=3;
+        starterArmour.healType=0;
+        starterArmour.healAmount=0;
+        starterArmour.isEquippable=true;
+        starterArmour.sellPrice=25;
+        starterArmour.isUsable=false;
+        starterArmour.minAtk=0;
+        starterArmour.maxAtk=0;
+        starterArmour.block=0;
+        starterArmour.holdType=0;
+        starterArmour.stat1=0;
+        starterArmour.stat2=0;
+        starterArmour.stat3=0;
+        starterArmour.statType1=0;
+        starterArmour.statType2=0;
+        starterArmour.statType3=0;
+        starterArmour.amount=1;
+        starterArmour.numStats=0;
+        addEquipment(starterArmour);
+    }
+    else if (classType_ == 4)
+    {
+        starterWeapon.name="Weak Short Sword";
+        starterWeapon.itemRarity=1;
+        starterWeapon.itemType=2;
+        starterWeapon.armourRating=0;
+        starterWeapon.armourType=0;
+        starterWeapon.healType=0;
+        starterWeapon.healAmount=0;
+        starterWeapon.isEquippable=true;
+        starterWeapon.sellPrice=15;
+        starterWeapon.isUsable=false;
+        starterWeapon.minAtk=1;
+        starterWeapon.maxAtk=5;
+        starterWeapon.block=0;
+        starterWeapon.holdType=1;
+        starterWeapon.stat1=0;
+        starterWeapon.stat2=0;
+        starterWeapon.stat3=0;
+        starterWeapon.statType1=0;
+        starterWeapon.statType2=0;
+        starterWeapon.statType3=0;
+        starterWeapon.amount=1;
+        starterWeapon.numStats=0;
+        starterWeapon.weaponType = 2;
+        starterWeapon.weaponEdgeType = 1;
+        starterWeapon.dotType_ = 1;
+        addEquipment(starterWeapon);
+
+        starterWeapon.name="Weak Wooden Shield";
+        starterWeapon.itemRarity=1;
+        starterWeapon.itemType=4;
+        starterWeapon.armourRating=0;
+        starterWeapon.armourType=0;
+        starterWeapon.healType=0;
+        starterWeapon.healAmount=0;
+        starterWeapon.isEquippable=true;
+        starterWeapon.sellPrice=15;
+        starterWeapon.isUsable=false;
+        starterWeapon.minAtk=0;
+        starterWeapon.maxAtk=0;
+        starterWeapon.block=7;
+        starterWeapon.holdType=0;
+        starterWeapon.stat1=0;
+        starterWeapon.stat2=0;
+        starterWeapon.stat3=0;
+        starterWeapon.statType1=0;
+        starterWeapon.statType2=0;
+        starterWeapon.statType3=0;
+        starterWeapon.amount=1;
+        starterWeapon.numStats=0;
+        addEquipment(starterWeapon);
+
+        starterArmour.name="Ruined Plate";
+        starterArmour.itemRarity=1;
+        starterArmour.itemType=3;
+        starterArmour.armourRating=0;
+        starterArmour.armourType=4;
+        starterArmour.healType=0;
+        starterArmour.healAmount=0;
+        starterArmour.isEquippable=true;
+        starterArmour.sellPrice=30;
+        starterArmour.isUsable=false;
+        starterArmour.minAtk=0;
+        starterArmour.maxAtk=0;
+        starterArmour.block=0;
+        starterArmour.holdType=0;
+        starterArmour.stat1=0;
+        starterArmour.stat2=0;
+        starterArmour.stat3=0;
+        starterArmour.statType1=0;
+        starterArmour.statType2=0;
+        starterArmour.statType3=0;
+        starterArmour.amount=1;
+        starterArmour.numStats=0;
+        addEquipment(starterArmour);
     }
 }
 
@@ -1048,6 +2154,153 @@ void Player::equippedShield()
 void Player::unequippedShield()
 {
     isShieldEquipped_ = false;
+}
+
+bool Player::itemEquipped()
+{
+    return itemEquipped_;
+}
+
+void Player::displayMessage(QString title, QString message)
+{
+    QMessageBox msgBox;
+    msgBox.setWindowTitle(title);
+    msgBox.setText(message);
+    msgBox.exec();
+}
+
+bool Player::hasBedroll()
+{
+    return hasBedroll_;
+}
+
+void Player::addBedroll()
+{
+    hasBedroll_ = true;
+}
+
+void Player::removeBedroll()
+{
+    hasBedroll_ = false;
+}
+
+bool Player::hasFireStarterKit()
+{
+    return hasFireStarterKit_;
+}
+
+void Player::addFireStarterKit()
+{
+    fireStarterKitAmount_ += 1;
+
+    if (!hasFireStarterKit_)
+        hasFireStarterKit_ = true;
+}
+
+void Player::removeFireStarterKit()
+{
+    fireStarterKitAmount_ -= 1;
+
+    if (fireStarterKitAmount_ < 1)
+        hasFireStarterKit_ = false;
+}
+
+bool Player::hasActiveDoT()
+{
+    bool hasDot = false;
+
+    if (dot_.length() >= 1)
+        hasDot = true;
+
+    return hasDot;
+}
+
+void Player::doDotEffect()
+{
+    health_ -= dot_.value(0).dotDamage;
+    dot_.remove(0);
+
+    message_ = QString("%3 takes %1 damage from the %2 effect\n\n").arg(dot_.value(0).dotDamage).arg(dot_.value(0).name).arg(name_);
+}
+
+int Player::getWeaponDotType()
+{
+    QVector<Item> weapons;
+    int weaponDot;
+
+    for (int i = 0; i < equipment_.length(); i++)
+    {
+        if (equipment_.value(i).itemType == 2)
+        {
+            weapons.push_back(equipment_.value(i));
+        }
+    }
+
+    if (weapons.length() > 1)
+    {
+        int weapIndex = rand() % weapons.length() + 1;
+
+        weaponDot = weapons.value(weapIndex).dotType_;
+    }
+    else
+    {
+        weaponDot = weapons.value(0).dotType_;
+    }
+
+    return weaponDot;
+}
+
+int Player::getWeapon()
+{
+    int weapon = 0;
+
+    for (int i = 0; i < equipment_.length(); i++)
+    {
+        if (equipment_.value(i).itemType == 2)
+        {
+            weapon = equipment_.value(i).holdType;
+        }
+    }
+
+    return weapon;
+}
+
+int Player::getRogueDblAtkBonus()
+{
+    return rogueDblAtkBonus_;
+}
+
+int Player::getShieldBlockBonus()
+{
+    int blockBonus = 0;
+
+    if (classType_ == 4 && isShieldEquipped_)
+        blockBonus = knightAbsorbBonus_;
+
+    return blockBonus;
+}
+
+bool Player::didRoguePassSecondAttackCheck()
+{
+    bool passedCheck = false;
+    int secondAttackChanceBonus = rogueDblAtkBonus_ * 10;
+    int secondAttackChance = rand() % ((100 + 1) - 1) + 1;
+
+    if (secondAttackChance >= (100 - secondAttackChanceBonus))
+        passedCheck = true;
+
+    return passedCheck;
+}
+
+bool Player::didKnightAbsorb(int enemyHitRoll)
+{
+    bool didAbsorb = false;
+    int absorbChanceBonus = knightAbsorbBonus_ * 10;
+
+    if (enemyHitRoll <= absorbChanceBonus)
+        didAbsorb = true;
+
+    return didAbsorb;
 }
 
 bool Player::isSpecialAbilityLeanred()

@@ -1,4 +1,20 @@
-Current Version: 0.3.4
+Current Version: 0.4.0
+
+Change Date: 08/19/2022
+Version 0.4.0
+Major Enhancement #46: Give classes bonuses for certain stats
+Major Enhancement #6: Camping should require you to have a bedroll and/or fire starter kit
+Major Enhancement #45: Limit what a player can equip
+Major Enhancement #36: Add New Weapons Types
+Major Enhancement #44: Add player classes to the game
+Major Enhancement #11: Update what a new Player's stats start as
+Major Enhancement #12: Create new variables for stats gained by equipped items
+Major Enhancement #37: Add Damage Over Time Effects
+Minor Enhancement #50: Update costs of Rations and sleeping in Inns 
+Minor Enhancement #48: Add Functionality for saving and loading inventory and equipped items
+Bug #49: Min and max attack power not updating correctly
+Bug #42: You can continue to add skill points to Vitality passed 20
+
 
 Change Date: 08/15/2022
 Version 0.3.4

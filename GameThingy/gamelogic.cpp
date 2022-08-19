@@ -96,11 +96,11 @@ GameLogic::GameLogic(QWidget *parent) :
     ui->btnLoad->setStyleSheet("background-color: rgb(225, 225, 225, 200)");
     ui->btnSave->setStyleSheet("background-color: rgb(225, 225, 225, 200)");
     ui->btnQuit->setStyleSheet("background-color: rgb(225, 225, 225, 200)");
-    bandit_ = new Bandit("", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-    banditBoss_ = new Bandit("", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+    bandit_ = new Bandit("", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+    banditBoss_ = new Bandit("", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
     warrior_ = new Warrior("", 0, 0, 0, 0, 0);
     warriorBoss_ = new Warrior("", 0, 0, 0, 0, 0);
-    player_ = new Player(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+    player_ = new Player(0, 0, 0, 0, 0, 0);
     quest_ = new quests(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "");
     itemXRef = new itemCrossReference();
     isBagOpen_ = false;
@@ -193,7 +193,17 @@ void GameLogic::on_btnAttack_clicked()
    // {
         if (player_->isAlive())
         {
-            bandit_->doHit(player_->doAttack(bandit_->getName()), player_->doHitRoll(), player_->getName());
+            if (player_->hasActiveDoT())
+            {
+                player_->doDotEffect();
+                message_ += player_->getMessage();
+            }
+            bandit_->doHit(player_->doAttack(bandit_->getName()), player_->doHitRoll(), player_->getName(), player_->getWeaponDotType(), player_->getClassType());
+
+            if (player_->getClassType() == 2 && player_->didRoguePassSecondAttackCheck())
+            {
+                bandit_->doHit(player_->doAttack(bandit_->getName()) / 2, player_->doHitRoll(), player_->getName(), player_->getWeaponDotType(), player_->getClassType());
+            }
 
             if (bandit_->isHit())
             {
@@ -211,7 +221,12 @@ void GameLogic::on_btnAttack_clicked()
 
         if (bandit_->isAlive())
         {
-            player_->doHit(bandit_->doAttack(player_->getName()), bandit_->doHitRoll(), bandit_->getName(), bandit_->isAlive());
+            if (bandit_->hasActiveDoT())
+            {
+                bandit_->doDotEffect();
+                message_ += bandit_->getMessage();
+            }
+            player_->doHit(bandit_->doAttack(player_->getName()), bandit_->doHitRoll(), bandit_->getName(), bandit_->isAlive(), bandit_->getWeaponDot());
             message_ += bandit_->getMessage() + player_->getMessage();
         }
 
@@ -308,13 +323,13 @@ void GameLogic::on_btnSpecialAbility_clicked()
 
     if (player_->isAlive())
     {
-        bandit_->doHit(player_->doSpecialAbility(bandit_->getName()), 20, player_->getName());
+        bandit_->doHit(player_->doSpecialAbility(bandit_->getName()), 20, player_->getName(), player_->getWeaponDotType(), player_->getClassType());
         message_ += player_->getMessage() + bandit_->getMessage();
     }
 
     if (bandit_->isAlive())
     {
-        player_->doHit(bandit_->doAttack(player_->getName()), bandit_->doHitRoll(), bandit_->getName(), bandit_->isAlive());
+        player_->doHit(bandit_->doAttack(player_->getName()), bandit_->doHitRoll(), bandit_->getName(), bandit_->isAlive(), bandit_->getWeaponDot());
         message_ += bandit_->getMessage() + player_->getMessage();
     }
 
@@ -650,11 +665,11 @@ void GameLogic::checkLevel()
     {
         if (quest_->getQuestType() == 0)
         {
-            bandit_ = new Bandit("banditName", 0, 0, 0, 0, 0, 0, 999, 0, 0, 0);
+            bandit_ = new Bandit("banditName", 0, 0, 0, 0, 0, 0, 999, 0, 0, 0, 0, 0);
         }
         else if (quest_->getQuestType() >= 4)
         {
-            bandit_ = new Bandit("banditName", 0, 0, 0, 0, 0, 0, 999, 0, 0, 0);
+            bandit_ = new Bandit("banditName", 0, 0, 0, 0, 0, 0, 999, 0, 0, 0, 0, 0);
         }
         else
         {
@@ -674,6 +689,8 @@ void GameLogic::checkLevel()
             int banditAgility = 3;
             int objType = 1;
             int banditDropChance = 90;
+            int weaponDot;
+            int armourType = 2;
 
             if (quest_->getQuestType() == 2 && quest_->getIsQuestActive() == 1 && trainerChance >= 75)
             {
@@ -687,6 +704,7 @@ void GameLogic::checkLevel()
                 banditType = 2;
                 banditLevel = 2;
                 banditAgility = 5;
+                weaponDot = rand()% 2 + 1;
 
             }
             else
@@ -698,17 +716,18 @@ void GameLogic::checkLevel()
                 banditCritChance = 20;
                 banditXPReward = 6;
                 banditType = 1;
+                weaponDot = 1;
             }
 
             bandit_ = new Bandit(banditName, banditHealth, banditMaxAttackPower, banditMinAttackPower,
-                                 banditCritChance, banditXPReward, banditLevel, banditType, banditAgility, objType, banditDropChance);
+                                 banditCritChance, banditXPReward, banditLevel, banditType, banditAgility, objType, banditDropChance, weaponDot, armourType);
         }
     }
     else if (location_ == deepwoodForest)
     {
         if (player_->getQuestsCompleted() < 2)
         {
-            bandit_ = new Bandit("banditName", 0, 0, 0, 0, 0, 0, 999, 0, 0, 0);
+            bandit_ = new Bandit("banditName", 0, 0, 0, 0, 0, 0, 999, 0, 0, 0, 0, 0);
         }
         else
         {
@@ -728,6 +747,8 @@ void GameLogic::checkLevel()
             int banditAgility = 3;
             int objType = 1;
             int banditDropChance = 90;
+            int weaponDot;
+            int armourType = 2;
 
             if (quest_->getQuestType() == 3 && quest_->getIsQuestActive() == 1 && trainerChance >= 85)
             {
@@ -741,6 +762,7 @@ void GameLogic::checkLevel()
                 banditType = 3;
                 banditLevel = 2;
                 banditAgility = 6;
+                weaponDot = rand()% 3 + 1;
             }
             else if (quest_->getQuestType() == 5 && quest_->getIsQuestActive() == 1)
             {
@@ -752,6 +774,7 @@ void GameLogic::checkLevel()
                 banditCritChance = 20;
                 banditXPReward = 6;
                 banditType = 5;
+                weaponDot = 3;
             }
             else
             {
@@ -762,21 +785,22 @@ void GameLogic::checkLevel()
                 banditCritChance = 20;
                 banditXPReward = 6;
                 banditType = 1;
+                weaponDot = 1;
             }
 
             bandit_ = new Bandit(banditName, banditHealth, banditMaxAttackPower, banditMinAttackPower,
-                                 banditCritChance, banditXPReward, banditLevel, banditType, banditAgility, objType, banditDropChance);
+                                 banditCritChance, banditXPReward, banditLevel, banditType, banditAgility, objType, banditDropChance, weaponDot, armourType);
         }
     }
     else if (location_ == riverbane)
     {
         if (quest_->getQuestType() < 4 )
         {
-            bandit_ = new Bandit("banditName", 0, 0, 0, 0, 0, 0, 999, 0, 0, 0);
+            bandit_ = new Bandit("banditName", 0, 0, 0, 0, 0, 0, 999, 0, 0, 0, 0, 0);
         }
         else if (quest_->getQuestType() > 4)
         {
-            bandit_ = new Bandit("banditName", 0, 0, 0, 0, 0, 0, 999, 0, 0, 0);
+            bandit_ = new Bandit("banditName", 0, 0, 0, 0, 0, 0, 999, 0, 0, 0, 0, 0);
         }
         else
         {
@@ -795,6 +819,8 @@ void GameLogic::checkLevel()
             int banditAgility = 4;
             int objType = 1;
             int banditDropChance = 90;
+            int weaponDot = rand()% 2 + 1;
+            int armourType = 2;
 
             banditHealth = rand() % ((12 + 1) - 9) + 9;
             enemyMaxHP_ = banditHealth;
@@ -804,19 +830,19 @@ void GameLogic::checkLevel()
             banditXPReward = 12;
 
             bandit_ = new Bandit(banditName, banditHealth, banditMaxAttackPower, banditMinAttackPower,
-                                 banditCritChance, banditXPReward, banditLevel, banditType, banditAgility, objType, banditDropChance);
+                                 banditCritChance, banditXPReward, banditLevel, banditType, banditAgility, objType, banditDropChance, weaponDot, armourType);
         }
     }
     else if (location_ == riverbaneMine)
     {
         if (quest_->getQuestType() < 7 )
         {
-            bandit_ = new Bandit("banditName", 0, 0, 0, 0, 0, 0, 999, 0, 0, 0);
+            bandit_ = new Bandit("banditName", 0, 0, 0, 0, 0, 0, 999, 0, 0, 0, 0, 0);
         }
         else if (quest_->getQuestType() > 7 || player_->getQuestsCompleted() == 7 ||
                  (quest_->getQuestType() == 7 && quest_->getAmountCompleteII() == quest_->getObjectiveII()))
         {
-            bandit_ = new Bandit("banditName", 0, 0, 0, 0, 0, 0, 999, 0, 0, 0);
+            bandit_ = new Bandit("banditName", 0, 0, 0, 0, 0, 0, 999, 0, 0, 0, 0, 0);
         }
         else
         {
@@ -835,6 +861,8 @@ void GameLogic::checkLevel()
             int banditAgility = 4;
             int objType = 1;
             int banditDropChance = 90;
+            int weaponDot = rand()% 2 + 1;
+            int armourType = 2;
 
             if (quest_->getAmountComplete() == quest_->getObjective())
             {
@@ -860,14 +888,14 @@ void GameLogic::checkLevel()
             }
 
             bandit_ = new Bandit(banditName, banditHealth, banditMaxAttackPower, banditMinAttackPower,
-                                 banditCritChance, banditXPReward, banditLevel, banditType, banditAgility, objType, banditDropChance);
+                                 banditCritChance, banditXPReward, banditLevel, banditType, banditAgility, objType, banditDropChance, weaponDot, armourType);
         }
     }
     else if (location_ == andorjaul)
     {
         if (quest_->getQuestType() < 6 && player_->getQuestsCompleted() < 7)
         {
-            bandit_ = new Bandit("banditName", 0, 0, 0, 0, 0, 0, 999, 0, 0, 0);
+            bandit_ = new Bandit("banditName", 0, 0, 0, 0, 0, 0, 999, 0, 0, 0, 0, 0);
         }
         else
         {
@@ -887,6 +915,8 @@ void GameLogic::checkLevel()
             int objType = 1;
             int banditDropChance = 75;
             int andorjaulSettlerChance = rand() % ((100 + 1) - 1) + 1;
+            int weaponDot = rand()% 2 + 1;
+            int armourType = 2;
 
             if (quest_->getQuestType() == 6  && quest_->getIsQuestActive() == 1 && andorjaulSettlerChance >= 60)
             {
@@ -911,19 +941,47 @@ void GameLogic::checkLevel()
             }
 
             bandit_ = new Bandit(banditName, banditHealth, banditMaxAttackPower, banditMinAttackPower,
-                                 banditCritChance, banditXPReward, banditLevel, banditType, banditAgility, objType, banditDropChance);
+                                 banditCritChance, banditXPReward, banditLevel, banditType, banditAgility, objType, banditDropChance, weaponDot, armourType);
         }
     }
     else
     {
-        bandit_ = new Bandit("banditName", 0, 0, 0, 0, 0, 0, 998, 0, 0, 0);
+        bandit_ = new Bandit("banditName", 0, 0, 0, 0, 0, 0, 998, 0, 0, 0, 0, 0);
     }
 }
 
 void GameLogic::createCharacter()
 {
-    //health, maxHealth, maxAttackPower, minAttackPower, vitality, strength, agility, luck, intelligence, hit, stamina, maxStamina, agilityDefault, luckDefault
-    player_ = new Player(20, 20, 5, 1, 10, 5, 0, 0, 0, 0, 10, 10, 6, 20);
+    QString classRogue = "Rogue";
+    QString classWarrior = "Warrior";
+    QString classKnight = "Knight";
+
+
+
+    QMessageBox msgBox;
+    msgBox.setWindowTitle("Choose a class");
+    msgBox.setText("Which class would you like to make?");
+    QPushButton *btnRogue = msgBox.addButton(classRogue, QMessageBox::ActionRole);
+    QPushButton *btnWarrior = msgBox.addButton(classWarrior, QMessageBox::ActionRole);
+    QPushButton *btnKnight = msgBox.addButton(classKnight, QMessageBox::ActionRole);
+    msgBox.exec();
+
+    if (msgBox.clickedButton() == btnRogue)
+    {
+        //defaultHealth, intelligence, defaultStamina, agilityDefault, luckDefault, classType
+        player_ = new Player(16, 0, 10, 7, 20, 2);
+    }
+    else if (msgBox.clickedButton() == btnWarrior)
+    {
+        //defaultHealth, intelligence, defaultStamina, agilityDefault, luckDefault, classType
+        player_ = new Player(20, 0, 10, 6, 20, 3);
+    }
+    else if (msgBox.clickedButton() == btnKnight)
+    {
+        //defaultHealth, intelligence, defaultStamina, agilityDefault, luckDefault, classType
+        player_ = new Player(26, 0, 10, 5, 20, 4);
+    }
+
     bool ok;
     name_ = QInputDialog::getText(this, tr("New Game"), tr("<p>Greetings traveler, welcome to <b>Windlehelm</b>.<br>"
                                                            "I am <b>Bormeir</b>, head of the <b>Windlehelm City Guard</b>.<br>"
@@ -933,6 +991,10 @@ void GameLogic::createCharacter()
     if(ok)
     {
         player_->setName(name_);
+        player_->addStarterEquipment();
+        player_->setStrength();
+        setPlayerInfo();
+        setPlayerEquipment();
         QMessageBox msgBox;
         msgBox.setWindowTitle("Bormeir");
         msgBox.setText(QString("Good to meet you %1.\n"
@@ -1132,6 +1194,8 @@ void GameLogic::on_btnLoad_clicked()
             }
 
             setPlayerInfo();
+            setPlayerInventory();
+            setPlayerEquipment();
             checkSkillPoints();
             checkLocation();
             ui->lblGoldAmount->setText(QString("Gold: %1").arg(player_->getGold()));
@@ -1219,7 +1283,7 @@ void GameLogic::on_btnBuyPotion_clicked()
 
 void GameLogic::on_btnBuyRation_clicked()
 {
-    if (player_->getGold() >= 50)
+    if (player_->getGold() >= 30)
     {
         if (strRestLocation_[player_->getLocation()] == "City" || strRestLocation_[player_->getLocation()] == "Town")
         {
@@ -1250,7 +1314,7 @@ void GameLogic::on_btnBuyRation_clicked()
             item.numStats = 0;
 
             QSound::play("Sounds\\rationDrop.wav");
-            player_->removeGold(75);
+            player_->removeGold(30);
             player_->addItemToInventory(item);
             ui->lblGoldAmount->setText(QString("Gold: %1").arg(player_->getGold()));
             ui->lblGoldInv->setText(QString("Gold: %1").arg(player_->getGold()));
@@ -1286,12 +1350,12 @@ void GameLogic::setPlayerInfo()
     ui->lblGoldAmount->setText(QString("Gold: %1").arg(player_->getGold()));
     ui->lblGoldInv->setText(QString("Gold: %1").arg(player_->getGold()));
     ui->lblPLevel->setText(QString("%1").arg(player_->getLevel()));
-    ui->lblCStrength->setText(QString("Strength: %1").arg(player_->getStrength()));
-    ui->lblCStamina->setText(QString("Stamina: %1").arg(player_->getMaxStamina()));
-    ui->lblCAgility->setText(QString("Agility: %1").arg(player_->getAgility()));
-    ui->lblCLuck->setText(QString("Luck: %1").arg(player_->getLuck()));
-    ui->lblCVitality->setText(QString("Vitality: %1").arg(player_->getVitality()));
-    ui->lblCHit->setText(QString("Hit: %1").arg(player_->getPrecision()));
+    ui->lblCStrength->setText(QString("Strength: %1").arg(player_->getTotalStrengthPoints()));
+    ui->lblCStamina->setText(QString("Stamina: %1").arg(player_->getTotalStaminaPoints()));
+    ui->lblCAgility->setText(QString("Agility: %1").arg(player_->getTotalAgilityPoints()));
+    ui->lblCLuck->setText(QString("Luck: %1").arg(player_->getTotalLuckPoints()));
+    ui->lblCVitality->setText(QString("Vitality: %1").arg(player_->getTotalVitalityPoints()));
+    ui->lblCHit->setText(QString("Hit: %1").arg(player_->getTotalPrecisionPoints()));
     ui->lblCBlock->setText(QString("Block: %1").arg(player_->getBlock()));
     double xpPercent = (double(player_->getXP()) / double(player_->getXPTillLevel())) * 100;
     double xpPercent2 = (double(player_->getXP()) / double(player_->getXPTillLevel())) * 400;
@@ -1406,7 +1470,9 @@ void GameLogic::equipItem()
     }
 
     player_->addEquipment(inventoryItems.value(itemIndex));
-    player_->removeItemFromInventory(itemIndex);
+
+    if (player_->itemEquipped())
+        player_->removeItemFromInventory(itemIndex);
 
     setPlayerEquipment();
 }
@@ -1496,6 +1562,11 @@ void GameLogic::sellItem()
     {
         player_->addGold(inventoryItems.value(itemIndex).sellPrice);
         player_->removeItemFromInventory(itemIndex);
+
+        if (inventoryItems.value(itemIndex).name == "Bedroll")
+            player_->removeBedroll();
+        if (inventoryItems.value(itemIndex).name == "Firestarter Kit")
+            player_->removeFireStarterKit();
     }
     else
     {
@@ -1537,13 +1608,13 @@ void GameLogic::on_btnRestBS_clicked()
 
         if (msgBox.clickedButton() == btnInn)
         {
-            if (player_->getGold() >= 50)
+            if (player_->getGold() >= 1000)
             {
                 message_ += QString("You pay 50 gold to rest for the night at the %1 Inn\n"
                                     "Health and Stamina are fully restored").arg(strLocations_[player_->getLocation()]);
                 player_->setHealth(player_->getMaxHealth());
                 player_->setStamina(player_->getMaxStamina());
-                player_->removeGold(50);
+                player_->removeGold(1000);
             }
             else
             {
@@ -1553,33 +1624,91 @@ void GameLogic::on_btnRestBS_clicked()
         }
         else if (msgBox.clickedButton() == btnCamp)
         {
-            message_ += QString("You set up camp outside %1 City\n").arg(strLocations_[player_->getLocation()]);
-
-            if (player_->getRation() >= 1)
+            if (!player_->hasBedroll() || !player_->hasFireStarterKit())
             {
-                QMessageBox msgBox;
-                msgBox.setWindowTitle("Rest");
-                msgBox.setText("Would you like to eat a ration before resting?<br>"
-                               "If no, you will not gain health from resting.");
-                QPushButton *btnYes = msgBox.addButton(tr("Yes"), QMessageBox::ActionRole);
-                QPushButton *btnNo = msgBox.addButton(tr("No"), QMessageBox::ActionRole);
-                msgBox.exec();
+                message_ += "You need a Bedroll or Firestarter Kit to set up camp\n";
+            }
+            else
+            {
+                message_ += QString("You set up camp outside %1 City\n").arg(strLocations_[player_->getLocation()]);
 
-                if (msgBox.clickedButton() == btnYes)
+                int itemIndex;
+                bool hasRation = false;
+                QVector<Item> inventoryItems;
+
+                inventoryItems = player_->getInventory();
+
+                for (int a = 0; a < inventoryItems.length(); a++)
                 {
-                    player_->addHealth(5);
-                    player_->removeRation();
-                    message_ += QString("You eat a ration\n"
-                                        "Health is restored by 5\n").arg(strLocations_[player_->getLocation()]);
+                    if (inventoryItems.value(a).name.toUpper() == "RATION")
+                    {
+                        itemIndex = a;
+                        hasRation = true;
+                        break;
+                    }
                 }
-                else if (msgBox.clickedButton() == btnNo)
+
+                if (hasRation)
                 {
-                    //do nothing
+                    QMessageBox msgBox;
+                    msgBox.setWindowTitle("Rest");
+                    msgBox.setText("Would you like to eat a ration before resting?<br>"
+                                   "If no, you will not gain health from resting.");
+                    QPushButton *btnYes = msgBox.addButton(tr("Yes"), QMessageBox::ActionRole);
+                    QPushButton *btnNo = msgBox.addButton(tr("No"), QMessageBox::ActionRole);
+                    msgBox.exec();
+
+                    if (msgBox.clickedButton() == btnYes)
+                    {
+                        if (player_->hasBedroll() && !player_->hasFireStarterKit())
+                        {
+                            player_->addHealth(player_->getMaxHealth() * .25);
+                            player_->addStamina(player_->getMaxStamina() * .30);
+                            message_ += QString("You eat a ration and sleep in your Bedroll\n"
+                                                "Health is restored by 25%\n"
+                                                "Stamina is restored by 30%\n");
+                        }
+                        else if (!player_->hasBedroll() && player_->hasFireStarterKit())
+                        {
+                            player_->addHealth(player_->getMaxHealth() * .25);
+                            player_->addStamina(player_->getMaxStamina() * .40);
+                            message_ += QString("You eat a ration and sleep next to a warm fire\n"
+                                                "Health is restored by 25%\n"
+                                                "Stamina is restored by 40%\n");
+                        }
+                        else if (player_->hasBedroll() && player_->hasFireStarterKit())
+                        {
+                            player_->addHealth(player_->getMaxHealth() * .30);
+                            player_->addStamina(player_->getMaxStamina() * .70);
+                            message_ += QString("You eat a ration and sleep in your Bedroll next to a warm fire\n"
+                                                "Health is restored by 30%\n"
+                                                "Stamina is restored by 70%\n");
+                        }
+                        player_->removeRation(itemIndex);
+                    }
+                    else if (msgBox.clickedButton() == btnNo)
+                    {
+                        if (player_->hasBedroll() && !player_->hasFireStarterKit())
+                        {
+                            player_->addStamina(player_->getMaxStamina() * .20);
+                            message_ += QString("You sleep in your Bedroll\n"
+                                                "Stamina is restored by 20%\n");
+                        }
+                        else if (!player_->hasBedroll() && player_->hasFireStarterKit())
+                        {
+                            player_->addStamina(player_->getMaxStamina() * .30);
+                            message_ += QString("You sleep next to a warm fire\n"
+                                                "Stamina is restored by 30%\n");
+                        }
+                        else if (player_->hasBedroll() && player_->hasFireStarterKit())
+                        {
+                            player_->addStamina(player_->getMaxStamina() * .70);
+                            message_ += QString("You sleep in your Bedroll next to a warm frire\n"
+                                                "Stamina is restored by 50%\n");
+                        }
+                    }
                 }
             }
-
-            player_->addStamina(2);
-            message_ += QString("Stamina is restored by 2");
         }
         else if (msgBox.clickedButton() == btnCancel)
         {
@@ -1607,13 +1736,13 @@ void GameLogic::on_btnRestBS_clicked()
 
             if (msgBox.clickedButton() == btnInn)
             {
-                if (player_->getGold() >= 30)
+                if (player_->getGold() >= 700)
                 {
                     message_ += QString("You pay 30 gold to rest for the night at the %1 Inn\n"
                                         "Health and Stamina are restored by 4").arg(strLocations_[player_->getLocation()]);
-                    player_->addHealth(4);
-                    player_->addStamina(4);
-                    player_->removeGold(30);
+                    player_->addHealth(player_->getMaxHealth() * .50);
+                    player_->addStamina(player_->getMaxHealth() * .50);
+                    player_->removeGold(700);
                 }
                 else
                 {
@@ -1623,33 +1752,91 @@ void GameLogic::on_btnRestBS_clicked()
             }
             else if (msgBox.clickedButton() == btnCamp)
             {
-                message_ += QString("You set up camp outside %1 City\n").arg(strLocations_[player_->getLocation()]);
-
-                if (player_->getRation() >= 1)
+                if (!player_->hasBedroll() || !player_->hasFireStarterKit())
                 {
-                    QMessageBox msgBox;
-                    msgBox.setWindowTitle("Rest");
-                    msgBox.setText("Would you like to eat a ration before resting?<br>"
-                                   "If no, you will not gain health from resting.");
-                    QPushButton *btnYes = msgBox.addButton(tr("Yes"), QMessageBox::ActionRole);
-                    QPushButton *btnNo = msgBox.addButton(tr("No"), QMessageBox::ActionRole);
-                    msgBox.exec();
+                    message_ += "You need a Bedroll or Firestarter Kit to set up camp\n";
+                }
+                else
+                {
+                    message_ += QString("You set up camp outside %1 City\n").arg(strLocations_[player_->getLocation()]);
 
-                    if (msgBox.clickedButton() == btnYes)
+                    int itemIndex;
+                    bool hasRation = false;
+                    QVector<Item> inventoryItems;
+
+                    inventoryItems = player_->getInventory();
+
+                    for (int a = 0; a < inventoryItems.length(); a++)
                     {
-                        player_->addHealth(5);
-                        player_->removeRation();
-                        message_ += QString("You eat a ration\n"
-                                            "Health is restored by 5\n").arg(strLocations_[player_->getLocation()]);
+                        if (inventoryItems.value(a).name.toUpper() == "RATION")
+                        {
+                            itemIndex = a;
+                            hasRation = true;
+                            break;
+                        }
                     }
-                    else if (msgBox.clickedButton() == btnNo)
+
+                    if (hasRation)
                     {
-                        //do nothing
+                        QMessageBox msgBox;
+                        msgBox.setWindowTitle("Rest");
+                        msgBox.setText("Would you like to eat a ration before resting?<br>"
+                                       "If no, you will not gain health from resting.");
+                        QPushButton *btnYes = msgBox.addButton(tr("Yes"), QMessageBox::ActionRole);
+                        QPushButton *btnNo = msgBox.addButton(tr("No"), QMessageBox::ActionRole);
+                        msgBox.exec();
+
+                        if (msgBox.clickedButton() == btnYes)
+                        {
+                            if (player_->hasBedroll() && !player_->hasFireStarterKit())
+                            {
+                                player_->addHealth(player_->getMaxHealth() * .25);
+                                player_->addStamina(player_->getMaxStamina() * .30);
+                                message_ += QString("You eat a ration and sleep in your Bedroll\n"
+                                                    "Health is restored by 25%\n"
+                                                    "Stamina is restored by 30%\n");
+                            }
+                            else if (!player_->hasBedroll() && player_->hasFireStarterKit())
+                            {
+                                player_->addHealth(player_->getMaxHealth() * .25);
+                                player_->addStamina(player_->getMaxStamina() * .40);
+                                message_ += QString("You eat a ration and sleep next to a warm fire\n"
+                                                    "Health is restored by 25%\n"
+                                                    "Stamina is restored by 40%\n");
+                            }
+                            else if (player_->hasBedroll() && player_->hasFireStarterKit())
+                            {
+                                player_->addHealth(player_->getMaxHealth() * .30);
+                                player_->addStamina(player_->getMaxStamina() * .70);
+                                message_ += QString("You eat a ration and sleep in your Bedroll next to a warm fire\n"
+                                                    "Health is restored by 30%\n"
+                                                    "Stamina is restored by 70%\n");
+                            }
+                            player_->removeRation(itemIndex);
+                        }
+                        else if (msgBox.clickedButton() == btnNo)
+                        {
+                            if (player_->hasBedroll() && !player_->hasFireStarterKit())
+                            {
+                                player_->addStamina(player_->getMaxStamina() * .20);
+                                message_ += QString("You sleep in your Bedroll\n"
+                                                    "Stamina is restored by 20%\n");
+                            }
+                            else if (!player_->hasBedroll() && player_->hasFireStarterKit())
+                            {
+                                player_->addStamina(player_->getMaxStamina() * .30);
+                                message_ += QString("You sleep next to a warm fire\n"
+                                                    "Stamina is restored by 30%\n");
+                            }
+                            else if (player_->hasBedroll() && player_->hasFireStarterKit())
+                            {
+                                player_->addStamina(player_->getMaxStamina() * .70);
+                                message_ += QString("You sleep in your Bedroll next to a warm frire\n"
+                                                    "Stamina is restored by 50%\n");
+                            }
+                        }
                     }
                 }
-
-                player_->addStamina(2);
-                message_ += QString("Stamina is restored by 2");
             }
             else if (msgBox.clickedButton() == btnCancel)
             {
@@ -1659,38 +1846,97 @@ void GameLogic::on_btnRestBS_clicked()
     }
     else if (strRestLocation_[player_->getLocation()] == "Camp")
     {
-        message_ += QString("You set up camp\n");
-
-        if (player_->getRation() >= 1)
+        if (!player_->hasBedroll() || !player_->hasFireStarterKit())
         {
-            QMessageBox msgBox;
-            msgBox.setWindowTitle("Rest");
-            msgBox.setText("Would you like to eat a ration before resting?<br>"
-                           "If no, you will not gain health from resting.");
-            QPushButton *btnYes = msgBox.addButton(tr("Yes"), QMessageBox::ActionRole);
-            QPushButton *btnNo = msgBox.addButton(tr("No"), QMessageBox::ActionRole);
-            msgBox.exec();
+            message_ += "You need a Bedroll or Firestarter Kit to set up camp\n";
+        }
+        else
+        {
+            message_ += QString("You set up camp\n");
 
-            if (msgBox.clickedButton() == btnYes)
+            int itemIndex;
+            bool hasRation = false;
+            QVector<Item> inventoryItems;
+
+            inventoryItems = player_->getInventory();
+
+            for (int a = 0; a < inventoryItems.length(); a++)
             {
-                player_->addHealth(5);
-                player_->removeRation();
-                message_ += QString("You eat a ration\n"
-                                    "Health is restored by 5\n").arg(strLocations_[player_->getLocation()]);
+                if (inventoryItems.value(a).name.toUpper() == "RATION")
+                {
+                    itemIndex = a;
+                    hasRation = true;
+                    break;
+                }
             }
-            else if (msgBox.clickedButton() == btnNo)
+
+            if (hasRation)
             {
-                //do nothing
+                QMessageBox msgBox;
+                msgBox.setWindowTitle("Rest");
+                msgBox.setText("Would you like to eat a ration before resting?<br>"
+                               "If no, you will not gain health from resting.");
+                QPushButton *btnYes = msgBox.addButton(tr("Yes"), QMessageBox::ActionRole);
+                QPushButton *btnNo = msgBox.addButton(tr("No"), QMessageBox::ActionRole);
+                msgBox.exec();
+
+                if (msgBox.clickedButton() == btnYes)
+                {
+                    if (player_->hasBedroll() && !player_->hasFireStarterKit())
+                    {
+                        player_->addHealth(player_->getMaxHealth() * .25);
+                        player_->addStamina(player_->getMaxStamina() * .30);
+                        message_ += QString("You eat a ration and sleep in your Bedroll\n"
+                                            "Health is restored by 25%\n"
+                                            "Stamina is restored by 30%\n");
+                    }
+                    else if (!player_->hasBedroll() && player_->hasFireStarterKit())
+                    {
+                        player_->addHealth(player_->getMaxHealth() * .25);
+                        player_->addStamina(player_->getMaxStamina() * .40);
+                        message_ += QString("You eat a ration and sleep next to a warm fire\n"
+                                            "Health is restored by 25%\n"
+                                            "Stamina is restored by 40%\n");
+                    }
+                    else if (player_->hasBedroll() && player_->hasFireStarterKit())
+                    {
+                        player_->addHealth(player_->getMaxHealth() * .30);
+                        player_->addStamina(player_->getMaxStamina() * .70);
+                        message_ += QString("You eat a ration and sleep in your Bedroll next to a warm fire\n"
+                                            "Health is restored by 30%\n"
+                                            "Stamina is restored by 70%\n");
+                    }
+                    player_->removeRation(itemIndex);
+                }
+                else if (msgBox.clickedButton() == btnNo)
+                {
+                    if (player_->hasBedroll() && !player_->hasFireStarterKit())
+                    {
+                        player_->addStamina(player_->getMaxStamina() * .20);
+                        message_ += QString("You sleep in your Bedroll\n"
+                                            "Stamina is restored by 20%\n");
+                    }
+                    else if (!player_->hasBedroll() && player_->hasFireStarterKit())
+                    {
+                        player_->addStamina(player_->getMaxStamina() * .30);
+                        message_ += QString("You sleep next to a warm fire\n"
+                                            "Stamina is restored by 30%\n");
+                    }
+                    else if (player_->hasBedroll() && player_->hasFireStarterKit())
+                    {
+                        player_->addStamina(player_->getMaxStamina() * .70);
+                        message_ += QString("You sleep in your Bedroll next to a warm frire\n"
+                                            "Stamina is restored by 50%\n");
+                    }
+                }
             }
         }
-
-        player_->addStamina(2);
-        message_ += QString("Stamina is restored by 2");
     }
 
     setPlayerInfo();
     setPlayerHealth();
     setPlayerStamina();
+    setPlayerInventory();
     ui->txtBattleInfo->setText(message_);
     ui->txtBattleInfo->setEnabled(true);
 }
@@ -1813,46 +2059,40 @@ void GameLogic::checkSkillPoints()
         ui->btnIncreaseStamina->setEnabled(false);
     }
 
-    if (player_->getVitality() == 20)
+    if (player_->getStatVitality() == 20)
     {
         ui->btnIncreaseHP->setEnabled(false);
         ui->btnIncreaseHP->setVisible(false);
     }
 
-    if (player_->getStrength() == 20)
+    if (player_->getStatStrength() == 20)
     {
         ui->btnIncreaseAttack->setEnabled(false);
         ui->btnIncreaseAttack->setVisible(false);
     }
 
-    if (player_->getStamina() == 20)
+    if (player_->getStatStamina() == 20)
     {
         ui->btnIncreaseStamina->setEnabled(false);
         ui->btnIncreaseStamina->setVisible(false);
     }
 
-    if (player_->getAgility() == 20)
+    if (player_->getStatAgility() == 20)
     {
         ui->btnIncreaseAgility->setEnabled(false);
         ui->btnIncreaseAgility->setVisible(false);
     }
 
-    if (player_->getLuck() == 20)
+    if (player_->getStatLuck() == 20)
     {
         ui->btnIncreaseCritChance->setEnabled(false);
         ui->btnIncreaseCritChance->setVisible(false);
     }
 
-    if (player_->getPrecision() == 20)
+    if (player_->getStatPrecision() == 20)
     {
         ui->btnIncreaseHitChance->setEnabled(false);
         ui->btnIncreaseHitChance->setVisible(false);
-    }
-
-    if (player_->getMaxStamina() == 20)
-    {
-        ui->btnIncreaseStamina->setEnabled(false);
-        ui->btnIncreaseStamina->setVisible(false);
     }
 }
 
@@ -2289,11 +2529,10 @@ void GameLogic::openQuestTab()
 
 void GameLogic::on_btnIncreaseHP_clicked()
 {
-    //player_->setMaxHealth(2);
-    player_->addVitality(1);
+    player_->addStatVitality(1);
     player_->setHealth(player_->getMaxHealth());
     ui->lblCHealth->setText(QString("Health: %1/%2").arg(player_->getHealth()).arg(player_->getMaxHealth()));
-    ui->lblCVitality->setText(QString("Vitality: %1").arg(player_->getVitality()));
+    ui->lblCVitality->setText(QString("Vitality: %1").arg(player_->getTotalVitalityPoints()));
     player_->setSkillPoints(1);
     ui->lblCSkillPoints->setText(QString("Skill Points: %1").arg(player_->getSkillPoints()));
     checkSkillPoints();
@@ -2302,11 +2541,9 @@ void GameLogic::on_btnIncreaseHP_clicked()
 
 void GameLogic::on_btnIncreaseAttack_clicked()
 {
-    //player_->setMaxAttackPower(1);
-    //player_->setMinAttackPower(10);
-    player_->addStrength(1);
+    player_->addStatStrength(1);
     ui->lblCAttack->setText(QString("Attack: %1-%2").arg(player_->getMinAttackPower()).arg(player_->getMaxAttackPower()));
-    ui->lblCStrength->setText(QString("Strength: %1").arg(player_->getStrength()));
+    ui->lblCStrength->setText(QString("Strength: %1").arg(player_->getTotalStrengthPoints()));
     player_->setSkillPoints(1);
     ui->lblCSkillPoints->setText(QString("Skill Points: %1").arg(player_->getSkillPoints()));
     checkSkillPoints();
@@ -2314,8 +2551,8 @@ void GameLogic::on_btnIncreaseAttack_clicked()
 
 void GameLogic::on_btnIncreaseStamina_clicked()
 {
-    player_->addMaxStamina(1);
-    ui->lblCStamina->setText(QString("Stamina: %1").arg(player_->getMaxStamina()));
+    player_->addStatStamina(1);
+    ui->lblCStamina->setText(QString("Stamina: %1").arg(player_->getTotalStaminaPoints()));
     player_->setSkillPoints(1);
     ui->lblCSkillPoints->setText(QString("Skill Points: %1").arg(player_->getSkillPoints()));
     checkSkillPoints();
@@ -2324,8 +2561,8 @@ void GameLogic::on_btnIncreaseStamina_clicked()
 
 void GameLogic::on_btnIncreaseAgility_clicked()
 {
-    player_->addAgility(1);
-    ui->lblCAgility->setText(QString("Agility: %1").arg(player_->getAgility()));
+    player_->addStatAgility(1);
+    ui->lblCAgility->setText(QString("Agility: %1").arg(player_->getTotalAgilityPoints()));
     player_->setSkillPoints(1);
     ui->lblCSkillPoints->setText(QString("Skill Points: %1").arg(player_->getSkillPoints()));
     checkSkillPoints();
@@ -2333,8 +2570,8 @@ void GameLogic::on_btnIncreaseAgility_clicked()
 
 void GameLogic::on_btnIncreaseCritChance_clicked()
 {
-    player_->addLuck(1);
-    ui->lblCLuck->setText(QString("Luck: %1").arg(player_->getLuck()));
+    player_->addStatLuck(1);
+    ui->lblCLuck->setText(QString("Luck: %1").arg(player_->getTotalLuckPoints()));
     player_->setSkillPoints(1);
     ui->lblCSkillPoints->setText(QString("Skill Points: %1").arg(player_->getSkillPoints()));
     checkSkillPoints();
@@ -2342,8 +2579,8 @@ void GameLogic::on_btnIncreaseCritChance_clicked()
 
 void GameLogic::on_btnIncreaseHitChance_clicked()
 {
-    player_->addPrecision(1);
-    ui->lblCHit->setText(QString("Hit: %1").arg(player_->getPrecision()));
+    player_->addStatPrecision(1);
+    ui->lblCHit->setText(QString("Hit: %1").arg(player_->getTotalPrecisionPoints()));
     player_->setSkillPoints(1);
     ui->lblCSkillPoints->setText(QString("Skill Points: %1").arg(player_->getSkillPoints()));
     checkSkillPoints();
@@ -3169,41 +3406,44 @@ void GameLogic::setInventoryItemToolTip(QVector<QString> listItems)
         {
             if (inventoryItems.value(itemIndex).statType1 == 0 && inventoryItems.value(itemIndex).statType2 == 0 && inventoryItems.value(itemIndex).statType3 == 0)
             {
-                itemInfo = QString("Type: %1\nRarity: %4\n%5\nDamage: %6-%7\n\nSell Price: %2G\nAmount: %3")
-                        .arg(itemXRef->getItemType(inventoryItems.value(itemIndex).itemType))
-                        .arg(inventoryItems.value(itemIndex).sellPrice).arg(itemAmount)
-                        .arg(itemXRef->getItemRarity(inventoryItems.value(itemIndex).itemRarity))
-                        .arg(itemXRef->getHoldType(inventoryItems.value(itemIndex).holdType))
-                        .arg(inventoryItems.value(itemIndex).minAtk)
-                        .arg(inventoryItems.value(itemIndex).maxAtk);
-            }
-            else if (inventoryItems.value(itemIndex).statType1 > 0 && inventoryItems.value(itemIndex).statType2 == 0 && inventoryItems.value(itemIndex).statType3 == 0)
-            {
-                itemInfo = QString("Type: %1\nRarity: %4\n%5\nDamage: %6-%7\nItem Stats:\n+%9 %10\n\nSell Price: %2G\nAmount: %3")
+                itemInfo = QString("Type: %1\nEdge: %8\nRarity: %4\n%5\nDamage: %6-%7\n\nSell Price: %2G\nAmount: %3")
                         .arg(itemXRef->getItemType(inventoryItems.value(itemIndex).itemType))
                         .arg(inventoryItems.value(itemIndex).sellPrice).arg(itemAmount)
                         .arg(itemXRef->getItemRarity(inventoryItems.value(itemIndex).itemRarity))
                         .arg(itemXRef->getHoldType(inventoryItems.value(itemIndex).holdType))
                         .arg(inventoryItems.value(itemIndex).minAtk)
                         .arg(inventoryItems.value(itemIndex).maxAtk)
-                        .arg(inventoryItems.value(itemIndex).stat1).arg(itemXRef->getStatType(inventoryItems.value(itemIndex).statType1));
+                        .arg(itemXRef->getWeaponEdgeType(inventoryItems.value(itemIndex).weaponEdgeType));
+            }
+            else if (inventoryItems.value(itemIndex).statType1 > 0 && inventoryItems.value(itemIndex).statType2 == 0 && inventoryItems.value(itemIndex).statType3 == 0)
+            {
+                itemInfo = QString("Type: %1\nEdge: %11\nRarity: %4\n%5\nDamage: %6-%7\nItem Stats:\n+%9 %10\n\nSell Price: %2G\nAmount: %3")
+                        .arg(itemXRef->getItemType(inventoryItems.value(itemIndex).itemType))
+                        .arg(inventoryItems.value(itemIndex).sellPrice).arg(itemAmount)
+                        .arg(itemXRef->getItemRarity(inventoryItems.value(itemIndex).itemRarity))
+                        .arg(itemXRef->getHoldType(inventoryItems.value(itemIndex).holdType))
+                        .arg(inventoryItems.value(itemIndex).minAtk)
+                        .arg(inventoryItems.value(itemIndex).maxAtk)
+                        .arg(inventoryItems.value(itemIndex).stat1).arg(itemXRef->getStatType(inventoryItems.value(itemIndex).statType1))
+                        .arg(itemXRef->getWeaponEdgeType(inventoryItems.value(itemIndex).weaponEdgeType));
             }
             else if (inventoryItems.value(itemIndex).statType1 > 0 && inventoryItems.value(itemIndex).statType2 > 0 && inventoryItems.value(itemIndex).statType3 == 0)
             {
                 if (inventoryItems.value(itemIndex).statType1 == inventoryItems.value(itemIndex).statType2)
                 {
-                    itemInfo = QString("Type: %1\nRarity: %4\n%5\nDamage: %6-%7\nItem Stats:\n+%9 %10\n\nSell Price: %2G\nAmount: %3")
+                    itemInfo = QString("Type: %1\nEdge: %11\nRarity: %4\n%5\nDamage: %6-%7\nItem Stats:\n+%9 %10\n\nSell Price: %2G\nAmount: %3")
                             .arg(itemXRef->getItemType(inventoryItems.value(itemIndex).itemType))
                             .arg(inventoryItems.value(itemIndex).sellPrice).arg(itemAmount)
                             .arg(itemXRef->getItemRarity(inventoryItems.value(itemIndex).itemRarity))
                             .arg(itemXRef->getHoldType(inventoryItems.value(itemIndex).holdType))
                             .arg(inventoryItems.value(itemIndex).minAtk)
                             .arg(inventoryItems.value(itemIndex).maxAtk)
-                            .arg(inventoryItems.value(itemIndex).stat1 + inventoryItems.value(itemIndex).stat2).arg(itemXRef->getStatType(inventoryItems.value(itemIndex).statType1));
+                            .arg(inventoryItems.value(itemIndex).stat1 + inventoryItems.value(itemIndex).stat2).arg(itemXRef->getStatType(inventoryItems.value(itemIndex).statType1))
+                            .arg(itemXRef->getWeaponEdgeType(inventoryItems.value(itemIndex).weaponEdgeType));
                 }
                 else
                 {
-                    itemInfo = QString("Type: %1\nRarity: %4\n%5\nDamage: %6-%7\nItem Stats:\n+%8 %9\n+%10 %11\n\nSell Price: %2G\nAmount: %3")
+                    itemInfo = QString("Type: %1\nEdge: %12\nRarity: %4\n%5\nDamage: %6-%7\nItem Stats:\n+%8 %9\n+%10 %11\n\nSell Price: %2G\nAmount: %3")
                             .arg(itemXRef->getItemType(inventoryItems.value(itemIndex).itemType))
                             .arg(inventoryItems.value(itemIndex).sellPrice).arg(itemAmount)
                             .arg(itemXRef->getItemRarity(inventoryItems.value(itemIndex).itemRarity))
@@ -3211,12 +3451,13 @@ void GameLogic::setInventoryItemToolTip(QVector<QString> listItems)
                             .arg(inventoryItems.value(itemIndex).minAtk)
                             .arg(inventoryItems.value(itemIndex).maxAtk)
                             .arg(inventoryItems.value(itemIndex).stat1).arg(itemXRef->getStatType(inventoryItems.value(itemIndex).statType1))
-                            .arg(inventoryItems.value(itemIndex).stat2).arg(itemXRef->getStatType(inventoryItems.value(itemIndex).statType2));
+                            .arg(inventoryItems.value(itemIndex).stat2).arg(itemXRef->getStatType(inventoryItems.value(itemIndex).statType2))
+                            .arg(itemXRef->getWeaponEdgeType(inventoryItems.value(itemIndex).weaponEdgeType));
                 }
             }
             else if (inventoryItems.value(itemIndex).statType1 > 0 && inventoryItems.value(itemIndex).statType2 > 0 && inventoryItems.value(itemIndex).statType3 > 0)
             {
-                itemInfo = QString("Type: %1\nRarity: %4\n%5\nDamage: %6-%7\nItem Stats:\n+%8 %9\n+%10 %11\n+%12 %13\n\nSell Price: %2G\nAmount: %3")
+                itemInfo = QString("Type: %1\nEdge: %14Rarity: %4\n%5\nDamage: %6-%7\nItem Stats:\n+%8 %9\n+%10 %11\n+%12 %13\n\nSell Price: %2G\nAmount: %3")
                         .arg(itemXRef->getItemType(inventoryItems.value(itemIndex).itemType))
                         .arg(inventoryItems.value(itemIndex).sellPrice).arg(itemAmount)
                         .arg(itemXRef->getItemRarity(inventoryItems.value(itemIndex).itemRarity))
@@ -3225,7 +3466,8 @@ void GameLogic::setInventoryItemToolTip(QVector<QString> listItems)
                         .arg(inventoryItems.value(itemIndex).maxAtk)
                         .arg(inventoryItems.value(itemIndex).stat1).arg(itemXRef->getStatType(inventoryItems.value(itemIndex).statType1))
                         .arg(inventoryItems.value(itemIndex).stat2).arg(itemXRef->getStatType(inventoryItems.value(itemIndex).statType2))
-                        .arg(inventoryItems.value(itemIndex).stat3).arg(itemXRef->getStatType(inventoryItems.value(itemIndex).statType3));
+                        .arg(inventoryItems.value(itemIndex).stat3).arg(itemXRef->getStatType(inventoryItems.value(itemIndex).statType3))
+                        .arg(itemXRef->getWeaponEdgeType(inventoryItems.value(itemIndex).weaponEdgeType));
             }
 
         }
@@ -3430,41 +3672,44 @@ void GameLogic::setEquipmentItemToolTip(QVector<QString> listItems)
         {
             if (equippedItems.value(itemIndex).statType1 == 0 && equippedItems.value(itemIndex).statType2 == 0 && equippedItems.value(itemIndex).statType3 == 0)
             {
-                itemInfo = QString("Type: %1\nRarity: %3\n%4\nDamage: %5-%6\n\nSell Price: %2G")
-                        .arg(itemXRef->getItemType(equippedItems.value(itemIndex).itemType))
-                        .arg(equippedItems.value(itemIndex).sellPrice)
-                        .arg(itemXRef->getItemRarity(equippedItems.value(itemIndex).itemRarity))
-                        .arg(itemXRef->getHoldType(equippedItems.value(itemIndex).holdType))
-                        .arg(equippedItems.value(itemIndex).minAtk)
-                        .arg(equippedItems.value(itemIndex).maxAtk);
-            }
-            else if (equippedItems.value(itemIndex).statType1 > 0 && equippedItems.value(itemIndex).statType2 == 0 && equippedItems.value(itemIndex).statType3 == 0)
-            {
-                itemInfo = QString("Type: %1\nRarity: %3\n%4\nDamage: %5-%6\nItem Stats:\n+%7 %8\n\nSell Price: %2G")
+                itemInfo = QString("Type: %1\nEdge: %7\nRarity: %3\n%4\nDamage: %5-%6\n\nSell Price: %2G")
                         .arg(itemXRef->getItemType(equippedItems.value(itemIndex).itemType))
                         .arg(equippedItems.value(itemIndex).sellPrice)
                         .arg(itemXRef->getItemRarity(equippedItems.value(itemIndex).itemRarity))
                         .arg(itemXRef->getHoldType(equippedItems.value(itemIndex).holdType))
                         .arg(equippedItems.value(itemIndex).minAtk)
                         .arg(equippedItems.value(itemIndex).maxAtk)
-                        .arg(equippedItems.value(itemIndex).stat1).arg(itemXRef->getStatType(equippedItems.value(itemIndex).statType1));
+                        .arg(itemXRef->getWeaponEdgeType(equippedItems.value(itemIndex).weaponEdgeType));
+            }
+            else if (equippedItems.value(itemIndex).statType1 > 0 && equippedItems.value(itemIndex).statType2 == 0 && equippedItems.value(itemIndex).statType3 == 0)
+            {
+                itemInfo = QString("Type: %1\nEdge: %9\nRarity: %3\n%4\nDamage: %5-%6\nItem Stats:\n+%7 %8\n\nSell Price: %2G")
+                        .arg(itemXRef->getItemType(equippedItems.value(itemIndex).itemType))
+                        .arg(equippedItems.value(itemIndex).sellPrice)
+                        .arg(itemXRef->getItemRarity(equippedItems.value(itemIndex).itemRarity))
+                        .arg(itemXRef->getHoldType(equippedItems.value(itemIndex).holdType))
+                        .arg(equippedItems.value(itemIndex).minAtk)
+                        .arg(equippedItems.value(itemIndex).maxAtk)
+                        .arg(equippedItems.value(itemIndex).stat1).arg(itemXRef->getStatType(equippedItems.value(itemIndex).statType1))
+                        .arg(itemXRef->getWeaponEdgeType(equippedItems.value(itemIndex).weaponEdgeType));
             }
             else if (equippedItems.value(itemIndex).statType1 > 0 && equippedItems.value(itemIndex).statType2 > 0 && equippedItems.value(itemIndex).statType3 == 0)
             {
                 if (equippedItems.value(itemIndex).statType1 == equippedItems.value(itemIndex).statType2)
                 {
-                    itemInfo = QString("Type: %1\nRarity: %3\n%4\nDamage: %5-%6\nItem Stats:\n+%7 %8\n\nSell Price: %2G")
+                    itemInfo = QString("Type: %1\nEdge: %9\nRarity: %3\n%4\nDamage: %5-%6\nItem Stats:\n+%7 %8\n\nSell Price: %2G")
                             .arg(itemXRef->getItemType(equippedItems.value(itemIndex).itemType))
                             .arg(equippedItems.value(itemIndex).sellPrice)
                             .arg(itemXRef->getItemRarity(equippedItems.value(itemIndex).itemRarity))
                             .arg(itemXRef->getHoldType(equippedItems.value(itemIndex).holdType))
                             .arg(equippedItems.value(itemIndex).minAtk)
                             .arg(equippedItems.value(itemIndex).maxAtk)
-                            .arg(equippedItems.value(itemIndex).stat1 + equippedItems.value(itemIndex).stat2).arg(itemXRef->getStatType(equippedItems.value(itemIndex).statType1));
+                            .arg(equippedItems.value(itemIndex).stat1 + equippedItems.value(itemIndex).stat2).arg(itemXRef->getStatType(equippedItems.value(itemIndex).statType1))
+                            .arg(itemXRef->getWeaponEdgeType(equippedItems.value(itemIndex).weaponEdgeType));
                 }
                 else
                 {
-                    itemInfo = QString("Type: %1\nRarity: %3\n%4\nDamage: %5-%6\nItem Stats:\n+%7 %8\n+%9 %10\n\nSell Price: %2G")
+                    itemInfo = QString("Type: %1\nEdge: %11\nRarity: %3\n%4\nDamage: %5-%6\nItem Stats:\n+%7 %8\n+%9 %10\n\nSell Price: %2G")
                             .arg(itemXRef->getItemType(equippedItems.value(itemIndex).itemType))
                             .arg(equippedItems.value(itemIndex).sellPrice)
                             .arg(itemXRef->getItemRarity(equippedItems.value(itemIndex).itemRarity))
@@ -3472,12 +3717,13 @@ void GameLogic::setEquipmentItemToolTip(QVector<QString> listItems)
                             .arg(equippedItems.value(itemIndex).minAtk)
                             .arg(equippedItems.value(itemIndex).maxAtk)
                             .arg(equippedItems.value(itemIndex).stat1).arg(itemXRef->getStatType(equippedItems.value(itemIndex).statType1))
-                            .arg(equippedItems.value(itemIndex).stat2).arg(itemXRef->getStatType(equippedItems.value(itemIndex).statType2));
+                            .arg(equippedItems.value(itemIndex).stat2).arg(itemXRef->getStatType(equippedItems.value(itemIndex).statType2))
+                            .arg(itemXRef->getWeaponEdgeType(equippedItems.value(itemIndex).weaponEdgeType));
                 }
             }
             else if (equippedItems.value(itemIndex).statType1 > 0 && equippedItems.value(itemIndex).statType2 > 0 && equippedItems.value(itemIndex).statType3 > 0)
             {
-                itemInfo = QString("Type: %1\nRarity: %3\n%4\nDamage: %5-%6\nItem Stats:\n+%7 %8\n+%9 %10\n+%11 %12\n\nSell Price: %2G")
+                itemInfo = QString("Type: %1\nEdge: %13Rarity: %3\n%4\nDamage: %5-%6\nItem Stats:\n+%7 %8\n+%9 %10\n+%11 %12\n\nSell Price: %2G")
                         .arg(itemXRef->getItemType(equippedItems.value(itemIndex).itemType))
                         .arg(equippedItems.value(itemIndex).sellPrice)
                         .arg(itemXRef->getItemRarity(equippedItems.value(itemIndex).itemRarity))
@@ -3486,7 +3732,8 @@ void GameLogic::setEquipmentItemToolTip(QVector<QString> listItems)
                         .arg(equippedItems.value(itemIndex).maxAtk)
                         .arg(equippedItems.value(itemIndex).stat1).arg(itemXRef->getStatType(equippedItems.value(itemIndex).statType1))
                         .arg(equippedItems.value(itemIndex).stat2).arg(itemXRef->getStatType(equippedItems.value(itemIndex).statType2))
-                        .arg(equippedItems.value(itemIndex).stat3).arg(itemXRef->getStatType(equippedItems.value(itemIndex).statType3));
+                        .arg(equippedItems.value(itemIndex).stat3).arg(itemXRef->getStatType(equippedItems.value(itemIndex).statType3))
+                        .arg(itemXRef->getWeaponEdgeType(equippedItems.value(itemIndex).weaponEdgeType));
             }
 
         }
@@ -3798,7 +4045,7 @@ void GameLogic::on_lstEquipment_itemClicked(QListWidgetItem *item)
 
 void GameLogic::on_btnBuyBedroll_clicked()
 {
-    if (player_->getGold() >= 100)
+    if (player_->getGold() >= 250)
     {
         if (strRestLocation_[player_->getLocation()] == "City" ||strRestLocation_[player_->getLocation()] == "Town")
         {
@@ -3828,8 +4075,9 @@ void GameLogic::on_btnBuyBedroll_clicked()
             item.amount = 1;
             item.numStats = 0;
 
-            player_->removeGold(100);
+            player_->removeGold(250);
             player_->addItemToInventory(item);
+            player_->addBedroll();
             ui->lblGoldAmount->setText(QString("Gold: %1").arg(player_->getGold()));
             ui->lblGoldInv->setText(QString("Gold: %1").arg(player_->getGold()));
             setPlayerInfo();
@@ -3855,7 +4103,7 @@ void GameLogic::on_btnBuyBedroll_clicked()
 
 void GameLogic::on_btnBuyFirestarterKit_clicked()
 {
-    if (player_->getGold() >= 75)
+    if (player_->getGold() >= 200)
     {
         if (strRestLocation_[player_->getLocation()] == "City" ||strRestLocation_[player_->getLocation()] == "Town")
         {
@@ -3885,8 +4133,9 @@ void GameLogic::on_btnBuyFirestarterKit_clicked()
             item.amount = 1;
             item.numStats = 0;
 
-            player_->removeGold(75);
+            player_->removeGold(200);
             player_->addItemToInventory(item);
+            player_->addFireStarterKit();
             ui->lblGoldAmount->setText(QString("Gold: %1").arg(player_->getGold()));
             ui->lblGoldInv->setText(QString("Gold: %1").arg(player_->getGold()));
             setPlayerInfo();
