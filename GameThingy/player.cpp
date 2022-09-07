@@ -668,7 +668,7 @@ void Player::saveInventory()
                  << inventory_.value(i).numStats << ","
                  << inventory_.value(i).weaponType << ","
                  << inventory_.value(i).weaponEdgeType << ","
-                 << inventory_.value(i).dotType_ << "/n";
+                 << inventory_.value(i).dotType_ << "\n";
     }
     file.close();
 }
