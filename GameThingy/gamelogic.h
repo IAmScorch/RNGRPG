@@ -11,6 +11,7 @@
 #include "quests.h"
 #include "inventorybag.h"
 #include "itemcrossreference.h"
+#include "enemylootdrops.h"
 
 namespace Ui {
 class GameLogic;
@@ -167,6 +168,7 @@ private:
     quests *quest_;
     InventoryBag *bag_;
     itemCrossReference *itemXRef;
+    enemyLootDrops *lootDrops_;
     QString name_;
     QString message_;
     QShortcut *msNewGameSC_;

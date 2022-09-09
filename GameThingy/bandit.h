@@ -2,6 +2,7 @@
 #define BANDIT_H
 #include <QString>
 #include <QVector>
+#include <algorithm>
 #include "item.h"
 #include "DoT.h"
 
@@ -28,67 +29,7 @@ private:
     bool isHit_;
     QString message_;
     QVector<DoT> dot_;
-
-    QString itemStatNames[7] = {"Vitality","Strength","Stamina","Agility","Luck","Precision","Block"};
-    QString weaponTypes[3] = {"Dagger","Short Sword","Long Sword"};
-    QString armourTypes[4] = {"Cloth","Leather","Mail","Plate"};
-    QString weaponPrefixes[20] = {"Sharp", "Sharpened", "Pointy", "Radient", "Rigid", "Immaculate", "Gouging", "Dangerous", "Vibrant", "Fancy",
-                                  "Menacing", "Slick",  "Jagged", "Dancing", "Blistering", "Mincing","Elegant", "Ravenous", "Fierce",  "Righteous"};
-    QString armourPrefixes[7] = {"Radient","Immaculate","Vibrant","Fancy","Slick","Elegant","Righteous"};
-    QString ShieldPrefixes[7] = {"Steel", "Tower", "Buckler", "Small", "Kiting", "Large", "Aspis"};
-    QString ringPrefixes[3] = {"Copper", "Silver", "Gold"};
-    QString trinketPrefixes[3] = {"Small", "Medium", "Large"};
-
-    QString banditItemDrops_ [19][19] = {
-        {"Tattered Shirt",      "0","9","0","0","0","0","0","5","0","1","0","0","0","0","0","0","0","200"},
-        {"Weak potion",         "0","1","0","0","1","2","0","2","1","1","0","0","0","0","0","0","0","100"},
-        {"Weak Dagger",         "1","2","0","0","0","0","1","10","0","2","1","3","0","2","1","1","1","40"},
-        {"Weak Short Sword",    "1","2","0","0","0","0","1","15","0","4","1","4","0","1","2","1","1","40"},
-        {"Weak Wooden Shield",  "1","4","0","0","0","0","1","10","0","5","0","0","4","2","0","0","0","40"},
-        {"Wooden Shield",       "1","4","0","0","0","0","1","12","0","5","0","0","5","2","0","0","0","40"},
-        {"Weak Long Sword",     "1","2","0","0","0","0","1","20","0","6","1","7","0","3","3","1","1","35"},
-        {"Ration",              "0","1","0","0","2","5","0","10","1","1","0","0","0","0","0","0","0","20"},
-        {"Short Sword",         "1","2","0","0","0","0","1","17","0","4","2","5","0","1","2","1","1","20"},
-        {"Dagger",              "1","2","0","0","0","0","1","12","0","2","1","4","0","2","1","1","1","20"},
-        {"Long Sword",          "1","2","0","0","0","0","1","25","0","6","3","7","0","3","3","1","1","15"},
-        {"Sharp Dagger",        "1","2","0","0","0","0","1","15","0","2","1","5","0","2","1","1","1","10"},
-        {"Sharp Short Sword",   "1","2","0","0","0","0","1","20","0","4","2","7","0","1","2","1","1","10"},
-        {"Sharp Long Sword",    "1","2","0","0","0","0","1","27","0","6","3","9","0","3","3","1","1","10"},
-        {"Steel Shield",        "1","4","0","0","0","0","1","15","0","6","0","0","7","2","0","0","0","10"},
-        {"Uncommon Item",       "2","8","0","0","0","0","1","0","0","0","0","0","0","0","0","0","0","5"},
-        {"Rare Item",           "3","8","0","0","0","0","1","0","0","0","0","0","0","0","0","0","0","3"},
-        {"Epic Item",           "4","8","0","0","0","0","1","0","0","0","0","0","0","0","0","0","0","2"},
-        {"Legendary Item",      "5","8","0","0","0","0","1","0","0","0","0","0","0","0","0","0","0","1"}
-    };
-
-    QString banditItemDropsChance_ [2][11] = {
-        {"200","100","40","35","20","15","10","5","3","2","1"},
-        {"1", "1", "4", "1", "3", "1", "4", "1","1","1","1"}
-    };
-
-    QString banditInitiateItemDrops_ [1][16] = {
-        {"Bandit Initiate Armour","0","9","0","0","0","0","0","7","0","3","0","0","0","0","50"}
-    };
-
-    QString banditTrainerItemDrops_ [2][16] = {
-        {"Bandit Trainer Armour","0","9","0","0","0","0","0","7","0","3","0","0","0","0","50"},
-        {"Potion","0","1","0","0","1","5","0","10","0","1","0","0","0","0","30"}
-    };
-
-    QString banditGrenItemDrops_ [2][16] = {
-        {"Trainer Gren's Head","0","9","0","0","0","0","0","7","0","3","0","0","0","0","100"},
-        {"Potion","0","1","0","0","1","5","0","10","0","1","0","0","0","0","30"}
-    };
-
-    QString banditRaiderItemDrops_ [2][16] = {
-        {"Bandit Raider Armour","0","9","0","0","0","0","0","7","0","3","0","0","0","0","50"},
-        {"Potion","0","1","0","0","1","5","0","10","0","1","0","0","0","0","30"}
-    };
-
-    QString banditAmbusherItemDrops_ [2][16] = {
-        {"Bandit Initiate Armour","0","9","0","0","0","0","0","7","0","3","0","0","0","0","50"},
-        {"Potion","0","1","0","0","1","5","0","10","0","1","0","0","0","0","30"}
-    };
+    QVector<Item> loot_;
 
 public:
     Bandit(QString name, int health, int maxAttackPower, int minAttackPower,
@@ -99,7 +40,6 @@ public:
     int doHitRoll();
     void doHit(int dmg, int playerHitRoll, QString playerName, int playerDotType, int playerClass);
     int goldDrop();
-    QVector<Item> doLootDrop(QString enemyName, int enemyType, int itemDropChance);
 
     int getHealth();
     void setHealth(int health);
@@ -143,6 +83,11 @@ public:
 
     bool hasActiveDoT();
     void doDotEffect();
+
+    void addLoot(QVector<Item> defaultLoot, QVector<Item> enemySpecificLoot);
+    QVector<Item> getEnemyLoot();
+
+    bool compareByWeight(const Item &a, const Item &b);
 };
 
 #endif // BANDIT_H

@@ -103,6 +103,7 @@ GameLogic::GameLogic(QWidget *parent) :
     player_ = new Player(0, 0, 0, 0, 0, 0);
     quest_ = new quests(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "");
     itemXRef = new itemCrossReference();
+    lootDrops_ = new enemyLootDrops();
     isBagOpen_ = false;
     isEquipping = true;
     qsrand(QTime::currentTime().msec());
@@ -269,7 +270,7 @@ void GameLogic::on_btnAttack_clicked()
             }
 
             player_->addGold(bandit_->goldDrop());
-            player_->addItemsToInventory(bandit_->doLootDrop(bandit_->getName(), bandit_->getEnemyType(), bandit_->getItemDropChance()));
+            player_->addItemsToInventory(lootDrops_->doLootDrop(bandit_->getName(), bandit_->getEnemyLoot(), bandit_->getItemDropChance()));
             setPlayerInventory();
             ui->lblGoldAmount->setText(QString("Gold: %1").arg(player_->getGold()));
             ui->lblGoldInv->setText(QString("Gold: %1").arg(player_->getGold()));
@@ -721,6 +722,8 @@ void GameLogic::checkLevel()
 
             bandit_ = new Bandit(banditName, banditHealth, banditMaxAttackPower, banditMinAttackPower,
                                  banditCritChance, banditXPReward, banditLevel, banditType, banditAgility, objType, banditDropChance, weaponDot, armourType);
+            lootDrops_->setLoot(bandit_->getEnemyType());
+            bandit_->addLoot(lootDrops_->getDefaultLoot(),lootDrops_->getEnemySpecificLoot());
         }
     }
     else if (location_ == deepwoodForest)
@@ -790,6 +793,8 @@ void GameLogic::checkLevel()
 
             bandit_ = new Bandit(banditName, banditHealth, banditMaxAttackPower, banditMinAttackPower,
                                  banditCritChance, banditXPReward, banditLevel, banditType, banditAgility, objType, banditDropChance, weaponDot, armourType);
+            lootDrops_->setLoot(bandit_->getEnemyType());
+            bandit_->addLoot(lootDrops_->getDefaultLoot(),lootDrops_->getEnemySpecificLoot());
         }
     }
     else if (location_ == riverbane)
@@ -831,6 +836,8 @@ void GameLogic::checkLevel()
 
             bandit_ = new Bandit(banditName, banditHealth, banditMaxAttackPower, banditMinAttackPower,
                                  banditCritChance, banditXPReward, banditLevel, banditType, banditAgility, objType, banditDropChance, weaponDot, armourType);
+            lootDrops_->setLoot(bandit_->getEnemyType());
+            bandit_->addLoot(lootDrops_->getDefaultLoot(),lootDrops_->getEnemySpecificLoot());
         }
     }
     else if (location_ == riverbaneMine)
@@ -942,6 +949,8 @@ void GameLogic::checkLevel()
 
             bandit_ = new Bandit(banditName, banditHealth, banditMaxAttackPower, banditMinAttackPower,
                                  banditCritChance, banditXPReward, banditLevel, banditType, banditAgility, objType, banditDropChance, weaponDot, armourType);
+            lootDrops_->setLoot(bandit_->getEnemyType());
+            bandit_->addLoot(lootDrops_->getDefaultLoot(),lootDrops_->getEnemySpecificLoot());
         }
     }
     else
@@ -1619,7 +1628,7 @@ void GameLogic::on_btnRestBS_clicked()
             else
             {
                 message_ += QString("You do not have enough gold to stay at the %1 Inn.\n"
-                                    "This Inn costs 50 gold for the night.").arg(strLocations_[player_->getLocation()]);
+                                    "This Inn costs 1000 gold for the night.").arg(strLocations_[player_->getLocation()]);
             }
         }
         else if (msgBox.clickedButton() == btnCamp)
@@ -1747,7 +1756,7 @@ void GameLogic::on_btnRestBS_clicked()
                 else
                 {
                     message_ += QString("You do not have enough gold to stay at the %1 Inn.\n"
-                                        "This Inn costs 30 gold for the night.").arg(strLocations_[player_->getLocation()]);
+                                        "This Inn costs 700 gold for the night.").arg(strLocations_[player_->getLocation()]);
                 }
             }
             else if (msgBox.clickedButton() == btnCamp)

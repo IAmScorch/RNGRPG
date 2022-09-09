@@ -41,17 +41,18 @@
       int maxAtk;
       int block;
       int holdType;
-      int stat1;
-      int statType1;
-      int stat2;
-      int statType2;
-      int stat3;
-      int statType3;
-      int amount;
-      int numStats;
+      int stat1 = 0;
+      int statType1 = 0;
+      int stat2 = 0;
+      int statType2 = 0;
+      int stat3 = 0;
+      int statType3 = 0;
+      int amount = 1;
+      int numStats = 0;
       int weaponType = 0;
       int weaponEdgeType = 0;
       int dotType_ = 0;
+      int dropWeight = 0;
   };
 
 #endif // ITEM_H
