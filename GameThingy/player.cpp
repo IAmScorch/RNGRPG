@@ -1437,12 +1437,12 @@ void Player::addEquipment(Item item)
     {
         if (item.holdType == 1)
         {
-            if (classType_ == 2 && (item.weaponType == 3 || item.weaponType == 4 || item.weaponType == 5))
+            if (classType_ == 2 && (item.weaponType >= 3 && item.weaponType <= 7))
             {
                 message_ = classXRef_->getClassType(classType_) + "s can only equip Daggers and Short Swords";
                 displayMessage("Equipping Restriction", message_);
             }
-            else if (classType_ == 1 && (item.weaponType == 2 || item.weaponType == 3 || item.weaponType == 4 || item.weaponType == 5))
+            else if (classType_ == 1 && (item.weaponType >= 2 && item.weaponType <= 5))
             {
                 message_ = classXRef_->getClassType(classType_) + "s can only equip Daggers, Staffs and Scepters";
                 displayMessage("Equipping Restriction", message_);
@@ -1467,12 +1467,12 @@ void Player::addEquipment(Item item)
 
         if (item.holdType == 2)
         {
-            if (classType_ == 2 && (item.weaponType == 3 || item.weaponType == 4 || item.weaponType == 5))
+            if (classType_ == 2 && (item.weaponType >= 3 && item.weaponType <= 7))
             {
                 message_ = classXRef_->getClassType(classType_) + "s can only equip Daggers and Short Swords";
                 displayMessage("Equipping Restriction", message_);
             }
-            else if (classType_ == 1 && (item.weaponType == 2 || item.weaponType == 3 || item.weaponType == 4 || item.weaponType == 5))
+            else if (classType_ == 1 && (item.weaponType >= 2 && item.weaponType <= 5))
             {
                 message_ = classXRef_->getClassType(classType_) + "s can only equip Daggers, Staffs and Scepters";
                 displayMessage("Equipping Restriction", message_);

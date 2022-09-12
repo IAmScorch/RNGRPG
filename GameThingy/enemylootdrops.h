@@ -13,14 +13,14 @@ private:
     QVector<Item> enemySpecificLoot_;
     int totalDropWeight_;
 
-    QString itemStatNames[7] = {"Vitality","Strength","Stamina","Agility","Luck","Precision","Block"};
-    QString weaponTypes[3] = {"Dagger","Short Sword","Long Sword"};
-    QString armourTypes[4] = {"Cloth","Leather","Mail","Plate"};
+    QString itemStatNames[7] =   {"Vitality","Strength","Stamina","Agility","Luck","Precision","Block"};
+    QString weaponTypes[3] =     {"Dagger","Short Sword","Long Sword"};
+    QString armourTypes[4] =     {"Cloth","Leather","Mail","Plate"};
     QString weaponPrefixes[20] = {"Sharp", "Sharpened", "Pointy", "Radient", "Rigid", "Immaculate", "Gouging", "Dangerous", "Vibrant", "Fancy",
                                   "Menacing", "Slick",  "Jagged", "Dancing", "Blistering", "Mincing","Elegant", "Ravenous", "Fierce",  "Righteous"};
-    QString armourPrefixes[7] = {"Radient","Immaculate","Vibrant","Fancy","Slick","Elegant","Righteous"};
-    QString ShieldPrefixes[7] = {"Steel", "Tower", "Buckler", "Small", "Kiting", "Large", "Aspis"};
-    QString ringPrefixes[3] = {"Copper", "Silver", "Gold"};
+    QString armourPrefixes[7] =  {"Radient","Immaculate","Vibrant","Fancy","Slick","Elegant","Righteous"};
+    QString ShieldPrefixes[7] =  {"Steel", "Tower", "Buckler", "Small", "Kiting", "Large", "Aspis"};
+    QString ringPrefixes[3] =    {"Copper", "Silver", "Gold"};
     QString trinketPrefixes[3] = {"Small", "Medium", "Large"};
 
     QString banditDefaultItemDrops_ [19][18] = {
@@ -84,11 +84,42 @@ private:
         {"Broken Long Sword",     "0","9","0","0","0","0","0","10","0","0","0","0","0","0","0","0","90"},
         {"Broken Wooden Shield",  "0","9","0","0","0","0","0","5","0","0","0","0","0","0","0","0","90"}
     };
+
+    QString koboldDefaultItemDrops_ [21][18] = {
+        {"Candle",              "0","9","0","0","0","0","0","3","0","0","0","0","0","0","0","0","200"},
+        {"Stick",               "0","9","0","0","0","0","0","2","0","0","0","0","0","0","0","0","85"},
+        {"Club",                "0","9","0","0","0","0","0","2","0","0","0","0","0","0","0","0","80"},
+        {"Blunted Dagger",      "0","9","0","0","0","0","0","3","0","0","0","0","0","0","0","0","75"},
+        {"Broken Staff",        "0","9","0","0","0","0","0","3","0","0","0","0","0","0","0","0","75"},
+        {"Broken Scepter",      "0","9","0","0","0","0","0","3","0","0","0","0","0","0","0","0","75"},
+        {"Strange Liquid",      "0","9","0","0","0","0","0","2","0","0","0","0","0","0","0","0","60"},
+        {"Weak potion",         "0","1","0","0","1","2","0","2","1","0","0","0","0","0","0","0","100"},
+        {"Potion",              "0","1","0","0","1","5","0","10","0","0","0","0","0","0","0","0","50"},
+        {"Weak Dagger",         "1","2","0","0","0","0","1","10","0","1","3","0","2","1","1","1","40"},
+        {"Ration",              "0","1","0","0","2","5","0","10","1","0","0","0","0","0","0","0","25"},
+        {"Dagger",              "1","2","0","0","0","0","1","12","0","1","4","0","2","1","1","1","20"},
+        {"Weak Staff",          "1","2","0","0","0","0","1","15","0","1","6","0","3","6","2","0","40"},
+        {"Staff",               "1","2","0","0","0","0","1","20","0","2","7","0","3","6","2","0","25"},
+        {"Wicked Staff",        "1","2","0","0","0","0","1","25","0","2","9","0","3","6","2","0","10"},
+        {"Lesser Scepter",      "1","2","0","0","0","0","1","10","0","1","3","0","2","7","2","0","40"},
+        {"Fire Scepter",        "1","2","0","0","0","0","1","25","0","2","5","0","2","7","2","0","10"},
+        {"Scepter",             "1","2","0","0","0","0","1","20","0","2","4","0","3","6","2","0","25"},
+        {"Uncommon Item",       "2","8","0","0","0","0","1","0","0","0","0","0","0","0","0","0","35"},
+        {"Gold Dust",           "0","9","0","0","0","0","0","25","0","0","0","0","0","0","0","0","8"},
+        {"Gold Nugget",         "0","9","0","0","0","0","0","100","0","0","0","0","0","0","0","0","5"}
+    };
+
+    QString menzidItemDrops_ [3][18] = {
+        {"Gold Tooth",          "0","9","0","0","0","0","0","50","0","0","0","0","0","0","0","0","30"},
+        {"Rare Item",           "3","8","0","0","0","0","1","0","0","0","0","0","0","0","0","0","15"},
+        {"Epic Item",           "4","8","0","0","0","0","1","0","0","0","0","0","0","0","0","0","5"}
+    };
+
 public:
     enemyLootDrops();
     QVector<Item> doLootDrop(QString enemyName, QVector<Item> enemyLoot, int itemDropChance);
 
-    void setLoot(int enemyType);
+    void setLoot(int enemyType, QString enemyName);
 
     QVector<Item> getDefaultLoot();
     QVector<Item> getEnemySpecificLoot();

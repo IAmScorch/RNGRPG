@@ -308,14 +308,14 @@ QVector<Item> enemyLootDrops::doLootDrop(QString enemyName, QVector<Item> enemyL
     return droppedItems_;
 }
 
-void enemyLootDrops::setLoot(int enemyType)
+void enemyLootDrops::setLoot(int enemyType, QString enemyName)
 {
     Item item;
     int dRows;
     defaultLoot_.clear();
     enemySpecificLoot_.clear();
 
-    if (enemyType == 1 || enemyType == 2 || enemyType == 3 || enemyType == 4 || enemyType == 5)
+    if (enemyType >= 1 && enemyType <= 5)
     {
         dRows =  sizeof banditDefaultItemDrops_ / sizeof banditDefaultItemDrops_[0];
 
@@ -479,6 +479,63 @@ void enemyLootDrops::setLoot(int enemyType)
                 item.weaponEdgeType =   banditAmbusherItemDrops_[x][15].toInt();
                 item.dotType_ =         banditAmbusherItemDrops_[x][16].toInt();
                 item.dropWeight =       banditAmbusherItemDrops_[x][17].toInt();
+
+                enemySpecificLoot_.push_back(item);
+            }
+        }
+    }
+    else if (enemyType >= 7 && enemyType <= 8)
+    {
+        dRows =  sizeof koboldDefaultItemDrops_ / sizeof koboldDefaultItemDrops_[0];
+
+        for (int x = 0; x < dRows; x++)
+        {
+            item.name =             koboldDefaultItemDrops_[x][0];
+            item.itemRarity =       koboldDefaultItemDrops_[x][1].toInt();
+            item.itemType =         koboldDefaultItemDrops_[x][2].toInt();
+            item.armourRating =     koboldDefaultItemDrops_[x][3].toInt();
+            item.armourType =       koboldDefaultItemDrops_[x][4].toInt();
+            item.healType =         koboldDefaultItemDrops_[x][5].toInt();
+            item.healAmount =       koboldDefaultItemDrops_[x][6].toInt();
+            item.isEquippable =     koboldDefaultItemDrops_[x][7].toInt();
+            item.sellPrice =        koboldDefaultItemDrops_[x][8].toInt();
+            item.isUsable =         koboldDefaultItemDrops_[x][9].toInt();
+            item.minAtk =           koboldDefaultItemDrops_[x][10].toInt();
+            item.maxAtk =           koboldDefaultItemDrops_[x][11].toInt();
+            item.block =            koboldDefaultItemDrops_[x][12].toInt();
+            item.holdType =         koboldDefaultItemDrops_[x][13].toInt();
+            item.weaponType =       koboldDefaultItemDrops_[x][14].toInt();
+            item.weaponEdgeType =   koboldDefaultItemDrops_[x][15].toInt();
+            item.dotType_ =         koboldDefaultItemDrops_[x][16].toInt();
+            item.dropWeight =       koboldDefaultItemDrops_[x][17].toInt();
+
+            defaultLoot_.push_back(item);
+        }
+
+        if (enemyName == "Menzid")
+        {
+            dRows =  sizeof menzidItemDrops_ / sizeof menzidItemDrops_[0];
+
+            for (int x = 0; x < dRows; x++)
+            {
+                item.name =             menzidItemDrops_[x][0];
+                item.itemRarity =       menzidItemDrops_[x][1].toInt();
+                item.itemType =         menzidItemDrops_[x][2].toInt();
+                item.armourRating =     menzidItemDrops_[x][3].toInt();
+                item.armourType =       menzidItemDrops_[x][4].toInt();
+                item.healType =         menzidItemDrops_[x][5].toInt();
+                item.healAmount =       menzidItemDrops_[x][6].toInt();
+                item.isEquippable =     menzidItemDrops_[x][7].toInt();
+                item.sellPrice =        menzidItemDrops_[x][8].toInt();
+                item.isUsable =         menzidItemDrops_[x][9].toInt();
+                item.minAtk =           menzidItemDrops_[x][10].toInt();
+                item.maxAtk =           menzidItemDrops_[x][11].toInt();
+                item.block =            menzidItemDrops_[x][12].toInt();
+                item.holdType =         menzidItemDrops_[x][13].toInt();
+                item.weaponType =       menzidItemDrops_[x][14].toInt();
+                item.weaponEdgeType =   menzidItemDrops_[x][15].toInt();
+                item.dotType_ =         menzidItemDrops_[x][16].toInt();
+                item.dropWeight =       menzidItemDrops_[x][17].toInt();
 
                 enemySpecificLoot_.push_back(item);
             }

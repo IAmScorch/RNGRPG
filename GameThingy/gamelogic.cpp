@@ -722,7 +722,7 @@ void GameLogic::checkLevel()
 
             bandit_ = new Bandit(banditName, banditHealth, banditMaxAttackPower, banditMinAttackPower,
                                  banditCritChance, banditXPReward, banditLevel, banditType, banditAgility, objType, banditDropChance, weaponDot, armourType);
-            lootDrops_->setLoot(bandit_->getEnemyType());
+            lootDrops_->setLoot(bandit_->getEnemyType(), bandit_->getName());
             bandit_->addLoot(lootDrops_->getDefaultLoot(),lootDrops_->getEnemySpecificLoot());
         }
     }
@@ -793,7 +793,7 @@ void GameLogic::checkLevel()
 
             bandit_ = new Bandit(banditName, banditHealth, banditMaxAttackPower, banditMinAttackPower,
                                  banditCritChance, banditXPReward, banditLevel, banditType, banditAgility, objType, banditDropChance, weaponDot, armourType);
-            lootDrops_->setLoot(bandit_->getEnemyType());
+            lootDrops_->setLoot(bandit_->getEnemyType(), bandit_->getName());
             bandit_->addLoot(lootDrops_->getDefaultLoot(),lootDrops_->getEnemySpecificLoot());
         }
     }
@@ -836,7 +836,7 @@ void GameLogic::checkLevel()
 
             bandit_ = new Bandit(banditName, banditHealth, banditMaxAttackPower, banditMinAttackPower,
                                  banditCritChance, banditXPReward, banditLevel, banditType, banditAgility, objType, banditDropChance, weaponDot, armourType);
-            lootDrops_->setLoot(bandit_->getEnemyType());
+            lootDrops_->setLoot(bandit_->getEnemyType(), bandit_->getName());
             bandit_->addLoot(lootDrops_->getDefaultLoot(),lootDrops_->getEnemySpecificLoot());
         }
     }
@@ -876,6 +876,7 @@ void GameLogic::checkLevel()
                 banditName = "Menzid";
                 banditHealth = 20;
                 enemyMaxHP_ = 20;
+                banditType = 7;
                 banditMaxAttackPower = 6;
                 banditMinAttackPower = 1;
                 banditCritChance = 18;
@@ -896,6 +897,8 @@ void GameLogic::checkLevel()
 
             bandit_ = new Bandit(banditName, banditHealth, banditMaxAttackPower, banditMinAttackPower,
                                  banditCritChance, banditXPReward, banditLevel, banditType, banditAgility, objType, banditDropChance, weaponDot, armourType);
+            lootDrops_->setLoot(bandit_->getEnemyType(), bandit_->getName());
+            bandit_->addLoot(lootDrops_->getDefaultLoot(),lootDrops_->getEnemySpecificLoot());
         }
     }
     else if (location_ == andorjaul)
@@ -949,7 +952,7 @@ void GameLogic::checkLevel()
 
             bandit_ = new Bandit(banditName, banditHealth, banditMaxAttackPower, banditMinAttackPower,
                                  banditCritChance, banditXPReward, banditLevel, banditType, banditAgility, objType, banditDropChance, weaponDot, armourType);
-            lootDrops_->setLoot(bandit_->getEnemyType());
+            lootDrops_->setLoot(bandit_->getEnemyType(), bandit_->getName());
             bandit_->addLoot(lootDrops_->getDefaultLoot(),lootDrops_->getEnemySpecificLoot());
         }
     }
@@ -1547,58 +1550,68 @@ void GameLogic::useItem()
 
 void GameLogic::sellItem()
 {
-    QSound::play("Sounds\\goldDrop.wav");
-    int itemIndex;
-    int itemType;
-    QVector<Item> inventoryItems;
-    QVector<int> junkIndexs;
-    int junkAmount = 0;
-    QString item = ui->lstInventory->currentItem()->text();
-
-    inventoryItems = player_->getInventory();
-
-    for (int a = 0; a < inventoryItems.length(); a++)
+    if (strRestLocation_[player_->getLocation()] == "City" || strRestLocation_[player_->getLocation()] == "Town")
     {
-        if (item == inventoryItems.value(a).name)
+        QSound::play("Sounds\\goldDrop.wav");
+        int itemIndex;
+        int itemType;
+        QVector<Item> inventoryItems;
+        QVector<int> junkIndexs;
+        int junkAmount = 0;
+        QString item = ui->lstInventory->currentItem()->text();
+
+        inventoryItems = player_->getInventory();
+
+        for (int a = 0; a < inventoryItems.length(); a++)
         {
-            itemIndex = a;
-        }
-    }
-
-    itemType = inventoryItems.value(itemIndex).itemType;
-
-    if (itemType != 9)
-    {
-        player_->addGold(inventoryItems.value(itemIndex).sellPrice);
-        player_->removeItemFromInventory(itemIndex);
-
-        if (inventoryItems.value(itemIndex).name == "Bedroll")
-            player_->removeBedroll();
-        if (inventoryItems.value(itemIndex).name == "Firestarter Kit")
-            player_->removeFireStarterKit();
-    }
-    else
-    {
-        for (int b = 0; b < inventoryItems.length(); b++)
-        {
-            if (item == inventoryItems.value(b).name)
+            if (item == inventoryItems.value(a).name)
             {
-                junkIndexs.push_back(b);
-                junkAmount += 1;
+                itemIndex = a;
             }
         }
 
-        player_->addGold(inventoryItems.value(itemIndex).sellPrice * junkAmount);
-        std::sort(junkIndexs.rbegin(), junkIndexs.rend());
+        itemType = inventoryItems.value(itemIndex).itemType;
 
-        for (int b = 0; b < junkIndexs.length(); b++)
+        if (itemType != 9)
         {
-            player_->removeItemFromInventory(junkIndexs.value(b));
-        }
-    }
+            player_->addGold(inventoryItems.value(itemIndex).sellPrice);
+            player_->removeItemFromInventory(itemIndex);
 
-    setPlayerInfo();
-    setPlayerInventory();
+            if (inventoryItems.value(itemIndex).name == "Bedroll")
+                player_->removeBedroll();
+            if (inventoryItems.value(itemIndex).name == "Firestarter Kit")
+                player_->removeFireStarterKit();
+        }
+        else
+        {
+            for (int b = 0; b < inventoryItems.length(); b++)
+            {
+                if (item == inventoryItems.value(b).name)
+                {
+                    junkIndexs.push_back(b);
+                    junkAmount += 1;
+                }
+            }
+
+            player_->addGold(inventoryItems.value(itemIndex).sellPrice * junkAmount);
+            std::sort(junkIndexs.rbegin(), junkIndexs.rend());
+
+            for (int b = 0; b < junkIndexs.length(); b++)
+            {
+                player_->removeItemFromInventory(junkIndexs.value(b));
+            }
+        }
+
+        setPlayerInfo();
+        setPlayerInventory();
+    }
+    else
+    {
+        QMessageBox msgBox;
+        msgBox.setWindowTitle("Sell Item");
+        msgBox.setText("You need to be in a City<br>or Town to sell items.");
+        msgBox.exec();
+    }
 }
 
 void GameLogic::on_btnRestBS_clicked()
