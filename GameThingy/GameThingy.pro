@@ -27,6 +27,7 @@ HEADERS  += gamelogic.h \
     enemylootdrops.h \
     inventorybag.h \
     item.h \
+    itemcolor.h \
     itemcrossreference.h \
     player.h \
     bandit.h \

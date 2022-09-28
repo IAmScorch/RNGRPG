@@ -12,6 +12,7 @@
 #include "inventorybag.h"
 #include "itemcrossreference.h"
 #include "enemylootdrops.h"
+#include "itemcolor.h"
 
 namespace Ui {
 class GameLogic;
@@ -91,9 +92,9 @@ private slots:
 
     void setPlayerEquipment();
 
-    void setInventoryItemToolTip(QVector<QString> listItems);
+    void setInventoryItemToolTip(QVector<ItemColor> listItems);
 
-    void setEquipmentItemToolTip(QVector<QString> listItems);
+    void setEquipmentItemToolTip(QVector<ItemColor> listItems);
 
     void on_lstInventory_itemClicked(QListWidgetItem *item);
 

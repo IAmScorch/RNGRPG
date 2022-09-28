@@ -876,7 +876,7 @@ void GameLogic::checkLevel()
                 banditName = "Menzid";
                 banditHealth = 20;
                 enemyMaxHP_ = 20;
-                banditType = 7;
+                banditType = 8;
                 banditMaxAttackPower = 6;
                 banditMinAttackPower = 1;
                 banditCritChance = 18;
@@ -3298,25 +3298,62 @@ void GameLogic::setPlayerInventory()
     }
     int itemAmount;
     QVector<Item> inventoryItems;
-    QVector<QString> itemNames;
+    QVector<ItemColor> itemNames;
     QVector<int> itemAmounts;
+    ItemColor IC;
 
     inventoryItems = player_->getInventory();
 
     for (int x = 0; x < inventoryItems.length(); x++)
     {
-        itemNames.push_back(inventoryItems.value(x).name);
+        IC.name = inventoryItems.value(x).name;
+
+        if (inventoryItems.value(x).itemRarity == 0 && inventoryItems.value(x).itemType == 9)
+        {
+            IC.colorCode = "#808080";
+        }
+        else if (inventoryItems.value(x).itemRarity == 0 && inventoryItems.value(x).itemType == 1)
+        {
+            IC.colorCode = "#FFFFFF";
+        }
+        else if (inventoryItems.value(x).itemRarity == 1)
+        {
+            IC.colorCode = "#FFFFFF";
+        }
+        else if (inventoryItems.value(x).itemRarity == 2)
+        {
+            IC.colorCode = "#00FF21";
+        }
+        else if (inventoryItems.value(x).itemRarity == 3)
+        {
+            IC.colorCode = "#0026FF";
+        }
+        else if (inventoryItems.value(x).itemRarity == 4)
+        {
+            IC.colorCode = "#B200FF";
+        }
+        else if (inventoryItems.value(x).itemRarity == 5)
+        {
+            IC.colorCode = "#FF5D00";
+        }
+
+        itemNames.push_back(IC);
     }
 
-    std::sort(itemNames.begin(), itemNames.end());
-    itemNames.erase(std::unique(itemNames.begin(), itemNames.end()), itemNames.end());
+    //std::sort(loot_.begin(),loot_.end(), [](Item &left, Item &right){return left.dropWeight > right.dropWeight;});
+    std::sort(itemNames.begin(), itemNames.end(),[](ItemColor &left, ItemColor &right){return left.name < right.name;});
+
+    auto comp1 = [] ( const ItemColor& lhs, const ItemColor& rhs ) {return lhs.name == rhs.name;};
+    auto last = std::unique(itemNames.begin(), itemNames.end(),comp1);
+    itemNames.erase(last, itemNames.end());
+    //itemNames.erase(std::unique(itemNames.begin(), itemNames.end()), itemNames.end());
 
     for (int z = 0; z < itemNames.length(); z++)
     {
         itemAmount = 0;
         for (int a = 0; a < inventoryItems.length(); a++)
         {
-            if (itemNames.value(z) == inventoryItems.value(a).name)
+            if (itemNames.value(z).name == inventoryItems.value(a).name)
             {
                 itemAmount++;
             }
@@ -3326,11 +3363,11 @@ void GameLogic::setPlayerInventory()
 
     for (int i = 0; i < itemNames.length(); i++)
     {
-        ui->lstInventory->addItem(QString("%1").arg(itemNames.value(i)));
-        if(isBagOpen_)
-        {
-            bag_->setInventory(QString("%1 x%2\n").arg(itemNames.value(i)).arg(itemAmounts.value(i)));
-        }
+        ui->lstInventory->addItem(QString("%1").arg(itemNames.value(i).name));
+        ui->lstInventory->item(i)->setBackgroundColor(itemNames.value(i).colorCode);
+
+        if (itemNames.value(i).colorCode == "#0026FF")
+            ui->lstInventory->item(i)->setTextColor("#FFFFFF");
     }
 
     setInventoryItemToolTip(itemNames);
@@ -3345,24 +3382,58 @@ void GameLogic::setPlayerEquipment()
 {
     ui->lstEquipment->clear();
 
-    QString itemName;
-    QVector<Item> inventoryItems;
     QVector<Item> equipedItems;
-    QVector<QString> itemNames;
+    QVector<ItemColor> itemNames;
+    ItemColor IC;
 
     equipedItems = player_->getEquiped();
 
     for (int x = 0; x < equipedItems.length(); x++)
     {
-        itemNames.push_back(equipedItems.value(x).name);
+        IC.name = equipedItems.value(x).name;
+
+        if (equipedItems.value(x).itemRarity == 0 && equipedItems.value(x).itemType == 9)
+        {
+            IC.colorCode = "#808080";
+        }
+        else if (equipedItems.value(x).itemRarity == 0 && equipedItems.value(x).itemType == 1)
+        {
+            IC.colorCode = "#FFFFFF";
+        }
+        else if (equipedItems.value(x).itemRarity == 1)
+        {
+            IC.colorCode = "#FFFFFF";
+        }
+        else if (equipedItems.value(x).itemRarity == 2)
+        {
+            IC.colorCode = "#00FF21";
+        }
+        else if (equipedItems.value(x).itemRarity == 3)
+        {
+            IC.colorCode = "#0026FF";
+        }
+        else if (equipedItems.value(x).itemRarity == 4)
+        {
+            IC.colorCode = "#B200FF";
+        }
+        else if (equipedItems.value(x).itemRarity == 5)
+        {
+            IC.colorCode = "#FF5D00";
+        }
+
+        itemNames.push_back(IC);
     }
 
-    std::sort(itemNames.begin(), itemNames.end());
+    std::sort(itemNames.begin(), itemNames.end(),[](ItemColor &left, ItemColor &right){return left.name < right.name;});
 
     for (int i = 0; i < itemNames.length(); i++)
     {
         //ui->lstInventory->addItem(QString("%1 x%2\n").arg(itemNames.value(i)).arg(itemAmounts.value(i)));
-        ui->lstEquipment->addItem(QString("%1").arg(itemNames.value(i)));
+        ui->lstEquipment->addItem(QString("%1").arg(itemNames.value(i).name));
+        ui->lstEquipment->item(i)->setBackgroundColor(itemNames.value(i).colorCode);
+
+        if (itemNames.value(i).colorCode == "#0026FF")
+            ui->lstEquipment->item(i)->setTextColor("#FFFFFF");
     }
 
     setEquipmentItemToolTip(itemNames);
@@ -3375,7 +3446,7 @@ void GameLogic::setPlayerEquipment()
     ui->btnDrop->setEnabled(false);
 }
 
-void GameLogic::setInventoryItemToolTip(QVector<QString> listItems)
+void GameLogic::setInventoryItemToolTip(QVector<ItemColor> listItems)
 {
     int itemAmount;
     int itemIndex;
@@ -3392,7 +3463,7 @@ void GameLogic::setInventoryItemToolTip(QVector<QString> listItems)
 
         for (int a = 0; a < inventoryItems.length(); a++)
         {
-            if (listItems.value(i) == inventoryItems.value(a).name)
+            if (listItems.value(i).name == inventoryItems.value(a).name)
             {
                 itemAmount++;
                 itemIndex = a;
@@ -3669,7 +3740,7 @@ void GameLogic::setInventoryItemToolTip(QVector<QString> listItems)
     }
 }
 
-void GameLogic::setEquipmentItemToolTip(QVector<QString> listItems)
+void GameLogic::setEquipmentItemToolTip(QVector<ItemColor> listItems)
 {
     int itemIndex;
     QString itemInfo;
@@ -3684,7 +3755,7 @@ void GameLogic::setEquipmentItemToolTip(QVector<QString> listItems)
 
         for (int a = 0; a < equippedItems.length(); a++)
         {
-            if (listItems.value(i) == equippedItems.value(a).name)
+            if (listItems.value(i).name == equippedItems.value(a).name)
             {
                 itemIndex = a;
             }
