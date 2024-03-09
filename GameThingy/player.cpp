@@ -99,7 +99,9 @@ int Player::doAttack(QString enemy)
     if (classType_ == 3 && warTwoHandAtkBonus_ >= 1)
     {
         double atkBonus = warTwoHandAtkBonus_ * .10;
-        attackDmg_ = (rand() % ((maxAttackPower_ + 1) - minAttackPower_) + minAttackPower_) * atkBonus ;
+        atkBonus+=1;
+        attackDmg_ = (rand() % ((maxAttackPower_ + 1) - minAttackPower_) + minAttackPower_);
+        attackDmg_*= atkBonus;
     }
     else
         attackDmg_ = rand() % ((maxAttackPower_ + 1) - minAttackPower_) + minAttackPower_;
