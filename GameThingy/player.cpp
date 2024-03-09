@@ -795,6 +795,7 @@ void Player::loadInventory(QString playerName)
     QStringList inventory;
     file.open(QIODevice::ReadOnly| QIODevice::Text);
     QTextStream saveFile(&file);
+    inventory_.clear();
     if (file.exists() && file.isOpen())
     {
         while (!file.atEnd())
@@ -846,6 +847,7 @@ void Player::loadEquipment(QString playerName)
     QStringList equipment;
     file.open(QIODevice::ReadOnly| QIODevice::Text);
     QTextStream saveFile(&file);
+    equipment_.clear();
     if (file.exists() && file.isOpen())
     {
         while (!file.atEnd())
