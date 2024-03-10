@@ -877,7 +877,7 @@ void GameLogic::checkLevel()
                 banditName = "Menzid";
                 banditHealth = 20;
                 enemyMaxHP_ = 20;
-                banditType = 8;
+                //banditType = 8;
                 banditMaxAttackPower = 6;
                 banditMinAttackPower = 1;
                 banditCritChance = 18;
