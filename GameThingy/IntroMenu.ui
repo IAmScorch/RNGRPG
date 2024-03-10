@@ -1255,6 +1255,87 @@
        <string>Block:</string>
       </property>
      </widget>
+     <widget class="QLabel" name="lblCAgilScore">
+      <property name="geometry">
+       <rect>
+        <x>169</x>
+        <y>150</y>
+        <width>91</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+       </font>
+      </property>
+      <property name="toolTip">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#000000;&quot;&gt;Determines the chance at which you can dodge an enemy's attack.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color: rgb(255, 255, 255);</string>
+      </property>
+      <property name="text">
+       <string>Score: 0</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+      </property>
+     </widget>
+     <widget class="QLabel" name="lblCLuckScore">
+      <property name="geometry">
+       <rect>
+        <x>129</x>
+        <y>180</y>
+        <width>131</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+       </font>
+      </property>
+      <property name="toolTip">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#000000;&quot;&gt;Determines the chance your attack can cause critical damage to an enemy.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color: rgb(255, 255, 255);</string>
+      </property>
+      <property name="text">
+       <string>Crit Chance: 0</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+      </property>
+     </widget>
+     <widget class="QLabel" name="lblCHitScore">
+      <property name="geometry">
+       <rect>
+        <x>169</x>
+        <y>210</y>
+        <width>91</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+       </font>
+      </property>
+      <property name="toolTip">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#000000;&quot;&gt;Determines the chance at which you can successfully strike an enemy.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color: rgb(255, 255, 255);</string>
+      </property>
+      <property name="text">
+       <string>Score: 0</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+      </property>
+     </widget>
      <zorder>lblCharTabBG</zorder>
      <zorder>lblCName</zorder>
      <zorder>lblCHealth</zorder>
@@ -1276,6 +1357,9 @@
      <zorder>lblCStamina</zorder>
      <zorder>btnIncreaseStamina</zorder>
      <zorder>lblCBlock</zorder>
+     <zorder>lblCAgilScore</zorder>
+     <zorder>lblCLuckScore</zorder>
+     <zorder>lblCHitScore</zorder>
     </widget>
     <widget class="QWidget" name="tabQuestScreen">
      <attribute name="title">
@@ -1673,7 +1757,7 @@ text-align: left;</string>
      <x>0</x>
      <y>0</y>
      <width>400</width>
-     <height>20</height>
+     <height>25</height>
     </rect>
    </property>
   </widget>

@@ -146,6 +146,7 @@ public:
     void addEquippedLuck(int luck);
     void removeLuck(int luck);
     void setLuck();
+    double getCritChance();
     int getLuck();
     int getStatLuck();
 

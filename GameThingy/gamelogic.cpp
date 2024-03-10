@@ -103,6 +103,7 @@ GameLogic::GameLogic(QWidget *parent) :
     player_ = new Player(0, 0, 0, 0, 0, 0);
     quest_ = new quests(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "");
     itemXRef = new itemCrossReference();
+    lootDrops_ = new enemyLootDrops();
     isBagOpen_ = false;
     isEquipping = true;
     qsrand(QTime::currentTime().msec());
@@ -269,7 +270,7 @@ void GameLogic::on_btnAttack_clicked()
             }
 
             player_->addGold(bandit_->goldDrop());
-            player_->addItemsToInventory(bandit_->doLootDrop(bandit_->getName(), bandit_->getEnemyType(), bandit_->getItemDropChance()));
+            player_->addItemsToInventory(lootDrops_->doLootDrop(bandit_->getName(), bandit_->getEnemyLoot(), bandit_->getItemDropChance()));
             setPlayerInventory();
             ui->lblGoldAmount->setText(QString("Gold: %1").arg(player_->getGold()));
             ui->lblGoldInv->setText(QString("Gold: %1").arg(player_->getGold()));
@@ -459,6 +460,7 @@ void GameLogic::on_btnBattle_clicked()
         ui->tabCInfoScreen->setEnabled(true);
         ui->tabMenuScreen->setEnabled(true);
         ui->tabQuestScreen->setEnabled(true);
+        bsAttackSC_->setEnabled(false);
 
         ui->txtBattleInfo->setEnabled(false);
         ui->btnAttack->setEnabled(false);
@@ -721,6 +723,8 @@ void GameLogic::checkLevel()
 
             bandit_ = new Bandit(banditName, banditHealth, banditMaxAttackPower, banditMinAttackPower,
                                  banditCritChance, banditXPReward, banditLevel, banditType, banditAgility, objType, banditDropChance, weaponDot, armourType);
+            lootDrops_->setLoot(bandit_->getEnemyType(), bandit_->getName());
+            bandit_->addLoot(lootDrops_->getDefaultLoot(),lootDrops_->getEnemySpecificLoot());
         }
     }
     else if (location_ == deepwoodForest)
@@ -790,6 +794,8 @@ void GameLogic::checkLevel()
 
             bandit_ = new Bandit(banditName, banditHealth, banditMaxAttackPower, banditMinAttackPower,
                                  banditCritChance, banditXPReward, banditLevel, banditType, banditAgility, objType, banditDropChance, weaponDot, armourType);
+            lootDrops_->setLoot(bandit_->getEnemyType(), bandit_->getName());
+            bandit_->addLoot(lootDrops_->getDefaultLoot(),lootDrops_->getEnemySpecificLoot());
         }
     }
     else if (location_ == riverbane)
@@ -831,6 +837,8 @@ void GameLogic::checkLevel()
 
             bandit_ = new Bandit(banditName, banditHealth, banditMaxAttackPower, banditMinAttackPower,
                                  banditCritChance, banditXPReward, banditLevel, banditType, banditAgility, objType, banditDropChance, weaponDot, armourType);
+            lootDrops_->setLoot(bandit_->getEnemyType(), bandit_->getName());
+            bandit_->addLoot(lootDrops_->getDefaultLoot(),lootDrops_->getEnemySpecificLoot());
         }
     }
     else if (location_ == riverbaneMine)
@@ -869,6 +877,7 @@ void GameLogic::checkLevel()
                 banditName = "Menzid";
                 banditHealth = 20;
                 enemyMaxHP_ = 20;
+                //banditType = 8;
                 banditMaxAttackPower = 6;
                 banditMinAttackPower = 1;
                 banditCritChance = 18;
@@ -889,6 +898,8 @@ void GameLogic::checkLevel()
 
             bandit_ = new Bandit(banditName, banditHealth, banditMaxAttackPower, banditMinAttackPower,
                                  banditCritChance, banditXPReward, banditLevel, banditType, banditAgility, objType, banditDropChance, weaponDot, armourType);
+            lootDrops_->setLoot(bandit_->getEnemyType(), bandit_->getName());
+            bandit_->addLoot(lootDrops_->getDefaultLoot(),lootDrops_->getEnemySpecificLoot());
         }
     }
     else if (location_ == andorjaul)
@@ -942,6 +953,8 @@ void GameLogic::checkLevel()
 
             bandit_ = new Bandit(banditName, banditHealth, banditMaxAttackPower, banditMinAttackPower,
                                  banditCritChance, banditXPReward, banditLevel, banditType, banditAgility, objType, banditDropChance, weaponDot, armourType);
+            lootDrops_->setLoot(bandit_->getEnemyType(), bandit_->getName());
+            bandit_->addLoot(lootDrops_->getDefaultLoot(),lootDrops_->getEnemySpecificLoot());
         }
     }
     else
@@ -1353,9 +1366,12 @@ void GameLogic::setPlayerInfo()
     ui->lblCStrength->setText(QString("Strength: %1").arg(player_->getTotalStrengthPoints()));
     ui->lblCStamina->setText(QString("Stamina: %1").arg(player_->getTotalStaminaPoints()));
     ui->lblCAgility->setText(QString("Agility: %1").arg(player_->getTotalAgilityPoints()));
+    ui->lblCAgilScore->setText(QString("Score: %1").arg(player_->getAgility()));
     ui->lblCLuck->setText(QString("Luck: %1").arg(player_->getTotalLuckPoints()));
+    ui->lblCLuckScore->setText(QString("Crit Chance: %1%").arg(QString::number(player_->getCritChance(), 'f', 2).remove(0,2)));
     ui->lblCVitality->setText(QString("Vitality: %1").arg(player_->getTotalVitalityPoints()));
-    ui->lblCHit->setText(QString("Hit: %1").arg(player_->getTotalPrecisionPoints()));
+    ui->lblCHit->setText(QString("Precision: %1").arg(player_->getTotalPrecisionPoints()));
+    ui->lblCHitScore->setText(QString("Score: +%1").arg(player_->getPrecision()));
     ui->lblCBlock->setText(QString("Block: %1").arg(player_->getBlock()));
     double xpPercent = (double(player_->getXP()) / double(player_->getXPTillLevel())) * 100;
     double xpPercent2 = (double(player_->getXP()) / double(player_->getXPTillLevel())) * 400;
@@ -1538,58 +1554,68 @@ void GameLogic::useItem()
 
 void GameLogic::sellItem()
 {
-    QSound::play("Sounds\\goldDrop.wav");
-    int itemIndex;
-    int itemType;
-    QVector<Item> inventoryItems;
-    QVector<int> junkIndexs;
-    int junkAmount = 0;
-    QString item = ui->lstInventory->currentItem()->text();
-
-    inventoryItems = player_->getInventory();
-
-    for (int a = 0; a < inventoryItems.length(); a++)
+    if (strRestLocation_[player_->getLocation()] == "City" || strRestLocation_[player_->getLocation()] == "Town")
     {
-        if (item == inventoryItems.value(a).name)
+        QSound::play("Sounds\\goldDrop.wav");
+        int itemIndex;
+        int itemType;
+        QVector<Item> inventoryItems;
+        QVector<int> junkIndexs;
+        int junkAmount = 0;
+        QString item = ui->lstInventory->currentItem()->text();
+
+        inventoryItems = player_->getInventory();
+
+        for (int a = 0; a < inventoryItems.length(); a++)
         {
-            itemIndex = a;
-        }
-    }
-
-    itemType = inventoryItems.value(itemIndex).itemType;
-
-    if (itemType != 9)
-    {
-        player_->addGold(inventoryItems.value(itemIndex).sellPrice);
-        player_->removeItemFromInventory(itemIndex);
-
-        if (inventoryItems.value(itemIndex).name == "Bedroll")
-            player_->removeBedroll();
-        if (inventoryItems.value(itemIndex).name == "Firestarter Kit")
-            player_->removeFireStarterKit();
-    }
-    else
-    {
-        for (int b = 0; b < inventoryItems.length(); b++)
-        {
-            if (item == inventoryItems.value(b).name)
+            if (item == inventoryItems.value(a).name)
             {
-                junkIndexs.push_back(b);
-                junkAmount += 1;
+                itemIndex = a;
             }
         }
 
-        player_->addGold(inventoryItems.value(itemIndex).sellPrice * junkAmount);
-        std::sort(junkIndexs.rbegin(), junkIndexs.rend());
+        itemType = inventoryItems.value(itemIndex).itemType;
 
-        for (int b = 0; b < junkIndexs.length(); b++)
+        if (itemType != 9)
         {
-            player_->removeItemFromInventory(junkIndexs.value(b));
-        }
-    }
+            player_->addGold(inventoryItems.value(itemIndex).sellPrice);
+            player_->removeItemFromInventory(itemIndex);
 
-    setPlayerInfo();
-    setPlayerInventory();
+            if (inventoryItems.value(itemIndex).name == "Bedroll")
+                player_->removeBedroll();
+            if (inventoryItems.value(itemIndex).name == "Firestarter Kit")
+                player_->removeFireStarterKit();
+        }
+        else
+        {
+            for (int b = 0; b < inventoryItems.length(); b++)
+            {
+                if (item == inventoryItems.value(b).name)
+                {
+                    junkIndexs.push_back(b);
+                    junkAmount += 1;
+                }
+            }
+
+            player_->addGold(inventoryItems.value(itemIndex).sellPrice * junkAmount);
+            std::sort(junkIndexs.rbegin(), junkIndexs.rend());
+
+            for (int b = 0; b < junkIndexs.length(); b++)
+            {
+                player_->removeItemFromInventory(junkIndexs.value(b));
+            }
+        }
+
+        setPlayerInfo();
+        setPlayerInventory();
+    }
+    else
+    {
+        QMessageBox msgBox;
+        msgBox.setWindowTitle("Sell Item");
+        msgBox.setText("You need to be in a City<br>or Town to sell items.");
+        msgBox.exec();
+    }
 }
 
 void GameLogic::on_btnRestBS_clicked()
@@ -1619,12 +1645,12 @@ void GameLogic::on_btnRestBS_clicked()
             else
             {
                 message_ += QString("You do not have enough gold to stay at the %1 Inn.\n"
-                                    "This Inn costs 50 gold for the night.").arg(strLocations_[player_->getLocation()]);
+                                    "This Inn costs 1000 gold for the night.").arg(strLocations_[player_->getLocation()]);
             }
         }
         else if (msgBox.clickedButton() == btnCamp)
         {
-            if (!player_->hasBedroll() || !player_->hasFireStarterKit())
+            if (!player_->hasBedroll() && !player_->hasFireStarterKit())
             {
                 message_ += "You need a Bedroll or Firestarter Kit to set up camp\n";
             }
@@ -1675,6 +1701,7 @@ void GameLogic::on_btnRestBS_clicked()
                             message_ += QString("You eat a ration and sleep next to a warm fire\n"
                                                 "Health is restored by 25%\n"
                                                 "Stamina is restored by 40%\n");
+                            player_->removeFireStarterKit();
                         }
                         else if (player_->hasBedroll() && player_->hasFireStarterKit())
                         {
@@ -1683,6 +1710,7 @@ void GameLogic::on_btnRestBS_clicked()
                             message_ += QString("You eat a ration and sleep in your Bedroll next to a warm fire\n"
                                                 "Health is restored by 30%\n"
                                                 "Stamina is restored by 70%\n");
+                            player_->removeFireStarterKit();
                         }
                         player_->removeRation(itemIndex);
                     }
@@ -1699,12 +1727,14 @@ void GameLogic::on_btnRestBS_clicked()
                             player_->addStamina(player_->getMaxStamina() * .30);
                             message_ += QString("You sleep next to a warm fire\n"
                                                 "Stamina is restored by 30%\n");
+                            player_->removeFireStarterKit();
                         }
                         else if (player_->hasBedroll() && player_->hasFireStarterKit())
                         {
                             player_->addStamina(player_->getMaxStamina() * .70);
-                            message_ += QString("You sleep in your Bedroll next to a warm frire\n"
+                            message_ += QString("You sleep in your Bedroll next to a warm fire\n"
                                                 "Stamina is restored by 50%\n");
+                            player_->removeFireStarterKit();
                         }
                     }
                 }
@@ -1747,12 +1777,12 @@ void GameLogic::on_btnRestBS_clicked()
                 else
                 {
                     message_ += QString("You do not have enough gold to stay at the %1 Inn.\n"
-                                        "This Inn costs 30 gold for the night.").arg(strLocations_[player_->getLocation()]);
+                                        "This Inn costs 700 gold for the night.").arg(strLocations_[player_->getLocation()]);
                 }
             }
             else if (msgBox.clickedButton() == btnCamp)
             {
-                if (!player_->hasBedroll() || !player_->hasFireStarterKit())
+                if (!player_->hasBedroll() && !player_->hasFireStarterKit())
                 {
                     message_ += "You need a Bedroll or Firestarter Kit to set up camp\n";
                 }
@@ -1803,6 +1833,7 @@ void GameLogic::on_btnRestBS_clicked()
                                 message_ += QString("You eat a ration and sleep next to a warm fire\n"
                                                     "Health is restored by 25%\n"
                                                     "Stamina is restored by 40%\n");
+                                player_->removeFireStarterKit();
                             }
                             else if (player_->hasBedroll() && player_->hasFireStarterKit())
                             {
@@ -1811,6 +1842,7 @@ void GameLogic::on_btnRestBS_clicked()
                                 message_ += QString("You eat a ration and sleep in your Bedroll next to a warm fire\n"
                                                     "Health is restored by 30%\n"
                                                     "Stamina is restored by 70%\n");
+                                player_->removeFireStarterKit();
                             }
                             player_->removeRation(itemIndex);
                         }
@@ -1821,18 +1853,21 @@ void GameLogic::on_btnRestBS_clicked()
                                 player_->addStamina(player_->getMaxStamina() * .20);
                                 message_ += QString("You sleep in your Bedroll\n"
                                                     "Stamina is restored by 20%\n");
+                                player_->removeFireStarterKit();
                             }
                             else if (!player_->hasBedroll() && player_->hasFireStarterKit())
                             {
                                 player_->addStamina(player_->getMaxStamina() * .30);
                                 message_ += QString("You sleep next to a warm fire\n"
                                                     "Stamina is restored by 30%\n");
+                                player_->removeFireStarterKit();
                             }
                             else if (player_->hasBedroll() && player_->hasFireStarterKit())
                             {
                                 player_->addStamina(player_->getMaxStamina() * .70);
-                                message_ += QString("You sleep in your Bedroll next to a warm frire\n"
+                                message_ += QString("You sleep in your Bedroll next to a warm fire\n"
                                                     "Stamina is restored by 50%\n");
+                                player_->removeFireStarterKit();
                             }
                         }
                     }
@@ -1897,6 +1932,7 @@ void GameLogic::on_btnRestBS_clicked()
                         message_ += QString("You eat a ration and sleep next to a warm fire\n"
                                             "Health is restored by 25%\n"
                                             "Stamina is restored by 40%\n");
+                        player_->removeFireStarterKit();
                     }
                     else if (player_->hasBedroll() && player_->hasFireStarterKit())
                     {
@@ -1905,6 +1941,7 @@ void GameLogic::on_btnRestBS_clicked()
                         message_ += QString("You eat a ration and sleep in your Bedroll next to a warm fire\n"
                                             "Health is restored by 30%\n"
                                             "Stamina is restored by 70%\n");
+                        player_->removeFireStarterKit();
                     }
                     player_->removeRation(itemIndex);
                 }
@@ -1921,12 +1958,14 @@ void GameLogic::on_btnRestBS_clicked()
                         player_->addStamina(player_->getMaxStamina() * .30);
                         message_ += QString("You sleep next to a warm fire\n"
                                             "Stamina is restored by 30%\n");
+                        player_->removeFireStarterKit();
                     }
                     else if (player_->hasBedroll() && player_->hasFireStarterKit())
                     {
                         player_->addStamina(player_->getMaxStamina() * .70);
-                        message_ += QString("You sleep in your Bedroll next to a warm frire\n"
+                        message_ += QString("You sleep in your Bedroll next to a warm fire\n"
                                             "Stamina is restored by 50%\n");
+                        player_->removeFireStarterKit();
                     }
                 }
             }
@@ -1995,7 +2034,7 @@ void GameLogic::on_btnUsePotionBS_clicked()
     else
     {
         QMessageBox msgBox;
-        msgBox.setWindowTitle("Drink Ration");
+        msgBox.setWindowTitle("Drink Potion");
         msgBox.setText("    You have no Potions         ");
         msgBox.exec();
     }
@@ -3276,25 +3315,62 @@ void GameLogic::setPlayerInventory()
     }
     int itemAmount;
     QVector<Item> inventoryItems;
-    QVector<QString> itemNames;
+    QVector<ItemColor> itemNames;
     QVector<int> itemAmounts;
+    ItemColor IC;
 
     inventoryItems = player_->getInventory();
 
     for (int x = 0; x < inventoryItems.length(); x++)
     {
-        itemNames.push_back(inventoryItems.value(x).name);
+        IC.name = inventoryItems.value(x).name;
+
+        if (inventoryItems.value(x).itemRarity == 0 && inventoryItems.value(x).itemType == 9)
+        {
+            IC.colorCode = "#808080";
+        }
+        else if (inventoryItems.value(x).itemRarity == 0 && inventoryItems.value(x).itemType == 1)
+        {
+            IC.colorCode = "#FFFFFF";
+        }
+        else if (inventoryItems.value(x).itemRarity == 1)
+        {
+            IC.colorCode = "#FFFFFF";
+        }
+        else if (inventoryItems.value(x).itemRarity == 2)
+        {
+            IC.colorCode = "#00FF21";
+        }
+        else if (inventoryItems.value(x).itemRarity == 3)
+        {
+            IC.colorCode = "#0026FF";
+        }
+        else if (inventoryItems.value(x).itemRarity == 4)
+        {
+            IC.colorCode = "#B200FF";
+        }
+        else if (inventoryItems.value(x).itemRarity == 5)
+        {
+            IC.colorCode = "#FF5D00";
+        }
+
+        itemNames.push_back(IC);
     }
 
-    std::sort(itemNames.begin(), itemNames.end());
-    itemNames.erase(std::unique(itemNames.begin(), itemNames.end()), itemNames.end());
+    //std::sort(loot_.begin(),loot_.end(), [](Item &left, Item &right){return left.dropWeight > right.dropWeight;});
+    std::sort(itemNames.begin(), itemNames.end(),[](ItemColor &left, ItemColor &right){return left.name < right.name;});
+
+    auto comp1 = [] ( const ItemColor& lhs, const ItemColor& rhs ) {return lhs.name == rhs.name;};
+    auto last = std::unique(itemNames.begin(), itemNames.end(),comp1);
+    itemNames.erase(last, itemNames.end());
+    //itemNames.erase(std::unique(itemNames.begin(), itemNames.end()), itemNames.end());
 
     for (int z = 0; z < itemNames.length(); z++)
     {
         itemAmount = 0;
         for (int a = 0; a < inventoryItems.length(); a++)
         {
-            if (itemNames.value(z) == inventoryItems.value(a).name)
+            if (itemNames.value(z).name == inventoryItems.value(a).name)
             {
                 itemAmount++;
             }
@@ -3304,11 +3380,11 @@ void GameLogic::setPlayerInventory()
 
     for (int i = 0; i < itemNames.length(); i++)
     {
-        ui->lstInventory->addItem(QString("%1").arg(itemNames.value(i)));
-        if(isBagOpen_)
-        {
-            bag_->setInventory(QString("%1 x%2\n").arg(itemNames.value(i)).arg(itemAmounts.value(i)));
-        }
+        ui->lstInventory->addItem(QString("%1").arg(itemNames.value(i).name));
+        ui->lstInventory->item(i)->setBackgroundColor(itemNames.value(i).colorCode);
+
+        if (itemNames.value(i).colorCode == "#0026FF")
+            ui->lstInventory->item(i)->setTextColor("#FFFFFF");
     }
 
     setInventoryItemToolTip(itemNames);
@@ -3323,24 +3399,58 @@ void GameLogic::setPlayerEquipment()
 {
     ui->lstEquipment->clear();
 
-    QString itemName;
-    QVector<Item> inventoryItems;
     QVector<Item> equipedItems;
-    QVector<QString> itemNames;
+    QVector<ItemColor> itemNames;
+    ItemColor IC;
 
     equipedItems = player_->getEquiped();
 
     for (int x = 0; x < equipedItems.length(); x++)
     {
-        itemNames.push_back(equipedItems.value(x).name);
+        IC.name = equipedItems.value(x).name;
+
+        if (equipedItems.value(x).itemRarity == 0 && equipedItems.value(x).itemType == 9)
+        {
+            IC.colorCode = "#808080";
+        }
+        else if (equipedItems.value(x).itemRarity == 0 && equipedItems.value(x).itemType == 1)
+        {
+            IC.colorCode = "#FFFFFF";
+        }
+        else if (equipedItems.value(x).itemRarity == 1)
+        {
+            IC.colorCode = "#FFFFFF";
+        }
+        else if (equipedItems.value(x).itemRarity == 2)
+        {
+            IC.colorCode = "#00FF21";
+        }
+        else if (equipedItems.value(x).itemRarity == 3)
+        {
+            IC.colorCode = "#0026FF";
+        }
+        else if (equipedItems.value(x).itemRarity == 4)
+        {
+            IC.colorCode = "#B200FF";
+        }
+        else if (equipedItems.value(x).itemRarity == 5)
+        {
+            IC.colorCode = "#FF5D00";
+        }
+
+        itemNames.push_back(IC);
     }
 
-    std::sort(itemNames.begin(), itemNames.end());
+    std::sort(itemNames.begin(), itemNames.end(),[](ItemColor &left, ItemColor &right){return left.name < right.name;});
 
     for (int i = 0; i < itemNames.length(); i++)
     {
         //ui->lstInventory->addItem(QString("%1 x%2\n").arg(itemNames.value(i)).arg(itemAmounts.value(i)));
-        ui->lstEquipment->addItem(QString("%1").arg(itemNames.value(i)));
+        ui->lstEquipment->addItem(QString("%1").arg(itemNames.value(i).name));
+        ui->lstEquipment->item(i)->setBackgroundColor(itemNames.value(i).colorCode);
+
+        if (itemNames.value(i).colorCode == "#0026FF")
+            ui->lstEquipment->item(i)->setTextColor("#FFFFFF");
     }
 
     setEquipmentItemToolTip(itemNames);
@@ -3353,7 +3463,7 @@ void GameLogic::setPlayerEquipment()
     ui->btnDrop->setEnabled(false);
 }
 
-void GameLogic::setInventoryItemToolTip(QVector<QString> listItems)
+void GameLogic::setInventoryItemToolTip(QVector<ItemColor> listItems)
 {
     int itemAmount;
     int itemIndex;
@@ -3370,7 +3480,7 @@ void GameLogic::setInventoryItemToolTip(QVector<QString> listItems)
 
         for (int a = 0; a < inventoryItems.length(); a++)
         {
-            if (listItems.value(i) == inventoryItems.value(a).name)
+            if (listItems.value(i).name == inventoryItems.value(a).name)
             {
                 itemAmount++;
                 itemIndex = a;
@@ -3647,7 +3757,7 @@ void GameLogic::setInventoryItemToolTip(QVector<QString> listItems)
     }
 }
 
-void GameLogic::setEquipmentItemToolTip(QVector<QString> listItems)
+void GameLogic::setEquipmentItemToolTip(QVector<ItemColor> listItems)
 {
     int itemIndex;
     QString itemInfo;
@@ -3662,7 +3772,7 @@ void GameLogic::setEquipmentItemToolTip(QVector<QString> listItems)
 
         for (int a = 0; a < equippedItems.length(); a++)
         {
-            if (listItems.value(i) == equippedItems.value(a).name)
+            if (listItems.value(i).name == equippedItems.value(a).name)
             {
                 itemIndex = a;
             }

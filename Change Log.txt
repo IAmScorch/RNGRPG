@@ -1,4 +1,23 @@
-Current Version: 0.4.0
+Current Version: 0.4.1
+
+Change Date: 03/10/2024
+Version 0.4.1
+Minor Enhancement #69: Update Stat Info Text on First level Up
+Minor Enhancement #68: Add Label for Bonus Stat Scores
+Minor Enhancement #62: Add Colors to Inventory Items
+Minor Enhancement #58: Add Loot for Kobolds
+Minor Enhancement #30: Add Functionality for Specific Enemy Type Drops 
+Minor Enhancement #56: Update how item drops work
+Bug #72: Remove Commas From Item Names
+Bug #71: Firestarter Kit Not being consumed
+Bug #70: Menzid not counting towards quest
+Bug #66: Rest Not Finding Camping Equipment 
+Bug #59: Unexpected Crashes Occur in Andorjaul
+Bug #67: Change Hit Text to Precision on Character Info Tab
+Bug #52: Equipment stacks when you load a save file
+Bug #65: Warrior Strength Damage Bonus Calculates Incorrectly
+Bug #55: Items can be sold anywhere
+Bug #53: Incorrect price when you can't afford an Inn
 
 Change Date: 08/19/2022
 Version 0.4.0

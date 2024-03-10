@@ -13,6 +13,7 @@ TEMPLATE = app
 QMAKE_CXXFLAGS += -std=c++11
 
 SOURCES += main.cpp\
+    enemylootdrops.cpp \
     inventorybag.cpp \
     itemcrossreference.cpp \
     player.cpp \
@@ -23,8 +24,10 @@ SOURCES += main.cpp\
 
 HEADERS  += gamelogic.h \
     DoT.h \
+    enemylootdrops.h \
     inventorybag.h \
     item.h \
+    itemcolor.h \
     itemcrossreference.h \
     player.h \
     bandit.h \
