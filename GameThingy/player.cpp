@@ -1052,6 +1052,11 @@ void Player::setLuck()
     luck_ = luckDefault_ - luckBonus;
 }
 
+double Player::getCritChance()
+{
+    return (double)((luckDefault_ - luck_) + 1)/(double)luckDefault_;
+}
+
 int Player::getLuck()
 {
     return luck_;

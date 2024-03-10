@@ -1365,9 +1365,12 @@ void GameLogic::setPlayerInfo()
     ui->lblCStrength->setText(QString("Strength: %1").arg(player_->getTotalStrengthPoints()));
     ui->lblCStamina->setText(QString("Stamina: %1").arg(player_->getTotalStaminaPoints()));
     ui->lblCAgility->setText(QString("Agility: %1").arg(player_->getTotalAgilityPoints()));
+    ui->lblCAgilScore->setText(QString("Score: %1").arg(player_->getAgility()));
     ui->lblCLuck->setText(QString("Luck: %1").arg(player_->getTotalLuckPoints()));
+    ui->lblCLuckScore->setText(QString("Crit Chance: %1%").arg(QString::number(player_->getCritChance(), 'f', 2).remove(0,2)));
     ui->lblCVitality->setText(QString("Vitality: %1").arg(player_->getTotalVitalityPoints()));
-    ui->lblCHit->setText(QString("Hit: %1").arg(player_->getTotalPrecisionPoints()));
+    ui->lblCHit->setText(QString("Precision: %1").arg(player_->getTotalPrecisionPoints()));
+    ui->lblCHitScore->setText(QString("Score: +%1").arg(player_->getPrecision()));
     ui->lblCBlock->setText(QString("Block: %1").arg(player_->getBlock()));
     double xpPercent = (double(player_->getXP()) / double(player_->getXPTillLevel())) * 100;
     double xpPercent2 = (double(player_->getXP()) / double(player_->getXPTillLevel())) * 400;
