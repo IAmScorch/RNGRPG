@@ -471,37 +471,107 @@ void Player::doLevelUp()
 
         if (level_ == 2)
         {
+            QString lvlUpText = "<b>You achieved your first level up!</b><br>"
+                                "---------------------------------------------------------------------<br><br>"
+                                "Every time you level, you get 4 skill points to distribute between<br>"
+                                "any of these 6 stats<br><br>"
+                                "<b>Vitality</b><br>"
+                                "Determines the amount of damage you can take from enemies<br>"
+                                "Each point towards <b>Vitality</b> increases your HP by 2<br>";
+            if (classType_ == 4)
+            {
+                lvlUpText+=     "As a <b>Knight</b>, every 5 points of <b>Vitality</b> gives you a 10% chance<br>"
+                                "to absorb half the enemy's total attack damage<br>";
+            }
+            lvlUpText+=         "<br><b>Strength</b><br>"
+                                "Determines how much damage you can do to enemies<br>"
+                                "Each point towards <b>Strength</b> increases your maximum amount of damage by 1<br>"
+                                "and every 5 points increases your minimum amount of damage by 1<br>";
+            if (classType_ == 3)
+            {
+                lvlUpText+=     "As a <b>Warrior</b>, your minimum damage is increased every 3 points<br>"
+                                "of <b>Strength</b> rather than every 5<br>";
+            }
+            lvlUpText+=         "<br><b>Stamina</b><br>"
+                                "Determines how many actions you can take in  day<br>"
+                                "Each point towards <b>Stamina</b> increases you maximum amount of stamina by 1<br><br>"
+                                "<b>Agility</b><br>"
+                                "Determines the chance at which you can dodge an enemy's attack<br>"
+                                "Each 5 points towards <b>Agility</b> increases your chance at dodging<br>"
+                                "an enemy's attack<br>";
+            if (classType_ == 2)
+            {
+                lvlUpText+=     "As a <b>Rogue</b>, you gain this bonus every 3 points of <b>Agility</b><br>"
+                                "rather than every 5.<br>";
+            }
+            if (classType_ == 4)
+            {
+                lvlUpText+=     "As a <b>Knight</b>, <b>Aglility</b> instead increases your <b>Block</b> chance<br>"
+                                "This bonus only applies if you are wielding a shield<br>";
+            }
+            lvlUpText+=         "<br><b>Luck</b><br>"
+                                "Determines the chance your attack can critically damage an enemy<br>"
+                                "Each 5 points towards <b>Luck</b> increases your chance at critically<br>"
+                                "damaging an enemy<br>"
+                                "critical strikes cause 2x damage but can still be dodged<br>";
+            if (classType_ == 2)
+            {
+                lvlUpText+=     "As a <b>Rogue</b>, your critical strike chance increases every 4<br>"
+                                "points of <b>Luck</b> rather than every 5<br>";
+            }
+            lvlUpText+=         "<br><b>Precision</b><br>"
+                                "Determines the chance at which you can successfully strike an enemy<br>"
+                                "Each 5 points towards <b>Precision</b> increases your chance to successfully "
+                                "strike an enemy<br>";
+            if (classType_ == 3)
+            {
+                lvlUpText+=     "As a <b>Warrior</b>, every 3 points of <b>Precision</b> increases your<br>"
+                                "strike chance rather than every 5<br>";
+            }
+            lvlUpText+=         "<br>Each skill can be raised to a maximum of 20, so spend your<br>"
+                                "skill points wisely.";
+
             msgBox.setWindowTitle("Level Up");
-            msgBox.setText("<b>You achieved your first level up!</b><br>"
-                           "---------------------------------------------------------------------<br><br>"
-                           "Every time you level, you get 4 skill points to distribute between<br>"
-                           "any of these 6 stats<br><br>"
-                           "<b>Vitality</b><br>"
-                           "Determines the amount of damage you can take from enemies.<br>"
-                           "Each point towards Vitality increases your HP by 2<br><br>"
-                           "<b>Strength</b><br>"
-                           "Determines how much damage you can do to enemies<br>"
-                           "Each point towards Strength increases your maximum amount of damage by 1<br>"
-                           "and every 5 points increases your minimum amount of damage by 5<br><br>"
-                           "<b>Stamina</b><br>"
-                           "Determines how many actions you can take in  day<br>"
-                           "Each point towards stamina increases you maximum amount of stamina by 1<br><br>"
-                           "<b>Agility</b><br>"
-                           "Determines the chance at which you can dodge an enemy's attack<br>"
-                           "Each 5 points towards Agility increases your chance at dodging<br>"
-                           "an enemy's attack<br><br>"
-                           "<b>Luck</b><br>"
-                           "Determines the chance your attack can critically damage an enemy<br>"
-                           "Each 5 points towards Luck increases your chance at critically<br>"
-                           "damaging an enemy<br>"
-                           "critical strikes cause 2x your maximum damage potential but can<br>"
-                           "still be dodged by an enemy<br><br>"
-                           "<b>Precision</b><br>"
-                           "Determines the chance at which you can successfully strike an enemy<br>"
-                           "Each 5 points towards Precision increases your chance to successfully "
-                           "strike an enemy<br><br>"
-                           "Each skill can be raised to a maximum of 20, so spend your<br>"
-                           "skill points wisely.");
+            msgBox.setText(lvlUpText);
+            msgBox.exec();
+
+            QString addClaBon = "";
+
+            if (classType_ == 2)
+            {
+                addClaBon = "<b>Additional Rogue Bonuses</b><br>"
+                            "---------------------------------------------------------------------<br><br>"
+                            "<b>Luck:</b><br>"
+                            "Every 6 points of <b>Luck</b> gives you a 10% chance of striking your enemy<br>"
+                            "an additional time. This strike deals half the damage of your first strike<br><br>"
+                            "<b>Precision:</b><br>"
+                            "Every 5 points of <b>Precision</b> increases your chance of poisoning<br>"
+                            "a target with poison laced weapons by 5%";
+            }
+            else if (classType_ == 3)
+            {
+                addClaBon = "<b>Additional Warrior Bonuses</b><br>"
+                            "---------------------------------------------------------------------<br><br>"
+                            "<b>Strength:</b><br>"
+                            "Every 6 points of <b>Strength</b> increases your damage ouput by 10%<br>"
+                            "This bonus only applies if you are wielding a 2-Handed weapon<br><br>"
+                            "Every 4 levels of <b>Strength</b> icreases your maximum damage<br>"
+                            "by an additional 2 points";
+            }
+            else if (classType_ == 4)
+            {
+                addClaBon = "<b>Additional Knight Bonuses</b><br>"
+                            "---------------------------------------------------------------------<br><br>"
+                            "<b>Vitality:</b><br>"
+                            "Every 4 points of <b>Vitality</b> increases your health by<br>"
+                            "an additional 2 points<br><br>"
+                            "<b>Blunt Trauma Resistence:</b><br>"
+                            "Every 5 points of block reduces the chance that you will be affected<br>"
+                            "by the <b>Blunt Trauma</b> DoT by 5%";
+            }
+
+            msgBox.setWindowTitle("Additional Class Bonuses");
+            msgBox.setText(addClaBon);
             msgBox.exec();
         }
 
@@ -837,6 +907,16 @@ void Player::loadInventory(QString playerName)
         invItem.weaponType = item.value(23).toInt();
         invItem.dotType_ = item.value(24).toInt();
         addItemToInventory(invItem);
+
+        if (invItem.name == "Bedroll")
+        {
+            addBedroll();
+        }
+
+        if (invItem.name == "Firestarter Kit")
+        {
+            addFireStarterKit();
+        }
     }
 }
 

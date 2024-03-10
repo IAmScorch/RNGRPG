@@ -460,6 +460,7 @@ void GameLogic::on_btnBattle_clicked()
         ui->tabCInfoScreen->setEnabled(true);
         ui->tabMenuScreen->setEnabled(true);
         ui->tabQuestScreen->setEnabled(true);
+        bsAttackSC_->setEnabled(false);
 
         ui->txtBattleInfo->setEnabled(false);
         ui->btnAttack->setEnabled(false);
@@ -1649,7 +1650,7 @@ void GameLogic::on_btnRestBS_clicked()
         }
         else if (msgBox.clickedButton() == btnCamp)
         {
-            if (!player_->hasBedroll() || !player_->hasFireStarterKit())
+            if (!player_->hasBedroll() && !player_->hasFireStarterKit())
             {
                 message_ += "You need a Bedroll or Firestarter Kit to set up camp\n";
             }
@@ -1728,7 +1729,7 @@ void GameLogic::on_btnRestBS_clicked()
                         else if (player_->hasBedroll() && player_->hasFireStarterKit())
                         {
                             player_->addStamina(player_->getMaxStamina() * .70);
-                            message_ += QString("You sleep in your Bedroll next to a warm frire\n"
+                            message_ += QString("You sleep in your Bedroll next to a warm fire\n"
                                                 "Stamina is restored by 50%\n");
                         }
                     }
@@ -2020,7 +2021,7 @@ void GameLogic::on_btnUsePotionBS_clicked()
     else
     {
         QMessageBox msgBox;
-        msgBox.setWindowTitle("Drink Ration");
+        msgBox.setWindowTitle("Drink Potion");
         msgBox.setText("    You have no Potions         ");
         msgBox.exec();
     }
