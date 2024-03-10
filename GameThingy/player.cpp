@@ -84,6 +84,9 @@ Player::Player(int defaultHealth, int intelligence, int defaultStamina,
     warTwoHandAtkBonus_ = 0;
     knightAbsorbBonus_ = 0;
     knightBlockBonus_ = 0;
+    fireStarterKitAmount_ = 0;
+    hasBedroll_ = false;
+    hasFireStarterKit_ = false;
     qsrand(QTime::currentTime().msec());
 }
 
@@ -2288,6 +2291,14 @@ void Player::addFireStarterKit()
 
 void Player::removeFireStarterKit()
 {
+    for (int a = 0; a < inventory_.length(); a++)
+    {
+        if (inventory_.value(a).name == "Firestarter Kit")
+        {
+            removeItemFromInventory(a);
+            break;
+        }
+    }
     fireStarterKitAmount_ -= 1;
 
     if (fireStarterKitAmount_ < 1)

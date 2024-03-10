@@ -1701,6 +1701,7 @@ void GameLogic::on_btnRestBS_clicked()
                             message_ += QString("You eat a ration and sleep next to a warm fire\n"
                                                 "Health is restored by 25%\n"
                                                 "Stamina is restored by 40%\n");
+                            player_->removeFireStarterKit();
                         }
                         else if (player_->hasBedroll() && player_->hasFireStarterKit())
                         {
@@ -1709,6 +1710,7 @@ void GameLogic::on_btnRestBS_clicked()
                             message_ += QString("You eat a ration and sleep in your Bedroll next to a warm fire\n"
                                                 "Health is restored by 30%\n"
                                                 "Stamina is restored by 70%\n");
+                            player_->removeFireStarterKit();
                         }
                         player_->removeRation(itemIndex);
                     }
@@ -1725,12 +1727,14 @@ void GameLogic::on_btnRestBS_clicked()
                             player_->addStamina(player_->getMaxStamina() * .30);
                             message_ += QString("You sleep next to a warm fire\n"
                                                 "Stamina is restored by 30%\n");
+                            player_->removeFireStarterKit();
                         }
                         else if (player_->hasBedroll() && player_->hasFireStarterKit())
                         {
                             player_->addStamina(player_->getMaxStamina() * .70);
                             message_ += QString("You sleep in your Bedroll next to a warm fire\n"
                                                 "Stamina is restored by 50%\n");
+                            player_->removeFireStarterKit();
                         }
                     }
                 }
@@ -1778,7 +1782,7 @@ void GameLogic::on_btnRestBS_clicked()
             }
             else if (msgBox.clickedButton() == btnCamp)
             {
-                if (!player_->hasBedroll() || !player_->hasFireStarterKit())
+                if (!player_->hasBedroll() && !player_->hasFireStarterKit())
                 {
                     message_ += "You need a Bedroll or Firestarter Kit to set up camp\n";
                 }
@@ -1829,6 +1833,7 @@ void GameLogic::on_btnRestBS_clicked()
                                 message_ += QString("You eat a ration and sleep next to a warm fire\n"
                                                     "Health is restored by 25%\n"
                                                     "Stamina is restored by 40%\n");
+                                player_->removeFireStarterKit();
                             }
                             else if (player_->hasBedroll() && player_->hasFireStarterKit())
                             {
@@ -1837,6 +1842,7 @@ void GameLogic::on_btnRestBS_clicked()
                                 message_ += QString("You eat a ration and sleep in your Bedroll next to a warm fire\n"
                                                     "Health is restored by 30%\n"
                                                     "Stamina is restored by 70%\n");
+                                player_->removeFireStarterKit();
                             }
                             player_->removeRation(itemIndex);
                         }
@@ -1847,18 +1853,21 @@ void GameLogic::on_btnRestBS_clicked()
                                 player_->addStamina(player_->getMaxStamina() * .20);
                                 message_ += QString("You sleep in your Bedroll\n"
                                                     "Stamina is restored by 20%\n");
+                                player_->removeFireStarterKit();
                             }
                             else if (!player_->hasBedroll() && player_->hasFireStarterKit())
                             {
                                 player_->addStamina(player_->getMaxStamina() * .30);
                                 message_ += QString("You sleep next to a warm fire\n"
                                                     "Stamina is restored by 30%\n");
+                                player_->removeFireStarterKit();
                             }
                             else if (player_->hasBedroll() && player_->hasFireStarterKit())
                             {
                                 player_->addStamina(player_->getMaxStamina() * .70);
-                                message_ += QString("You sleep in your Bedroll next to a warm frire\n"
+                                message_ += QString("You sleep in your Bedroll next to a warm fire\n"
                                                     "Stamina is restored by 50%\n");
+                                player_->removeFireStarterKit();
                             }
                         }
                     }
@@ -1923,6 +1932,7 @@ void GameLogic::on_btnRestBS_clicked()
                         message_ += QString("You eat a ration and sleep next to a warm fire\n"
                                             "Health is restored by 25%\n"
                                             "Stamina is restored by 40%\n");
+                        player_->removeFireStarterKit();
                     }
                     else if (player_->hasBedroll() && player_->hasFireStarterKit())
                     {
@@ -1931,6 +1941,7 @@ void GameLogic::on_btnRestBS_clicked()
                         message_ += QString("You eat a ration and sleep in your Bedroll next to a warm fire\n"
                                             "Health is restored by 30%\n"
                                             "Stamina is restored by 70%\n");
+                        player_->removeFireStarterKit();
                     }
                     player_->removeRation(itemIndex);
                 }
@@ -1947,12 +1958,14 @@ void GameLogic::on_btnRestBS_clicked()
                         player_->addStamina(player_->getMaxStamina() * .30);
                         message_ += QString("You sleep next to a warm fire\n"
                                             "Stamina is restored by 30%\n");
+                        player_->removeFireStarterKit();
                     }
                     else if (player_->hasBedroll() && player_->hasFireStarterKit())
                     {
                         player_->addStamina(player_->getMaxStamina() * .70);
-                        message_ += QString("You sleep in your Bedroll next to a warm frire\n"
+                        message_ += QString("You sleep in your Bedroll next to a warm fire\n"
                                             "Stamina is restored by 50%\n");
+                        player_->removeFireStarterKit();
                     }
                 }
             }
