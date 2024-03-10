@@ -283,7 +283,7 @@ QVector<Item> enemyLootDrops::doLootDrop(QString enemyName, QVector<Item> enemyL
                                     }
                                     else
                                     {
-                                        item.name += " of " + statName1 + ", " + statName2 + " and " +statName3;
+                                        item.name += " of " + statName1 + " and " + statName2 + " and " +statName3;
                                     }
                                     break;
                             }
