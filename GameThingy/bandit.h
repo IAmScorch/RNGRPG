@@ -25,6 +25,8 @@ private:
     int itemDropChance_;
     int weaponDot_;
     int armourType_;
+    int goldDropMin_;
+    int goldDropMax_;
     bool isAlive_;
     bool isHit_;
     QString message_;
@@ -33,13 +35,15 @@ private:
 
 public:
     Bandit(QString name, int health, int maxAttackPower, int minAttackPower,
-        int critChance, int XPReward, int level, int enemyType, int agility, int objType, int itemDropChance, int weaponDot, int armourType);
+        int critChance, int XPReward, int level, int enemyType, int agility,
+           int objType, int itemDropChance, int weaponDot, int armourType,
+           int goldDropMin, int goldDropMax);
     ~Bandit(void);
 
     int doAttack(QString enemy);
     int doHitRoll();
     void doHit(int dmg, int playerHitRoll, QString playerName, int playerDotType, int playerClass);
-    int goldDrop();
+    int goldDrop(double goldModifier);
 
     int getHealth();
     void setHealth(int health);

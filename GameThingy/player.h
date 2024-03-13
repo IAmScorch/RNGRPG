@@ -50,6 +50,9 @@ private:
 
     int luck_;
     int luckDefault_;
+    double luckGold_;
+    int luckLoot_;
+    int luckBigLoot_;
     int statLuck_;
     int equippedLuck_;
 
@@ -142,13 +145,18 @@ public:
     int getAgility();
     int getStatAgility();
 
+//    double luckGold_;
+//    int luckLoot_;
+//    int luckBigLoot_;
     void addStatLuck(int luck);
     void addEquippedLuck(int luck);
     void removeLuck(int luck);
     void setLuck();
     double getCritChance();
+    double getGoldModifier();
     int getLuck();
     int getStatLuck();
+    int getBigLootModifier();
 
     void addIntelligence(int intelligence);
     int getIntelligence();

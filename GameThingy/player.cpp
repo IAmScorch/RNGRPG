@@ -87,6 +87,9 @@ Player::Player(int defaultHealth, int intelligence, int defaultStamina,
     fireStarterKitAmount_ = 0;
     hasBedroll_ = false;
     hasFireStarterKit_ = false;
+    luckGold_ = 1.0;
+    luckLoot_ = 0;
+    luckBigLoot_ = 0;
     qsrand(QTime::currentTime().msec());
 }
 
@@ -705,6 +708,9 @@ void Player::save()
     saveFile << rogueDblAtkBonus_ << "\n";
     saveFile << warTwoHandAtkBonus_ << "\n";
     saveFile << knightAbsorbBonus_ << "\n";
+    saveFile << luckGold_ << "\n";
+    saveFile << luckLoot_ << "\n";
+    saveFile << luckBigLoot_ << "\n";
     file.close();
     saveInventory();
     saveEquipment();
@@ -853,6 +859,9 @@ void Player::load(QString playerName)
         rogueDblAtkBonus_ = saveFile.readLine().toInt();
         warTwoHandAtkBonus_ = saveFile.readLine().toInt();
         knightAbsorbBonus_ = saveFile.readLine().toInt();
+        luckGold_ = saveFile.readLine().toDouble();
+        luckLoot_ = saveFile.readLine().toInt();
+        luckBigLoot_ = saveFile.readLine().toInt();
         file.close();
     }
     loadInventory(playerName);
@@ -1132,12 +1141,21 @@ void Player::setLuck()
     else
         luckBonus = totalLuckPoints / 5;
 
+    luckGold_ = 1.0 + ((totalLuckPoints / 2) * 0.1);
+
+    luckBigLoot_ = ((totalLuckPoints / 3) * 10);
+
     luck_ = luckDefault_ - luckBonus;
 }
 
 double Player::getCritChance()
 {
     return (double)((luckDefault_ - luck_) + 1)/(double)luckDefault_;
+}
+
+double Player::getGoldModifier()
+{
+    return luckGold_;
 }
 
 int Player::getLuck()
@@ -1148,6 +1166,11 @@ int Player::getLuck()
 int Player::getStatLuck()
 {
     return statLuck_;
+}
+
+int Player::getBigLootModifier()
+{
+    return luckBigLoot_;
 }
 
 void Player::addIntelligence(int intelligence)

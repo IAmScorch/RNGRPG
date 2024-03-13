@@ -96,8 +96,8 @@ GameLogic::GameLogic(QWidget *parent) :
     ui->btnLoad->setStyleSheet("background-color: rgb(225, 225, 225, 200)");
     ui->btnSave->setStyleSheet("background-color: rgb(225, 225, 225, 200)");
     ui->btnQuit->setStyleSheet("background-color: rgb(225, 225, 225, 200)");
-    bandit_ = new Bandit("", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-    banditBoss_ = new Bandit("", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+    bandit_ = new Bandit("", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+    banditBoss_ = new Bandit("", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
     warrior_ = new Warrior("", 0, 0, 0, 0, 0);
     warriorBoss_ = new Warrior("", 0, 0, 0, 0, 0);
     player_ = new Player(0, 0, 0, 0, 0, 0);
@@ -269,8 +269,9 @@ void GameLogic::on_btnAttack_clicked()
                     quest_->setAmountCompleteII(1);
             }
 
-            player_->addGold(bandit_->goldDrop());
-            player_->addItemsToInventory(lootDrops_->doLootDrop(bandit_->getName(), bandit_->getEnemyLoot(), bandit_->getItemDropChance()));
+            player_->addGold(bandit_->goldDrop(1));
+            player_->addItemsToInventory(lootDrops_->doLootDrop(bandit_->getName(), bandit_->getEnemyLoot(),
+                                                                bandit_->getItemDropChance(), player_->getLuck()));
             setPlayerInventory();
             ui->lblGoldAmount->setText(QString("Gold: %1").arg(player_->getGold()));
             ui->lblGoldInv->setText(QString("Gold: %1").arg(player_->getGold()));
@@ -368,7 +369,7 @@ void GameLogic::on_btnSpecialAbility_clicked()
                 quest_->setAmountCompleteII(1);
         }
 
-        player_->addGold(bandit_->goldDrop());
+        player_->addGold(bandit_->goldDrop(player_->getGoldModifier()));
         ui->lblGoldAmount->setText(QString("Gold: %1").arg(player_->getGold()));
         ui->lblGoldInv->setText(QString("Gold: %1").arg(player_->getGold()));
 
@@ -667,11 +668,11 @@ void GameLogic::checkLevel()
     {
         if (quest_->getQuestType() == 0)
         {
-            bandit_ = new Bandit("banditName", 0, 0, 0, 0, 0, 0, 999, 0, 0, 0, 0, 0);
+            bandit_ = new Bandit("banditName", 0, 0, 0, 0, 0, 0, 999, 0, 0, 0, 0, 0, 0, 0);
         }
         else if (quest_->getQuestType() >= 4)
         {
-            bandit_ = new Bandit("banditName", 0, 0, 0, 0, 0, 0, 999, 0, 0, 0, 0, 0);
+            bandit_ = new Bandit("banditName", 0, 0, 0, 0, 0, 0, 999, 0, 0, 0, 0, 0, 0, 0);
         }
         else
         {
@@ -690,9 +691,11 @@ void GameLogic::checkLevel()
             int banditType = 0;
             int banditAgility = 3;
             int objType = 1;
-            int banditDropChance = 90;
+            int banditDropChance = 10;
             int weaponDot;
             int armourType = 2;
+            int minGold;
+            int maxGold;
 
             if (quest_->getQuestType() == 2 && quest_->getIsQuestActive() == 1 && trainerChance >= 75)
             {
@@ -707,7 +710,8 @@ void GameLogic::checkLevel()
                 banditLevel = 2;
                 banditAgility = 5;
                 weaponDot = rand()% 2 + 1;
-
+                minGold = 7;
+                maxGold = 20;
             }
             else
             {
@@ -719,11 +723,14 @@ void GameLogic::checkLevel()
                 banditXPReward = 6;
                 banditType = 1;
                 weaponDot = 1;
+                minGold = 5;
+                maxGold = 15;
             }
 
             bandit_ = new Bandit(banditName, banditHealth, banditMaxAttackPower, banditMinAttackPower,
-                                 banditCritChance, banditXPReward, banditLevel, banditType, banditAgility, objType, banditDropChance, weaponDot, armourType);
-            lootDrops_->setLoot(bandit_->getEnemyType(), bandit_->getName());
+                                 banditCritChance, banditXPReward, banditLevel, banditType, banditAgility,
+                                 objType, banditDropChance, weaponDot, armourType, minGold, maxGold);
+            lootDrops_->setLoot(bandit_->getEnemyType(), bandit_->getName(), player_->getBigLootModifier());
             bandit_->addLoot(lootDrops_->getDefaultLoot(),lootDrops_->getEnemySpecificLoot());
         }
     }
@@ -731,7 +738,7 @@ void GameLogic::checkLevel()
     {
         if (player_->getQuestsCompleted() < 2)
         {
-            bandit_ = new Bandit("banditName", 0, 0, 0, 0, 0, 0, 999, 0, 0, 0, 0, 0);
+            bandit_ = new Bandit("banditName", 0, 0, 0, 0, 0, 0, 999, 0, 0, 0, 0, 0, 0, 0);
         }
         else
         {
@@ -750,9 +757,11 @@ void GameLogic::checkLevel()
             int banditType = 0;
             int banditAgility = 3;
             int objType = 1;
-            int banditDropChance = 90;
+            int banditDropChance = 10;
             int weaponDot;
             int armourType = 2;
+            int minGold;
+            int maxGold;
 
             if (quest_->getQuestType() == 3 && quest_->getIsQuestActive() == 1 && trainerChance >= 85)
             {
@@ -767,6 +776,8 @@ void GameLogic::checkLevel()
                 banditLevel = 2;
                 banditAgility = 6;
                 weaponDot = rand()% 3 + 1;
+                minGold = 13;
+                maxGold = 30;
             }
             else if (quest_->getQuestType() == 5 && quest_->getIsQuestActive() == 1)
             {
@@ -779,6 +790,8 @@ void GameLogic::checkLevel()
                 banditXPReward = 6;
                 banditType = 5;
                 weaponDot = 3;
+                minGold = 7;
+                maxGold = 20;
             }
             else
             {
@@ -790,11 +803,14 @@ void GameLogic::checkLevel()
                 banditXPReward = 6;
                 banditType = 1;
                 weaponDot = 1;
+                minGold = 5;
+                maxGold = 15;
             }
 
             bandit_ = new Bandit(banditName, banditHealth, banditMaxAttackPower, banditMinAttackPower,
-                                 banditCritChance, banditXPReward, banditLevel, banditType, banditAgility, objType, banditDropChance, weaponDot, armourType);
-            lootDrops_->setLoot(bandit_->getEnemyType(), bandit_->getName());
+                                 banditCritChance, banditXPReward, banditLevel, banditType, banditAgility,
+                                 objType, banditDropChance, weaponDot, armourType, minGold, maxGold);
+            lootDrops_->setLoot(bandit_->getEnemyType(), bandit_->getName(), player_->getBigLootModifier());
             bandit_->addLoot(lootDrops_->getDefaultLoot(),lootDrops_->getEnemySpecificLoot());
         }
     }
@@ -802,11 +818,11 @@ void GameLogic::checkLevel()
     {
         if (quest_->getQuestType() < 4 )
         {
-            bandit_ = new Bandit("banditName", 0, 0, 0, 0, 0, 0, 999, 0, 0, 0, 0, 0);
+            bandit_ = new Bandit("banditName", 0, 0, 0, 0, 0, 0, 999, 0, 0, 0, 0, 0, 0, 0);
         }
         else if (quest_->getQuestType() > 4)
         {
-            bandit_ = new Bandit("banditName", 0, 0, 0, 0, 0, 0, 999, 0, 0, 0, 0, 0);
+            bandit_ = new Bandit("banditName", 0, 0, 0, 0, 0, 0, 999, 0, 0, 0, 0, 0, 0, 0);
         }
         else
         {
@@ -824,9 +840,11 @@ void GameLogic::checkLevel()
             int banditType = 4;
             int banditAgility = 4;
             int objType = 1;
-            int banditDropChance = 90;
+            int banditDropChance = 10;
             int weaponDot = rand()% 2 + 1;
             int armourType = 2;
+            int minGold;
+            int maxGold;
 
             banditHealth = rand() % ((12 + 1) - 9) + 9;
             enemyMaxHP_ = banditHealth;
@@ -834,10 +852,13 @@ void GameLogic::checkLevel()
             banditMinAttackPower = 1;
             banditCritChance = 20;
             banditXPReward = 12;
+            minGold = 9;
+            maxGold = 23;
 
             bandit_ = new Bandit(banditName, banditHealth, banditMaxAttackPower, banditMinAttackPower,
-                                 banditCritChance, banditXPReward, banditLevel, banditType, banditAgility, objType, banditDropChance, weaponDot, armourType);
-            lootDrops_->setLoot(bandit_->getEnemyType(), bandit_->getName());
+                                 banditCritChance, banditXPReward, banditLevel, banditType, banditAgility,
+                                 objType, banditDropChance, weaponDot, armourType, minGold, maxGold);
+            lootDrops_->setLoot(bandit_->getEnemyType(), bandit_->getName(), player_->getBigLootModifier());
             bandit_->addLoot(lootDrops_->getDefaultLoot(),lootDrops_->getEnemySpecificLoot());
         }
     }
@@ -845,12 +866,12 @@ void GameLogic::checkLevel()
     {
         if (quest_->getQuestType() < 7 )
         {
-            bandit_ = new Bandit("banditName", 0, 0, 0, 0, 0, 0, 999, 0, 0, 0, 0, 0);
+            bandit_ = new Bandit("banditName", 0, 0, 0, 0, 0, 0, 999, 0, 0, 0, 0, 0, 0, 0);
         }
         else if (quest_->getQuestType() > 7 || player_->getQuestsCompleted() == 7 ||
                  (quest_->getQuestType() == 7 && quest_->getAmountCompleteII() == quest_->getObjectiveII()))
         {
-            bandit_ = new Bandit("banditName", 0, 0, 0, 0, 0, 0, 999, 0, 0, 0, 0, 0);
+            bandit_ = new Bandit("banditName", 0, 0, 0, 0, 0, 0, 999, 0, 0, 0, 0, 0, 0, 0);
         }
         else
         {
@@ -868,9 +889,11 @@ void GameLogic::checkLevel()
             int banditType = 7;
             int banditAgility = 4;
             int objType = 1;
-            int banditDropChance = 90;
+            int banditDropChance = 10;
             int weaponDot = rand()% 2 + 1;
             int armourType = 2;
+            int minGold;
+            int maxGold;
 
             if (quest_->getAmountComplete() == quest_->getObjective())
             {
@@ -885,6 +908,8 @@ void GameLogic::checkLevel()
                 banditLevel = 3;
                 banditAgility = 4;
                 objType = 2;
+                minGold = 13;
+                maxGold = 25;
             }
             else
             {
@@ -894,11 +919,14 @@ void GameLogic::checkLevel()
                 banditMinAttackPower = 1;
                 banditCritChance = 20;
                 banditXPReward = 12;
+                minGold = 3;
+                maxGold = 10;
             }
 
             bandit_ = new Bandit(banditName, banditHealth, banditMaxAttackPower, banditMinAttackPower,
-                                 banditCritChance, banditXPReward, banditLevel, banditType, banditAgility, objType, banditDropChance, weaponDot, armourType);
-            lootDrops_->setLoot(bandit_->getEnemyType(), bandit_->getName());
+                                 banditCritChance, banditXPReward, banditLevel, banditType, banditAgility,
+                                 objType, banditDropChance, weaponDot, armourType, minGold, maxGold);
+            lootDrops_->setLoot(bandit_->getEnemyType(), bandit_->getName(), player_->getBigLootModifier());
             bandit_->addLoot(lootDrops_->getDefaultLoot(),lootDrops_->getEnemySpecificLoot());
         }
     }
@@ -906,7 +934,7 @@ void GameLogic::checkLevel()
     {
         if (quest_->getQuestType() < 6 && player_->getQuestsCompleted() < 7)
         {
-            bandit_ = new Bandit("banditName", 0, 0, 0, 0, 0, 0, 999, 0, 0, 0, 0, 0);
+            bandit_ = new Bandit("banditName", 0, 0, 0, 0, 0, 0, 999, 0, 0, 0, 0, 0, 0, 0);
         }
         else
         {
@@ -924,10 +952,12 @@ void GameLogic::checkLevel()
             int banditType = 4;
             int banditAgility = 5;
             int objType = 1;
-            int banditDropChance = 75;
+            int banditDropChance = 25;
             int andorjaulSettlerChance = rand() % ((100 + 1) - 1) + 1;
             int weaponDot = rand()% 2 + 1;
             int armourType = 2;
+            int minGold = 0;
+            int maxGold = 0;
 
             if (quest_->getQuestType() == 6  && quest_->getIsQuestActive() == 1 && andorjaulSettlerChance >= 60)
             {
@@ -949,17 +979,20 @@ void GameLogic::checkLevel()
                 banditMinAttackPower = 1;
                 banditCritChance = 20;
                 banditXPReward = 12;
+                minGold = 9;
+                maxGold = 23;
             }
 
             bandit_ = new Bandit(banditName, banditHealth, banditMaxAttackPower, banditMinAttackPower,
-                                 banditCritChance, banditXPReward, banditLevel, banditType, banditAgility, objType, banditDropChance, weaponDot, armourType);
-            lootDrops_->setLoot(bandit_->getEnemyType(), bandit_->getName());
+                                 banditCritChance, banditXPReward, banditLevel, banditType, banditAgility,
+                                 objType, banditDropChance, weaponDot, armourType, minGold, maxGold);
+            lootDrops_->setLoot(bandit_->getEnemyType(), bandit_->getName(), player_->getBigLootModifier());
             bandit_->addLoot(lootDrops_->getDefaultLoot(),lootDrops_->getEnemySpecificLoot());
         }
     }
     else
     {
-        bandit_ = new Bandit("banditName", 0, 0, 0, 0, 0, 0, 998, 0, 0, 0, 0, 0);
+        bandit_ = new Bandit("banditName", 0, 0, 0, 0, 0, 0, 998, 0, 0, 0, 0, 0, 0, 0);
     }
 }
 
@@ -982,17 +1015,17 @@ void GameLogic::createCharacter()
     if (msgBox.clickedButton() == btnRogue)
     {
         //defaultHealth, intelligence, defaultStamina, agilityDefault, luckDefault, classType
-        player_ = new Player(16, 0, 10, 7, 20, 2);
+        player_ = new Player(16, 0, 20, 7, 20, 2);
     }
     else if (msgBox.clickedButton() == btnWarrior)
     {
         //defaultHealth, intelligence, defaultStamina, agilityDefault, luckDefault, classType
-        player_ = new Player(20, 0, 10, 6, 20, 3);
+        player_ = new Player(20, 0, 20, 6, 20, 3);
     }
     else if (msgBox.clickedButton() == btnKnight)
     {
         //defaultHealth, intelligence, defaultStamina, agilityDefault, luckDefault, classType
-        player_ = new Player(26, 0, 10, 5, 20, 4);
+        player_ = new Player(26, 0, 20, 5, 20, 4);
     }
 
     bool ok;
@@ -2604,6 +2637,7 @@ void GameLogic::on_btnIncreaseAgility_clicked()
     ui->lblCAgility->setText(QString("Agility: %1").arg(player_->getTotalAgilityPoints()));
     player_->setSkillPoints(1);
     ui->lblCSkillPoints->setText(QString("Skill Points: %1").arg(player_->getSkillPoints()));
+    ui->lblCAgilScore->setText(QString("Score: %1").arg(player_->getAgility()));
     checkSkillPoints();
 }
 
@@ -2613,15 +2647,17 @@ void GameLogic::on_btnIncreaseCritChance_clicked()
     ui->lblCLuck->setText(QString("Luck: %1").arg(player_->getTotalLuckPoints()));
     player_->setSkillPoints(1);
     ui->lblCSkillPoints->setText(QString("Skill Points: %1").arg(player_->getSkillPoints()));
+    ui->lblCLuckScore->setText(QString("Crit Chance: %1%").arg(QString::number(player_->getCritChance(), 'f', 2).remove(0,2)));
     checkSkillPoints();
 }
 
 void GameLogic::on_btnIncreaseHitChance_clicked()
 {
     player_->addStatPrecision(1);
-    ui->lblCHit->setText(QString("Hit: %1").arg(player_->getTotalPrecisionPoints()));
+    ui->lblCHit->setText(QString("Precision: %1").arg(player_->getTotalPrecisionPoints()));
     player_->setSkillPoints(1);
     ui->lblCSkillPoints->setText(QString("Skill Points: %1").arg(player_->getSkillPoints()));
+    ui->lblCHitScore->setText(QString("Score: +%1").arg(player_->getPrecision()));
     checkSkillPoints();
 }
 

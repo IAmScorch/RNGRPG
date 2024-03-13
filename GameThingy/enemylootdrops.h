@@ -117,9 +117,9 @@ private:
 
 public:
     enemyLootDrops();
-    QVector<Item> doLootDrop(QString enemyName, QVector<Item> enemyLoot, int itemDropChance);
+    QVector<Item> doLootDrop(QString enemyName, QVector<Item> enemyLoot, int itemDropChance, int itemDropChanceModifier);
 
-    void setLoot(int enemyType, QString enemyName);
+    void setLoot(int enemyType, QString enemyName, int bigLootModifier);
 
     QVector<Item> getDefaultLoot();
     QVector<Item> getEnemySpecificLoot();

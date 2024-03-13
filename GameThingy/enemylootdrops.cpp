@@ -7,7 +7,8 @@ enemyLootDrops::enemyLootDrops()
 
 }
 
-QVector<Item> enemyLootDrops::doLootDrop(QString enemyName, QVector<Item> enemyLoot, int itemDropChance)
+QVector<Item> enemyLootDrops::doLootDrop(QString enemyName, QVector<Item> enemyLoot,
+                                         int itemDropChance, int itemDropChanceModifier)
 {
     int dropChance;
     QString itemChance;
@@ -19,10 +20,11 @@ QVector<Item> enemyLootDrops::doLootDrop(QString enemyName, QVector<Item> enemyL
     Item item;
 
     dropChance = rand()% 100 + 1;
+    dropChance+= itemDropChanceModifier;
     lootMessage = enemyName + " dropped no loot";
     itemChance = "";
 
-    if (dropChance <= itemDropChance)
+    if (dropChance >= itemDropChance)
     {
         lootMessage = enemyName + " dropped:\n";
         itemsToDropped = rand()% 3 + 1;
@@ -308,7 +310,7 @@ QVector<Item> enemyLootDrops::doLootDrop(QString enemyName, QVector<Item> enemyL
     return droppedItems_;
 }
 
-void enemyLootDrops::setLoot(int enemyType, QString enemyName)
+void enemyLootDrops::setLoot(int enemyType, QString enemyName, int bigLootModifier)
 {
     Item item;
     int dRows;
@@ -340,6 +342,9 @@ void enemyLootDrops::setLoot(int enemyType, QString enemyName)
             item.dotType_ =         banditDefaultItemDrops_[x][16].toInt();
             item.dropWeight =       banditDefaultItemDrops_[x][17].toInt();
 
+            if (item.itemRarity == 2 || item.itemRarity == 3 || item.itemRarity == 4 || item.itemRarity == 5)
+                item.dropWeight += bigLootModifier;
+
             defaultLoot_.push_back(item);
         }
 
@@ -367,6 +372,9 @@ void enemyLootDrops::setLoot(int enemyType, QString enemyName)
                 item.weaponEdgeType =   banditInitiateItemDrops_[x][15].toInt();
                 item.dotType_ =         banditInitiateItemDrops_[x][16].toInt();
                 item.dropWeight =       banditInitiateItemDrops_[x][17].toInt();
+
+                if (item.itemRarity == 2 || item.itemRarity == 3 || item.itemRarity == 4 || item.itemRarity == 5)
+                    item.dropWeight += bigLootModifier;
 
                 enemySpecificLoot_.push_back(item);
             }
@@ -396,6 +404,9 @@ void enemyLootDrops::setLoot(int enemyType, QString enemyName)
                 item.dotType_ =         banditTrainerItemDrops_[x][16].toInt();
                 item.dropWeight =       banditTrainerItemDrops_[x][17].toInt();
 
+                if (item.itemRarity == 2 || item.itemRarity == 3 || item.itemRarity == 4 || item.itemRarity == 5)
+                    item.dropWeight += bigLootModifier;
+
                 enemySpecificLoot_.push_back(item);
             }
         }
@@ -423,6 +434,9 @@ void enemyLootDrops::setLoot(int enemyType, QString enemyName)
                 item.weaponEdgeType =   banditGrenItemDrops_[x][15].toInt();
                 item.dotType_ =         banditGrenItemDrops_[x][16].toInt();
                 item.dropWeight =       banditGrenItemDrops_[x][17].toInt();
+
+                if (item.itemRarity == 2 || item.itemRarity == 3 || item.itemRarity == 4 || item.itemRarity == 5)
+                    item.dropWeight += bigLootModifier;
 
                 enemySpecificLoot_.push_back(item);
             }
@@ -452,6 +466,9 @@ void enemyLootDrops::setLoot(int enemyType, QString enemyName)
                 item.dotType_ =         banditRaiderItemDrops_[x][16].toInt();
                 item.dropWeight =       banditRaiderItemDrops_[x][17].toInt();
 
+                if (item.itemRarity == 2 || item.itemRarity == 3 || item.itemRarity == 4 || item.itemRarity == 5)
+                    item.dropWeight += bigLootModifier;
+
                 enemySpecificLoot_.push_back(item);
             }
         }
@@ -479,6 +496,9 @@ void enemyLootDrops::setLoot(int enemyType, QString enemyName)
                 item.weaponEdgeType =   banditAmbusherItemDrops_[x][15].toInt();
                 item.dotType_ =         banditAmbusherItemDrops_[x][16].toInt();
                 item.dropWeight =       banditAmbusherItemDrops_[x][17].toInt();
+
+                if (item.itemRarity == 2 || item.itemRarity == 3 || item.itemRarity == 4 || item.itemRarity == 5)
+                    item.dropWeight += bigLootModifier;
 
                 enemySpecificLoot_.push_back(item);
             }
@@ -509,6 +529,9 @@ void enemyLootDrops::setLoot(int enemyType, QString enemyName)
             item.dotType_ =         koboldDefaultItemDrops_[x][16].toInt();
             item.dropWeight =       koboldDefaultItemDrops_[x][17].toInt();
 
+            if (item.itemRarity == 2 || item.itemRarity == 3 || item.itemRarity == 4 || item.itemRarity == 5)
+                item.dropWeight += bigLootModifier;
+
             defaultLoot_.push_back(item);
         }
 
@@ -536,6 +559,9 @@ void enemyLootDrops::setLoot(int enemyType, QString enemyName)
                 item.weaponEdgeType =   menzidItemDrops_[x][15].toInt();
                 item.dotType_ =         menzidItemDrops_[x][16].toInt();
                 item.dropWeight =       menzidItemDrops_[x][17].toInt();
+
+                if (item.itemRarity == 2 || item.itemRarity == 3 || item.itemRarity == 4 || item.itemRarity == 5)
+                    item.dropWeight += bigLootModifier;
 
                 enemySpecificLoot_.push_back(item);
             }

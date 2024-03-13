@@ -9,7 +9,9 @@
 #include "item.h"
 
 Bandit::Bandit(QString name, int health, int maxAttackPower, int minAttackPower,
-               int critChance, int XPReward, int level, int enemyType, int agility, int objType, int itemDropChance, int weaponDot, int armourType)
+               int critChance, int XPReward, int level, int enemyType, int agility,
+               int objType, int itemDropChance, int weaponDot, int armourType,
+               int goldDropMin, int goldDropMax)
     :name_(name),
     health_(health),
     maxAttackPower_(maxAttackPower),
@@ -22,7 +24,9 @@ Bandit::Bandit(QString name, int health, int maxAttackPower, int minAttackPower,
     objType_(objType),
     itemDropChance_(itemDropChance),
     weaponDot_(weaponDot),
-    armourType_(armourType)
+    armourType_(armourType),
+    goldDropMin_(goldDropMin),
+    goldDropMax_(goldDropMax)
 {
     qsrand(QTime::currentTime().msec());
     isAlive_ = true;
@@ -332,43 +336,16 @@ void Bandit::doHit(int dmg, int playerHitRoll, QString playerName, int playerDot
     }
 }
 
-int Bandit::goldDrop()
+int Bandit::goldDrop(double goldModifier)
 {
     QSound::play("Sounds\\goldDrop.wav");
     int gold = 0;
-    if (level_ == 15)
-    {
-        gold = 500;
-        QMessageBox msgBox;
-        msgBox.setWindowTitle("Gold Drop");
-        msgBox.setText(QString("Bandit Leader dropped %1 gold.").arg(gold));
-        msgBox.exec();
-    }
-    if (level_ == 13 || level_ == 14)
-    {
-        //attackDmg_ = rand() % ((maxAttackPower_ + 1) - minAttackPower_) + minAttackPower_;
-        gold = rand()% ((30 + 1 ) - 20) + 20;
-        QMessageBox msgBox;
-        msgBox.setWindowTitle("Gold Drop");
-        msgBox.setText(QString("Bandit Leader dropped %1 gold.").arg(gold));
-        msgBox.exec();
-    }
-    else if (level_ >= 10 && level_ <= 12)
-    {
-        gold = rand()% ((10 + 1) - 5) + 5;
-        QMessageBox msgBox;
-        msgBox.setWindowTitle("Gold Drop");
-        msgBox.setText(QString("Bandit dropped %1 gold.").arg(gold));
-        msgBox.exec();
-    }
-    else if (level_ <= 11)
-    {
-        gold = rand()% 4 + 1;
-        QMessageBox msgBox;
-        msgBox.setWindowTitle("Gold Drop");
-        msgBox.setText(QString("Bandit dropped %1 gold.").arg(gold));
-        msgBox.exec();
-    }
+    gold = rand() % ((goldDropMax_ + 1) - goldDropMin_) + goldDropMin_;
+    gold*= goldModifier;
+    QMessageBox msgBox;
+    msgBox.setWindowTitle("Gold Drop");
+    msgBox.setText(QString("Bandit dropped %1 gold.").arg(gold));
+    msgBox.exec();
     return gold;
 }
 
