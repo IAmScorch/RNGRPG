@@ -2690,7 +2690,7 @@ void GameLogic::on_btnBeginQuest_clicked()
                                    "<B>Objective:</b><br>Kill 6 Bandit Initiates<br>"
                                    "<b>Reward</b><br>"
                                    "50 XP<br>"
-                                   "10 Gold<br>").arg(player_->getName()));
+                                   "150 Gold<br>").arg(player_->getName()));
             QPushButton *btnAccept = msgBox.addButton(tr("Accept"), QMessageBox::ActionRole);
             QPushButton *btnDecline = msgBox.addButton(tr("Decline"), QMessageBox::ActionRole);
             msgBox.exec();
@@ -2698,7 +2698,7 @@ void GameLogic::on_btnBeginQuest_clicked()
             if (msgBox.clickedButton() == btnAccept)
             {
                 QSound::play("Sounds\\acceptQuest.wav");
-                goldReward = 10;
+                goldReward = 150;
                 //xpReward, objective, objectiveII, amountComplete, amountCompleteII, isQuestComplete, isQuestActive, questType, numObjectives,  handInLocation,  handInNPC
                 quest_ = new quests(50, 6, 0, 0, 0, 0, 1, 1, 1, 0, "Bormier");
                 questTitle = QString("Kill %1 Bandit Initiates").arg(quest_->getObjective());
@@ -2736,7 +2736,7 @@ void GameLogic::on_btnBeginQuest_clicked()
                                    "<B>Objective:</b><br>Take an Initiate Trainer's Outfit<br>"
                                    "<b>Reward</b><br>"
                                    "100 XP<br>"
-                                   "15 Gold").arg(player_->getName()));
+                                   "50 Gold").arg(player_->getName()));
             QPushButton *btnAccept = msgBox.addButton(tr("Accept"), QMessageBox::ActionRole);
             QPushButton *btnDecline = msgBox.addButton(tr("Decline"), QMessageBox::ActionRole);
             msgBox.exec();
@@ -2744,7 +2744,7 @@ void GameLogic::on_btnBeginQuest_clicked()
             if (msgBox.clickedButton() == btnAccept)
             {
                 QSound::play("Sounds\\acceptQuest.wav");
-                goldReward = 15;
+                goldReward = 50;
                 //xpReward, objective, objectiveII, amountComplete, amountCompleteII, isQuestComplete, isQuestActive, questType, numObjectives,  handInLocation,  handInNPC
                 quest_ = new quests(100, 1, 0, 0, 0, 0, 1, 2, 1, 0, "Bormier");
                 questTitle = QString("Fashionable New Clothes").arg(quest_->getObjective());
@@ -2787,7 +2787,7 @@ void GameLogic::on_btnBeginQuest_clicked()
                                    "<B>Objective:</b><br>Kill Gren and bring his head to Bormier<br>"
                                    "<b>Reward</b><br>"
                                    "250 XP<br>"
-                                   "20 Gold").arg(player_->getName()));
+                                   "75 Gold").arg(player_->getName()));
             QPushButton *btnAccept = msgBox.addButton(tr("Accept"), QMessageBox::ActionRole);
             QPushButton *btnDecline = msgBox.addButton(tr("Decline"), QMessageBox::ActionRole);
             msgBox.exec();
@@ -2795,7 +2795,7 @@ void GameLogic::on_btnBeginQuest_clicked()
             if (msgBox.clickedButton() == btnAccept)
             {
                 QSound::play("Sounds\\acceptQuest.wav");
-                goldReward = 20;
+                goldReward = 75;
                 //xpReward, objective, objectiveII, amountComplete, amountCompleteII, isQuestComplete, isQuestActive, questType, numObjectives,  handInLocation,  handInNPC
                 quest_ = new quests(250, 1, 0, 0, 0, 0, 1, 3, 1, 0, "Bormier");
                 questTitle = QString("An Oportunity Arises").arg(quest_->getObjective());
@@ -2834,7 +2834,7 @@ void GameLogic::on_btnBeginQuest_clicked()
                                    "<B>Objective:</b><br>Kill 10 Bandit Raiders<br>"
                                    "<b>Reward</b><br>"
                                    "150 XP<br>"
-                                   "30 Gold").arg(player_->getName()));
+                                   "80 Gold").arg(player_->getName()));
             QPushButton *btnAccept = msgBox.addButton(tr("Accept"), QMessageBox::ActionRole);
             QPushButton *btnDecline = msgBox.addButton(tr("Decline"), QMessageBox::ActionRole);
             msgBox.exec();
@@ -2842,7 +2842,7 @@ void GameLogic::on_btnBeginQuest_clicked()
             if (msgBox.clickedButton() == btnAccept)
             {
                 QSound::play("Sounds\\acceptQuest.wav");
-                goldReward = 30;
+                goldReward = 80;
                 //xpReward, objective, objectiveII, amountComplete, amountCompleteII, isQuestComplete, isQuestActive, questType, numObjectives,  handInLocation,  handInNPC
                 quest_ = new quests(150, 10, 0, 0, 0, 0, 1, 4, 1, 3, "Werner");
                 questTitle = QString("What's Mine is not Yours").arg(quest_->getObjective());
@@ -2880,7 +2880,7 @@ void GameLogic::on_btnBeginQuest_clicked()
                                    "<B>Objective:</b><br>Kill 10 Initiate Ambushers<br>"
                                    "<b>Reward</b><br>"
                                    "75 XP<br>"
-                                   "15 Gold"));
+                                   "50 Gold"));
             QPushButton *btnAccept = msgBox.addButton(tr("Accept"), QMessageBox::ActionRole);
             QPushButton *btnDecline = msgBox.addButton(tr("Decline"), QMessageBox::ActionRole);
             msgBox.exec();
@@ -2888,7 +2888,7 @@ void GameLogic::on_btnBeginQuest_clicked()
             if (msgBox.clickedButton() == btnAccept)
             {
                 QSound::play("Sounds\\acceptQuest.wav");
-                goldReward = 15;
+                goldReward = 50;
                 //xpReward, objective, objectiveII, amountComplete, amountCompleteII, isQuestComplete, isQuestActive, questType, numObjectives,  handInLocation,  handInNPC
                 quest_ = new quests(75, 10, 0, 0, 0, 0, 1, 5, 1, 0, "Bormier");
                 questTitle = QString("Deepwood Cleanup").arg(quest_->getObjective());
@@ -2933,7 +2933,7 @@ void GameLogic::on_btnBeginQuest_clicked()
                                    "<B>Objective:</b><br>Save 7 Andorjaul Settlers<br>"
                                    "<b>Reward</b><br>"
                                    "150 XP<br>"
-                                   "20 Gold"));
+                                   "75 Gold"));
             QPushButton *btnAccept = msgBox.addButton(tr("Accept"), QMessageBox::ActionRole);
             QPushButton *btnDecline = msgBox.addButton(tr("Decline"), QMessageBox::ActionRole);
             msgBox.exec();
@@ -2941,7 +2941,7 @@ void GameLogic::on_btnBeginQuest_clicked()
             if (msgBox.clickedButton() == btnAccept)
             {
                 QSound::play("Sounds\\acceptQuest.wav");
-                goldReward = 20;
+                goldReward = 75;
                 //xpReward, objective, objectiveII, amountComplete, amountCompleteII, isQuestComplete, isQuestActive, questType, numObjectives,  handInLocation,  handInNPC
                 quest_ = new quests(150, 7, 0, 0, 0, 0, 1, 6, 1, 0, "Bormeir");
                 questTitle = QString("Played The Fool").arg(quest_->getObjective());
@@ -2979,7 +2979,7 @@ void GameLogic::on_btnBeginQuest_clicked()
                                    "<B>Objective:</b><br>Kill 10 Kobolds<br>Kill Menzid<br>"
                                    "<b>Reward</b><br>"
                                    "175 XP<br>"
-                                   "25 Gold"));
+                                   "85 Gold"));
             QPushButton *btnAccept = msgBox.addButton(tr("Accept"), QMessageBox::ActionRole);
             QPushButton *btnDecline = msgBox.addButton(tr("Decline"), QMessageBox::ActionRole);
             msgBox.exec();
@@ -2987,7 +2987,7 @@ void GameLogic::on_btnBeginQuest_clicked()
             if (msgBox.clickedButton() == btnAccept)
             {
                 QSound::play("Sounds\\acceptQuest.wav");
-                goldReward = 25;
+                goldReward = 85;
                 //xpReward, objective, objectiveII, amountComplete, amountCompleteII, isQuestComplete, isQuestActive, questType, numObjectives,  handInLocation,  handInNPC
                 quest_ = new quests(175, 10, 1, 0, 0, 0, 1, 7, 2, 3, "Werner");
                 questTitle = QString("Clearing the Mine").arg(quest_->getObjective());
@@ -3099,12 +3099,13 @@ void GameLogic::on_btnCompleteQuest_clicked()
                                            "Thank you, %1.<br>"
                                            "Now that we've taken out some of Thragg's initiates,<br>"
                                            "maybe that will deter others from joining his ranks.<br>"
-                                           "Take this gold as a sign of my gratitude. It's not much,<br>"
-                                           "but it's all I can offer you for the time being.<br><br>"
+                                           "Take this gold as a sign of my gratitude. Visit the<br>"
+                                           "Shop and buy some potions and rations.<br>"
+                                           "You've earned it!<br><br>"
                                            "<b>Quest complete!</b><br>"
-                                           "You are rewarded %2 XP and 10 Gold!").arg(player_->getName()).arg(quest_->getXPReward()));
+                                           "You are rewarded %2 XP and 150 Gold!").arg(player_->getName()).arg(quest_->getXPReward()));
                     msgBox.exec();
-                    player_->addGold(10);
+                    player_->addGold(150);
                 }
                 else if (player_->getQuestsCompleted() == 2)
                 {
@@ -3117,9 +3118,9 @@ void GameLogic::on_btnCompleteQuest_clicked()
                                            "He will use it to infiltrate the barracks and disrupt their training<br>"
                                            "and relay any useful information to us that may help us get to Thragg.<br><br>"
                                            "<b>Quest complete!</b><br>"
-                                           "You are rewarded %2 XP and 15 Gold!").arg(player_->getName()).arg(quest_->getXPReward()));
+                                           "You are rewarded %2 XP and 50 Gold!").arg(player_->getName()).arg(quest_->getXPReward()));
                     msgBox.exec();
-                    player_->addGold(15);
+                    player_->addGold(50);
                 }
                 else if (player_->getQuestsCompleted() == 3)
                 {
@@ -3132,9 +3133,9 @@ void GameLogic::on_btnCompleteQuest_clicked()
                                            "only a small step towards defeating Thragg and his bandits. If you<br>"
                                            "continue to be successful like this, we'll get Thragg in no time.<br><br>"
                                            "<b>Quest complete!</b><br>"
-                                           "You are rewarded %2 XP and 20 Gold!").arg(player_->getName()).arg(quest_->getXPReward()));
+                                           "You are rewarded %2 XP and 75 Gold!").arg(player_->getName()).arg(quest_->getXPReward()));
                     msgBox.exec();
-                    player_->addGold(20);
+                    player_->addGold(75);
                 }
                 else if (player_->getQuestsCompleted() == 4)
                 {
@@ -3151,9 +3152,9 @@ void GameLogic::on_btnCompleteQuest_clicked()
                                            "sent down to Riverbane to replace what we've lost. I'm sure he'll<br>"
                                            "have more for you to do.<br><br>"
                                            "<b>Quest complete!</b><br>"
-                                           "You are rewarded %2 XP and 30 Gold!").arg(quest_->getXPReward()));
+                                           "You are rewarded %2 XP and 80 Gold!").arg(quest_->getXPReward()));
                     msgBox.exec();
-                    player_->addGold(30);
+                    player_->addGold(80);
                 }
                 else if (player_->getQuestsCompleted() == 5)
                 {
@@ -3164,9 +3165,9 @@ void GameLogic::on_btnCompleteQuest_clicked()
                                            "Thanks for helping out my scouts in Deepwood. They should be<br>"
                                            "fine on their own now, I have an urgent task for you.<br><br>"
                                            "<b>Quest complete!</b><br>"
-                                           "You are rewarded %2 XP and 15 Gold!").arg(quest_->getXPReward()));
+                                           "You are rewarded %2 XP and 50 Gold!").arg(quest_->getXPReward()));
                     msgBox.exec();
-                    player_->addGold(15);
+                    player_->addGold(50);
                 }
                 else if (player_->getQuestsCompleted() == 6)
                 {
@@ -3179,9 +3180,9 @@ void GameLogic::on_btnCompleteQuest_clicked()
                                            "Return to Riverbane. I'm sure Werner could still use your help there.<br>"
                                            "Tell him what happened.<br><br>"
                                            "<b>Quest complete!</b><br>"
-                                           "You are rewarded %2 XP and 20 Gold!").arg(quest_->getXPReward()));
+                                           "You are rewarded %2 XP and 75 Gold!").arg(quest_->getXPReward()));
                     msgBox.exec();
-                    player_->addGold(20);
+                    player_->addGold(75);
                 }
                 else if (player_->getQuestsCompleted() == 7)
                 {
@@ -3193,9 +3194,9 @@ void GameLogic::on_btnCompleteQuest_clicked()
                                            "we’re going to need to make more weapons and armour so we can even<br>"
                                            "stand a chance at getting it back.<br><br>"
                                            "<b>Quest complete!</b><br>"
-                                           "You are rewarded %2 XP and 25 Gold!").arg(quest_->getXPReward()));
+                                           "You are rewarded %2 XP and 85 Gold!").arg(quest_->getXPReward()));
                     msgBox.exec();
-                    player_->addGold(25);
+                    player_->addGold(85);
                 }
                 player_->addXP(quest_->getXPReward());
                 ui->lblQTitle->setText("Quest Completed!");
