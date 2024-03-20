@@ -87,6 +87,9 @@ Player::Player(int defaultHealth, int intelligence, int defaultStamina,
     fireStarterKitAmount_ = 0;
     hasBedroll_ = false;
     hasFireStarterKit_ = false;
+    luckGold_ = 1.0;
+    luckLoot_ = 0;
+    luckBigLoot_ = 0;
     qsrand(QTime::currentTime().msec());
 }
 
@@ -496,8 +499,8 @@ void Player::doLevelUp()
                                 "of <b>Strength</b> rather than every 5<br>";
             }
             lvlUpText+=         "<br><b>Stamina</b><br>"
-                                "Determines how many actions you can take in  day<br>"
-                                "Each point towards <b>Stamina</b> increases you maximum amount of stamina by 1<br><br>"
+                                "Determines how many actions you can take in a day<br>"
+                                "Each point towards <b>Stamina</b> increases your maximum amount of stamina by 1<br><br>"
                                 "<b>Agility</b><br>"
                                 "Determines the chance at which you can dodge an enemy's attack<br>"
                                 "Each 5 points towards <b>Agility</b> increases your chance at dodging<br>"
@@ -705,6 +708,9 @@ void Player::save()
     saveFile << rogueDblAtkBonus_ << "\n";
     saveFile << warTwoHandAtkBonus_ << "\n";
     saveFile << knightAbsorbBonus_ << "\n";
+    saveFile << luckGold_ << "\n";
+    saveFile << luckLoot_ << "\n";
+    saveFile << luckBigLoot_ << "\n";
     file.close();
     saveInventory();
     saveEquipment();
@@ -853,6 +859,9 @@ void Player::load(QString playerName)
         rogueDblAtkBonus_ = saveFile.readLine().toInt();
         warTwoHandAtkBonus_ = saveFile.readLine().toInt();
         knightAbsorbBonus_ = saveFile.readLine().toInt();
+        luckGold_ = saveFile.readLine().toDouble();
+        luckLoot_ = saveFile.readLine().toInt();
+        luckBigLoot_ = saveFile.readLine().toInt();
         file.close();
     }
     loadInventory(playerName);
@@ -1132,12 +1141,21 @@ void Player::setLuck()
     else
         luckBonus = totalLuckPoints / 5;
 
+    luckGold_ = 1.0 + ((totalLuckPoints / 2) * 0.1);
+
+    luckBigLoot_ = ((totalLuckPoints / 3) * 10);
+
     luck_ = luckDefault_ - luckBonus;
 }
 
 double Player::getCritChance()
 {
     return (double)((luckDefault_ - luck_) + 1)/(double)luckDefault_;
+}
+
+double Player::getGoldModifier()
+{
+    return luckGold_;
 }
 
 int Player::getLuck()
@@ -1148,6 +1166,11 @@ int Player::getLuck()
 int Player::getStatLuck()
 {
     return statLuck_;
+}
+
+int Player::getBigLootModifier()
+{
+    return luckBigLoot_;
 }
 
 void Player::addIntelligence(int intelligence)
@@ -1995,7 +2018,7 @@ void Player::addStarterEquipment()
         starterWeapon.sellPrice=10;
         starterWeapon.isUsable=false;
         starterWeapon.minAtk=1;
-        starterWeapon.maxAtk=3;
+        starterWeapon.maxAtk=2;
         starterWeapon.block=0;
         starterWeapon.holdType=2;
         starterWeapon.stat1=0;
@@ -2049,7 +2072,7 @@ void Player::addStarterEquipment()
         starterWeapon.sellPrice=20;
         starterWeapon.isUsable=false;
         starterWeapon.minAtk=1;
-        starterWeapon.maxAtk=7;
+        starterWeapon.maxAtk=6;
         starterWeapon.block=0;
         starterWeapon.holdType=3;
         starterWeapon.stat1=0;
@@ -2102,7 +2125,7 @@ void Player::addStarterEquipment()
         starterWeapon.sellPrice=15;
         starterWeapon.isUsable=false;
         starterWeapon.minAtk=1;
-        starterWeapon.maxAtk=5;
+        starterWeapon.maxAtk=4;
         starterWeapon.block=0;
         starterWeapon.holdType=1;
         starterWeapon.stat1=0;
@@ -2130,7 +2153,7 @@ void Player::addStarterEquipment()
         starterWeapon.isUsable=false;
         starterWeapon.minAtk=0;
         starterWeapon.maxAtk=0;
-        starterWeapon.block=7;
+        starterWeapon.block=4;
         starterWeapon.holdType=0;
         starterWeapon.stat1=0;
         starterWeapon.stat2=0;

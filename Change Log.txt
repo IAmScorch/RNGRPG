@@ -1,4 +1,19 @@
-Current Version: 0.4.1
+Current Version: 0.4.2
+
+Change Date: 03/20/2024
+Version 0.4.2
+Minor Enhancement #83 Add Hit Modifier for Enemies
+Minor Enhancement #86 Add new item drops
+Minor Enhancement #84 update weapon stats
+Minor Enhancement #85 update default agility and armour rating bonuses
+Minor Enhancement #76 Increase gold reward for quests
+Minor Enhancement #79 Make luck stat effect loot drops
+Minor Enhancement #75 Increase default stamina amount
+Minor Enhancement #80 Update loot drop chance
+Minor Enhancement #81 Update gold drops
+Bug #Weak shield has higher block than regular shield
+Bug #Bonus stats score only updating on game load
+GSM #78 Level up text has grammar mistakes
 
 Change Date: 03/10/2024
 Version 0.4.1
