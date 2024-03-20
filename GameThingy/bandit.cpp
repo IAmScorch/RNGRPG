@@ -11,7 +11,7 @@
 Bandit::Bandit(QString name, int health, int maxAttackPower, int minAttackPower,
                int critChance, int XPReward, int level, int enemyType, int agility,
                int objType, int itemDropChance, int weaponDot, int armourType,
-               int goldDropMin, int goldDropMax)
+               int goldDropMin, int goldDropMax, int hitModifier)
     :name_(name),
     health_(health),
     maxAttackPower_(maxAttackPower),
@@ -26,7 +26,8 @@ Bandit::Bandit(QString name, int health, int maxAttackPower, int minAttackPower,
     weaponDot_(weaponDot),
     armourType_(armourType),
     goldDropMin_(goldDropMin),
-    goldDropMax_(goldDropMax)
+    goldDropMax_(goldDropMax),
+    hitModifier_(hitModifier)
 {
     qsrand(QTime::currentTime().msec());
     isAlive_ = true;
@@ -80,7 +81,7 @@ int Bandit::doAttack(QString enemy)
 int Bandit::doHitRoll()
 {
     int hitRoll = rand()% ((20 + 1) - 1) + 1;
-    return hitRoll;
+    return hitRoll + hitModifier_;
 }
 
 void Bandit::doHit(int dmg, int playerHitRoll, QString playerName, int playerDotType, int playerClass)

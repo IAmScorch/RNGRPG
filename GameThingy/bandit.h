@@ -27,6 +27,7 @@ private:
     int armourType_;
     int goldDropMin_;
     int goldDropMax_;
+    int hitModifier_;
     bool isAlive_;
     bool isHit_;
     QString message_;
@@ -37,7 +38,7 @@ public:
     Bandit(QString name, int health, int maxAttackPower, int minAttackPower,
         int critChance, int XPReward, int level, int enemyType, int agility,
            int objType, int itemDropChance, int weaponDot, int armourType,
-           int goldDropMin, int goldDropMax);
+           int goldDropMin, int goldDropMax, int hitModifier);
     ~Bandit(void);
 
     int doAttack(QString enemy);
