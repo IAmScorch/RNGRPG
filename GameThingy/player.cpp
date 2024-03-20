@@ -499,8 +499,8 @@ void Player::doLevelUp()
                                 "of <b>Strength</b> rather than every 5<br>";
             }
             lvlUpText+=         "<br><b>Stamina</b><br>"
-                                "Determines how many actions you can take in  day<br>"
-                                "Each point towards <b>Stamina</b> increases you maximum amount of stamina by 1<br><br>"
+                                "Determines how many actions you can take in a day<br>"
+                                "Each point towards <b>Stamina</b> increases your maximum amount of stamina by 1<br><br>"
                                 "<b>Agility</b><br>"
                                 "Determines the chance at which you can dodge an enemy's attack<br>"
                                 "Each 5 points towards <b>Agility</b> increases your chance at dodging<br>"
