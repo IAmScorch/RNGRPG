@@ -1015,17 +1015,17 @@ void GameLogic::createCharacter()
     if (msgBox.clickedButton() == btnRogue)
     {
         //defaultHealth, intelligence, defaultStamina, agilityDefault, luckDefault, classType
-        player_ = new Player(16, 0, 20, 7, 20, 2);
+        player_ = new Player(16, 0, 20, 5, 20, 2);
     }
     else if (msgBox.clickedButton() == btnWarrior)
     {
         //defaultHealth, intelligence, defaultStamina, agilityDefault, luckDefault, classType
-        player_ = new Player(20, 0, 20, 6, 20, 3);
+        player_ = new Player(20, 0, 20, 4, 20, 3);
     }
     else if (msgBox.clickedButton() == btnKnight)
     {
         //defaultHealth, intelligence, defaultStamina, agilityDefault, luckDefault, classType
-        player_ = new Player(26, 0, 20, 5, 20, 4);
+        player_ = new Player(26, 0, 20, 3, 20, 4);
     }
 
     bool ok;

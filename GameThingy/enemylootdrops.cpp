@@ -176,12 +176,12 @@ QVector<Item> enemyLootDrops::doLootDrop(QString enemyName, QVector<Item> enemyL
                             {
                                 case 2: //weapons
                                     item.name = weaponPrefixes[rand()%20];
-                                    item.name +=  " " + weaponTypes[rand()% 3];
+                                    item.name +=  " " + weaponTypes[rand()% 14];
                                     if (item.name.contains("Dagger"))
                                     {
-                                        item.sellPrice = (15 * item.itemRarity) - 10;
-                                        item.minAtk = 1;
-                                        item.maxAtk = (5 + item.itemRarity) - 1;
+                                        item.sellPrice = (20 * item.itemRarity);
+                                        item.minAtk = (1 + item.itemRarity) - 1;
+                                        item.maxAtk = (4 + item.itemRarity) - 1;
                                         item.holdType = 2;
                                         item.weaponType = 1;
                                         item.weaponEdgeType = 1;
@@ -189,21 +189,111 @@ QVector<Item> enemyLootDrops::doLootDrop(QString enemyName, QVector<Item> enemyL
                                     }
                                     else if (item.name.contains("Short Sword"))
                                     {
-                                        item.sellPrice = (20 * item.itemRarity) - 10;
-                                        item.minAtk = 2;
-                                        item.maxAtk = (7 + item.itemRarity);
-                                        item.holdType = rand()%1 + 1;
+                                        item.sellPrice = (25 * item.itemRarity);
+                                        item.minAtk = (1 + item.itemRarity) - 1;
+                                        item.maxAtk = (6 + item.itemRarity) - 1;
+                                        item.holdType = rand()%2 + 1;
                                         item.weaponType = 2;
                                         item.weaponEdgeType = 1;
                                         item.dotType_ = 1;
                                     }
                                     else if (item.name.contains("Long Sword"))
                                     {
-                                        item.sellPrice = (27 * item.itemRarity) - 15;
-                                        item.minAtk = 3;
-                                        item.maxAtk = (9 + item.itemRarity);
+                                        item.sellPrice = (30 * item.itemRarity);
+                                        item.minAtk = (1 + item.itemRarity) - 1;
+                                        item.maxAtk = (10 + item.itemRarity) - 1;
                                         item.holdType = 3;
                                         item.weaponType = 3;
+                                        item.weaponEdgeType = 1;
+                                        item.dotType_ = 1;
+                                    }
+                                    else if (item.name.contains("Club"))
+                                    {
+                                        item.sellPrice = (20 * item.itemRarity);
+                                        item.minAtk = (1 + item.itemRarity) - 1;
+                                        item.maxAtk = (4 + item.itemRarity) - 1;
+                                        item.holdType = 2;
+                                        item.weaponType = 5;
+                                        item.weaponEdgeType = 2;
+                                        item.dotType_ = 2;
+                                    }
+                                    else if (item.name.contains("Greatclub"))
+                                    {
+                                        item.sellPrice = (25 * item.itemRarity);
+                                        item.minAtk = (1 + item.itemRarity) - 1;
+                                        item.maxAtk = (8 + item.itemRarity) - 1;
+                                        item.holdType = 3;
+                                        item.weaponType = 8;
+                                        item.weaponEdgeType = 2;
+                                        item.dotType_ = 2;
+                                    }
+                                    else if (item.name.contains("Mace"))
+                                    {
+                                        item.sellPrice = (25 * item.itemRarity);
+                                        item.minAtk = (1 + item.itemRarity) - 1;
+                                        item.maxAtk = (6 + item.itemRarity) - 1;
+                                        item.holdType = rand()%2 + 1;
+                                        item.weaponType = 4;
+                                        item.weaponEdgeType = 2;
+                                        item.dotType_ = 2;
+                                    }
+                                    else if (item.name.contains("Warhammer"))
+                                    {
+                                        item.sellPrice = (30 * item.itemRarity);
+                                        item.minAtk = (1 + item.itemRarity) - 1;
+                                        item.maxAtk = (10 + item.itemRarity) - 1;
+                                        item.holdType = 3;
+                                        item.weaponType = 3;
+                                        item.weaponEdgeType = 2;
+                                        item.dotType_ = 2;
+                                    }
+                                    else if (item.name.contains("Maul"))
+                                    {
+                                        item.sellPrice = (35 * item.itemRarity);
+                                        item.minAtk = (2 + item.itemRarity) - 1;
+                                        item.maxAtk = (12 + item.itemRarity) - 1;
+                                        item.holdType = 3;
+                                        item.weaponType = 12;
+                                        item.weaponEdgeType = 1;
+                                        item.dotType_ = 1;
+                                    }
+                                    else if (item.name.contains("Greatsword"))
+                                    {
+                                        item.sellPrice = (35 * item.itemRarity);
+                                        item.minAtk = (2 + item.itemRarity) - 1;
+                                        item.maxAtk = (12 + item.itemRarity) - 1;
+                                        item.holdType = 3;
+                                        item.weaponType = 10;
+                                        item.weaponEdgeType = 2;
+                                        item.dotType_ = 2;
+                                    }
+                                    else if (item.name.contains("Morningstar"))
+                                    {
+                                        item.sellPrice = (25 * item.itemRarity);
+                                        item.minAtk = (1 + item.itemRarity) - 1;
+                                        item.maxAtk = (8 + item.itemRarity) - 1;
+                                        item.holdType = 2;
+                                        item.weaponType = 11;
+                                        item.weaponEdgeType = 1;
+                                        item.dotType_ = 1;
+                                    }
+                                    else if (item.name.contains("Battleaxe"))
+                                    {
+                                        item.sellPrice = (30 * item.itemRarity);
+                                        item.minAtk = (1 + item.itemRarity) - 1;
+                                        item.maxAtk = (10 + item.itemRarity) - 1;
+                                        item.holdType = 3;
+                                        item.weaponType = 13;
+                                        item.weaponEdgeType = 1;
+                                        item.dotType_ = 1;
+                                    }
+                                    else if (item.name.contains("Greataxe"))
+                                    {
+                                        item.sellPrice = (35 * item.itemRarity);
+                                        item.minAtk = (1 + item.itemRarity) - 1;
+                                        item.maxAtk = (12 + item.itemRarity) - 1;
+                                        item.holdType = 3;
+                                        item.weaponType = 14;
                                         item.weaponEdgeType = 1;
                                         item.dotType_ = 1;
                                     }
@@ -213,41 +303,41 @@ QVector<Item> enemyLootDrops::doLootDrop(QString enemyName, QVector<Item> enemyL
                                     item.name +=  " " + armourTypes[rand()% 4];
                                     if (item.name.contains("Cloth"))
                                     {
-                                        item.sellPrice = (5 * item.itemRarity);
+                                        item.sellPrice = (15 * item.itemRarity);
                                         item.armourType = 1;
-                                        item.armourRating = 4;
+                                        item.armourRating = (5 + item.itemRarity) - 1;
                                     }
                                     else if (item.name.contains("Leather"))
                                     {
-                                        item.sellPrice = (7 * item.itemRarity);
+                                        item.sellPrice = (20 * item.itemRarity);
                                         item.armourType = 2;
-                                        item.armourRating = 3;
+                                        item.armourRating = (4 + item.itemRarity) - 1;
                                     }
                                     else if (item.name.contains("Mail"))
                                     {
-                                        item.sellPrice = (10 * item.itemRarity);
+                                        item.sellPrice = (25 * item.itemRarity);
                                         item.armourType = 3;
-                                        item.armourRating = 2;
+                                        item.armourRating = (3 + item.itemRarity) - 1;
                                     }
                                     else if (item.name.contains("Plate"))
                                     {
-                                        item.sellPrice = (15 * item.itemRarity);
+                                        item.sellPrice = (30 * item.itemRarity);
                                         item.armourType = 4;
-                                        item.armourRating = 1;
+                                        item.armourRating = (2 + item.itemRarity) - 1;
                                     }
                                     break;
                                 case 4: //Shield
                                     item.name = ShieldPrefixes[rand()%7] + " Shield";
-                                    item.sellPrice = (15 * item.itemRarity) - 5;
+                                    item.sellPrice = (30 * item.itemRarity) - 5;
                                     item.block = (7 + item.itemRarity) - 1;
                                     break;
                                 case 6: //ring
                                     item.name = ringPrefixes[rand()%2] + " Ring";
-                                    item.sellPrice = (5 + item.itemRarity) - 3;
+                                    item.sellPrice = (15 + item.itemRarity);
                                     break;
                                 case 7: //trinket
                                     item.name = trinketPrefixes[rand()%3] + " Trinket";
-                                    item.sellPrice = (5 + item.itemRarity) - 3;
+                                    item.sellPrice = (15 + item.itemRarity);
                                     break;
                             }
 

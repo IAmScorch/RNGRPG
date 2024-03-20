@@ -2018,7 +2018,7 @@ void Player::addStarterEquipment()
         starterWeapon.sellPrice=10;
         starterWeapon.isUsable=false;
         starterWeapon.minAtk=1;
-        starterWeapon.maxAtk=3;
+        starterWeapon.maxAtk=2;
         starterWeapon.block=0;
         starterWeapon.holdType=2;
         starterWeapon.stat1=0;
@@ -2072,7 +2072,7 @@ void Player::addStarterEquipment()
         starterWeapon.sellPrice=20;
         starterWeapon.isUsable=false;
         starterWeapon.minAtk=1;
-        starterWeapon.maxAtk=7;
+        starterWeapon.maxAtk=6;
         starterWeapon.block=0;
         starterWeapon.holdType=3;
         starterWeapon.stat1=0;
@@ -2125,7 +2125,7 @@ void Player::addStarterEquipment()
         starterWeapon.sellPrice=15;
         starterWeapon.isUsable=false;
         starterWeapon.minAtk=1;
-        starterWeapon.maxAtk=5;
+        starterWeapon.maxAtk=4;
         starterWeapon.block=0;
         starterWeapon.holdType=1;
         starterWeapon.stat1=0;
@@ -2153,7 +2153,7 @@ void Player::addStarterEquipment()
         starterWeapon.isUsable=false;
         starterWeapon.minAtk=0;
         starterWeapon.maxAtk=0;
-        starterWeapon.block=7;
+        starterWeapon.block=4;
         starterWeapon.holdType=0;
         starterWeapon.stat1=0;
         starterWeapon.stat2=0;
