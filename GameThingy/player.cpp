@@ -2127,7 +2127,7 @@ void Player::addStarterEquipment()
         starterWeapon.minAtk=1;
         starterWeapon.maxAtk=4;
         starterWeapon.block=0;
-        starterWeapon.holdType=1;
+        starterWeapon.holdType=2;
         starterWeapon.stat1=0;
         starterWeapon.stat2=0;
         starterWeapon.stat3=0;
